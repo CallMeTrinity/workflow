@@ -15,4 +15,5 @@
 
     <Button text="Se connecter" onAction="#handleLogin"/>
 
+    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
 </VBox>
