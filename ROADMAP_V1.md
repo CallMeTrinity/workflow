@@ -29,7 +29,7 @@
 
 | Tâche                                                         | Qui | Durée |
 |---------------------------------------------------------------|-----|-------|
-| Modèles Projet, Tache, UserStory + enums                      | B   | 1h    |
+| ~~Modèles Projet, Tache, UserStory + enums~~                  | B   | 1h    |
 | ProjetRepository (CRUD complet)                               | A   | 45min |
 | TacheRepository (CRUD + findByAssignee)                       | A   | 45min |
 | ProjetService + TacheService (logique métier, droits)         | A   | 1h    |
