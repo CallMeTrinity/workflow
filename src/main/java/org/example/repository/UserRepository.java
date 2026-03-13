@@ -10,12 +10,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository for CRUD operations on users.
+ */
 public class UserRepository {
+
+    /**
+     * Saves a new user in the database.
+     * @param user the user to save
+     */
     public void save(User user) {
         String sql = "INSERT INTO users (last_name, first_name, mail, password, role) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
-
             stmt.setString(1, user.getLastName());
             stmt.setString(2, user.getFirstName());
             stmt.setString(3, user.getMail());
@@ -27,12 +34,15 @@ public class UserRepository {
         }
     }
 
+    /**
+     * Finds a user by their ID.
+     * @param id the user ID
+     * @return the user, or null if not found
+     */
     public User findById(Long id) {
         String sql = "SELECT * FROM users WHERE id = ?";
 
-        try (PreparedStatement stmt =
-                     DatabaseConfig.getConnection().prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
 
@@ -46,13 +56,15 @@ public class UserRepository {
         }
     }
 
-
+    /**
+     * Finds a user by their email address.
+     * @param mail the email address
+     * @return the user, or null if not found
+     */
     public User findByMail(String mail) {
         String sql = "SELECT * FROM users WHERE mail = ?";
 
-        try (PreparedStatement stmt =
-                     DatabaseConfig.getConnection().prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setString(1, mail);
             ResultSet rs = stmt.executeQuery();
 
@@ -62,16 +74,18 @@ public class UserRepository {
             return null;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding user", e);
+            throw new RuntimeException("Error finding user by mail", e);
         }
     }
 
+    /**
+     * Returns all users in the database.
+     * @return list of all users
+     */
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
 
-        try (PreparedStatement stmt =
-                     DatabaseConfig.getConnection().prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             List<User> users = new ArrayList<>();
 
@@ -85,11 +99,14 @@ public class UserRepository {
         }
     }
 
+    /**
+     * Updates an existing user in the database.
+     * @param user the user to update (must have a valid id)
+     */
     public void update(User user) {
         String sql = "UPDATE users SET last_name = ?, first_name = ?, mail = ?, password = ?, role = ? WHERE id = ?";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
-
             stmt.setString(1, user.getLastName());
             stmt.setString(2, user.getFirstName());
             stmt.setString(3, user.getMail());
@@ -102,18 +119,26 @@ public class UserRepository {
         }
     }
 
-    public void delete(User user) {
+    /**
+     * Deletes a user by their ID.
+     * @param id the ID of the user to delete
+     */
+    public void delete(Long id) {
         String sql = "DELETE FROM users WHERE id = ?";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
-
-            stmt.setLong(1, user.getId());
+            stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error deleting user: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Maps a ResultSet row to a User object.
+     * @param rs the ResultSet positioned on a row
+     * @return the corresponding User
+     */
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
         return new User(
                 rs.getLong("id"),
