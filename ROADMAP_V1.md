@@ -8,16 +8,17 @@
 
 **Objectif : projet qui tourne, base de données créée, login fonctionnel**
 
-| Tâche                                                             | Qui | Durée |
-|-------------------------------------------------------------------|-----|-------|
-| ~~Créer le projet Maven, configurer le pom.xml, init Git/GitLab~~ | A   | 30min |
-| ~~Créer la structure des packages~~                               | A   | 20min |
-| ~~Écrire le schema.sql (toutes les tables)~~                      | A   | 45min |
-| ~~DatabaseConfig.java + initialisation auto du schema.sql~~       | A   | 45min |
-| ~~Modèles User, Role (enum), priority (enum), status (enum)~~     | B   | 1h    |
-| UserRepository (save, findByEmail, findById)                      | A   | 45min |
-| AuthService (login, hash bcrypt, SessionManager)                  | A   | 45min |
-| login.fxml + LoginController basique                              | B   | 1h    |
+| Tâche                                                             | Qui | Durée estimé |
+|-------------------------------------------------------------------|-----|--------------|
+| ~~Créer le projet Maven, configurer le pom.xml, init Git/GitLab~~ | A   | 30min        |
+| ~~Créer la structure des packages~~                               | A   | 20min        |
+| ~~Écrire le schema.sql (toutes les tables)~~                      | A   | 45min        |
+| ~~DatabaseConfig.java + initialisation auto du schema.sql~~       | A   | 45min        |
+| ~~Modèles User, Role (enum), priority (enum), status (enum)~~     | B   | 1h           |
+| ~~UserRepository (save, findByEmail, findById)~~                  | A   | 45min        |
+| ~~AuthService (login, hash bcrypt, SessionManager)~~              | A   | 45min        |
+| ~~login.fxml + LoginController basique~~                          | B   | 1h           |
+| ~~Modèles Projet, Tache, UserStory + enums~~                      | B   | 1h           |
 
 **Fin de séance 1 :** on peut se connecter avec un user créé manuellement en base
 
@@ -29,7 +30,6 @@
 
 | Tâche                                                         | Qui | Durée |
 |---------------------------------------------------------------|-----|-------|
-| ~~Modèles Projet, Tache, UserStory + enums~~                  | B   | 1h    |
 | ProjetRepository (CRUD complet)                               | A   | 45min |
 | TacheRepository (CRUD + findByAssignee)                       | A   | 45min |
 | ProjetService + TacheService (logique métier, droits)         | A   | 1h    |
