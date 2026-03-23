@@ -30,9 +30,9 @@ public class Task {
         this.priority = priority;
         this.deadline = deadline;
         this.timeEstimate = timeEstimate;
+        this.assignedUserId = assignedUserId;
         this.projectId = projectId;
         this.userStoryId = userStoryId;
-        this.assignedUserId = assignedUserId;
     }
 
     public Long getId() {

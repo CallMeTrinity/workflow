@@ -6,19 +6,27 @@ import org.example.model.enums.Priority;
 import org.example.model.enums.Status;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskRepository {
 
-    public void save(Task task) {
+    public Long save(Task task) {
         String sql = "INSERT INTO task (title, description, status, priority, deadline, time_estimate, assigned_user_id, project_id, user_story_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setParameters(task, stmt);
 
             stmt.executeUpdate();
+
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return task.getId();
+            }
+            throw new RuntimeException("No ID generated for task");
         } catch (SQLException e) {
             throw new RuntimeException("Error saving task: " + e.getMessage(), e);
         }
