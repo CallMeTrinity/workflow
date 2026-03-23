@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<HBox spacing="20" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.KanbanController">
+
+    <VBox>
+        <Label text="TODO"/>
+        <ListView fx:id="todoList"/>
+    </VBox>
+
+    <VBox>
+        <Label text="IN PROGRESS"/>
+        <ListView fx:id="inProgressList"/>
+    </VBox>
+
+    <VBox>
+        <Label text="DONE"/>
+        <ListView fx:id="doneList"/>
+    </VBox>
+
+</HBox>
