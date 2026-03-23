@@ -32,10 +32,10 @@
 |---------------------------------------------------------------|-----|-------|
 | ~~ProjetRepository (CRUD complet)~~                           | A   | 45min |
 | ~~TacheRepository (CRUD + findByAssignee)~~                   | A   | 45min |
-| ProjetService + TacheService (logique métier, droits)         | A   | 1h    |
+| ~~ProjetService + TacheService (logique métier, droits)~~     | A   | 1h    |
 | dashboard.fxml + DashboardController (liste projets)          | B   | 1h    |
 | kanban.fxml + KanbanController (3 colonnes, affichage tâches) | B   | 1h    |
-| Tests JUnit ProjetService + TacheService                      | A   | 30min |
+| ~~Tests JUnit ProjetService + TacheService~~                  | A   | 30min |
 
 **Fin de séance 2 :** on peut créer un projet, des tâches, les déplacer dans le kanban
 
