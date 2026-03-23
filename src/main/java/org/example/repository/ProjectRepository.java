@@ -6,15 +6,16 @@ import org.example.model.Project;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectRepository {
 
-    public void save(Project project) {
+    public Long save(Project project) {
         String sql = "INSERT INTO project (name, description, start_date, end_date, project_leader_id) VALUES (?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, project.getName());
             stmt.setString(2, project.getDescription());
             stmt.setString(3, project.getStartDate());
@@ -22,6 +23,12 @@ public class ProjectRepository {
             stmt.setLong(5, project.getProjectLeaderId());
 
             stmt.executeUpdate();
+
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return project.getId();
+            }
+            throw new RuntimeException("No ID generated for project");
 
         } catch (SQLException e) {
             throw new RuntimeException("Error saving project: " + e.getMessage(), e);
@@ -100,6 +107,55 @@ public class ProjectRepository {
             stmt.executeUpdate();
         } catch (SQLException e){
             throw new RuntimeException("Error deleting project: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Adds a member to a project.
+     */
+    public void addMember(Long projectId, Long userId) {
+        String sql = "INSERT INTO project_member (project_id, user_id) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, projectId);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error adding member to project: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Removes a member from a project.
+     */
+    public void removeMember(Long projectId, Long userId) {
+        String sql = "DELETE FROM project_member WHERE project_id = ? AND user_id = ?";
+
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, projectId);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error removing member from project: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Returns all members of a project.
+     */
+    public List<Long> findMemberIds(Long projectId) {
+        String sql = "SELECT user_id FROM project_member WHERE project_id = ?";
+
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, projectId);
+            ResultSet rs = stmt.executeQuery();
+            List<Long> memberIds = new ArrayList<>();
+            while (rs.next()) {
+                memberIds.add(rs.getLong("user_id"));
+            }
+            return memberIds;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding project members: " + e.getMessage(), e);
         }
     }
 
