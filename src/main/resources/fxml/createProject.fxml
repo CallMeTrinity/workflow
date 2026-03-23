@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.CreateProjectController">
+
+    <Label text="Créer un projet"/>
+
+    <TextField fx:id="nameField" promptText="Nom du projet"/>
+    <TextField fx:id="descriptionField" promptText="Description"/>
+    <TextField fx:id="startDateField" promptText="Date début (YYYY-MM-DD)"/>
+    <TextField fx:id="endDateField" promptText="Date fin (YYYY-MM-DD)"/>
+
+    <Button text="Valider" onAction="#handleCreate"/>
+
+</VBox>

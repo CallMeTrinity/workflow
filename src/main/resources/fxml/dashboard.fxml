@@ -11,6 +11,6 @@
 
     <ListView fx:id="projectList"/>
 
-    <Button text="Créer projet"/>
+    <Button text="Créer projet" onAction="#openCreateProject"/>
 
 </VBox>
