@@ -8,6 +8,9 @@ import org.example.exception.InvalidLoginCredentialsException;
 import org.example.exception.UserNotFoundException;
 import org.example.model.User;
 import org.example.service.AuthService;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class LoginController {
 
@@ -29,10 +32,24 @@ public class LoginController {
 
         try {
             User user = authService.login(email, password);
-            System.out.println("Logged in as : " + user.getFullName());
-            // @TODO naviguer vers le dashboard
+
+            // ouvrir dashboard dans une nouvelle fenêtre
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            Stage newStage = new Stage();
+            newStage.setTitle("ProjectRoom");
+            newStage.setScene(scene);
+            newStage.show();
+
+            // fermer login
+            Stage currentStage = (Stage) emailField.getScene().getWindow();
+            currentStage.close();
+
         } catch (UserNotFoundException | InvalidLoginCredentialsException e){
             errorLabel.setText(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

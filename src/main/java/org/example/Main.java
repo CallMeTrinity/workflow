@@ -12,8 +12,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
-        Scene scene = new Scene(loader.load(), 400, 300);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));        Scene scene = new Scene(loader.load(), 400, 300);
 
         stage.setTitle("ProjectRoom");
         stage.setScene(scene);
