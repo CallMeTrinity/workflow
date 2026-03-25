@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.CreateTaskController">
+
+    <Label text="Créer une tâche"/>
+
+    <TextField fx:id="titleField" promptText="Titre"/>
+    <TextField fx:id="descriptionField" promptText="Description"/>
+    <TextField fx:id="deadlineField" promptText="Deadline (YYYY-MM-DD)"/>
+
+    <ComboBox fx:id="priorityBox" promptText="Priorité"/>
+
+    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+
+    <Button text="Créer" onAction="#handleCreate"/>
+
+</VBox>

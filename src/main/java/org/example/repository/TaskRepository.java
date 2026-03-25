@@ -24,7 +24,7 @@ public class TaskRepository {
 
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                return task.getId();
+                return generatedKeys.getLong(1);
             }
             throw new RuntimeException("No ID generated for task");
         } catch (SQLException e) {
@@ -114,7 +114,11 @@ public class TaskRepository {
         stmt.setString(3, task.getStatus().name());
         stmt.setString(4, task.getPriority().name());
         stmt.setString(5, task.getDeadline());
-        stmt.setInt(6, task.getTimeEstimate());
+        if (task.getTimeEstimate() != null) {
+            stmt.setInt(6, task.getTimeEstimate());
+        } else {
+            stmt.setNull(6, java.sql.Types.INTEGER);
+        }
         if (task.getAssignedUserId() != null) {
             stmt.setLong(7, task.getAssignedUserId());
         } else {

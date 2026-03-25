@@ -22,6 +22,10 @@ target/
 .springBeans
 .sts4-cache
 
+### AI ###
+.claude
+CLAUDE.md
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
