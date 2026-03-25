@@ -38,9 +38,9 @@ public class LoginController {
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));
-                Scene scene = new Scene(loader.load(), 800, 600);
                 Stage stage = (Stage) emailField.getScene().getWindow();
-                stage.setScene(scene);
+                Scene scene = stage.getScene();
+                scene.setRoot(loader.load());
                 stage.setTitle("Workflow - Dashboard");
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load dashboard", e);

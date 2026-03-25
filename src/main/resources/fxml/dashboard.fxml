@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 
 <VBox spacing="10" alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.DashboardController">
 
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Label fx:id="welcomeLabel"/>
+            <Button text="Se déconnecter" onAction="#handleLogout"/>
+    </HBox>
     <Label text="Mes projets"/>
 
     <ListView fx:id="projectList"/>
-
-    <Button text="Créer projet" onAction="#openCreateProject"/>
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Créer projet" onAction="#openCreateProject"/>
+        <Button text="Ouvrir Kanban" onAction="#openKanban"/>
+    </HBox>
 
 </VBox>
