@@ -6,6 +6,7 @@
 <HBox spacing="20" alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.KanbanController">
+    <Button text="Retour" onAction="#goBackToDashboard"/>
 
     <VBox>
         <Label text="TODO"/>

@@ -13,10 +13,11 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-        Scene scene = new Scene(loader.load(), 400, 300);
+        Scene scene = new Scene(loader.load());
 
         stage.setTitle("ProjectRoom");
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 

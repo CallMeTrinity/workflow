@@ -1,53 +1,39 @@
 package org.example.ui.controller;
 
-import org.example.config.SessionManager;
-import org.example.model.User;
-import org.example.model.enums.Role;
-
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
+import org.example.config.SessionManager;
 import org.example.model.Project;
+import org.example.service.AuthService;
 import org.example.service.ProjectService;
 
 import java.util.List;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 public class DashboardController {
 
-    @FXML
-    private ListView<String> projectList;
+    @FXML private ListView<String> projectList;
+    @FXML private Label welcomeLabel;
 
-    private ProjectService projectService = new ProjectService();
-
+    private final ProjectService projectService = new ProjectService();
+    private final AuthService authService = new AuthService();
     private List<Project> projects;
 
     @FXML
     public void initialize() {
-
-        SessionManager.setCurrentUser(
-                new User(1L, "Test", "User", "test@test.com", "pass", Role.ADMIN)
-        );
-
-        System.out.println("User connecté : " + SessionManager.getCurrentUser());
-
-        projects = projectService.getAllProjects();
-
-        for (Project project : projects) {
-            projectList.getItems().add(project.getName());
+        // Affiche le nom de l'utilisateur connecté
+        if (SessionManager.getCurrentUser() != null) {
+            welcomeLabel.setText("Bonjour, " + SessionManager.getCurrentUser().getFullName());
         }
-
         refreshProjects();
-        }
+    }
 
     private void refreshProjects() {
-
         projectList.getItems().clear();
-
         projects = projectService.getAllProjects();
-
         for (Project project : projects) {
             projectList.getItems().add(project.getName());
         }
@@ -55,22 +41,53 @@ public class DashboardController {
 
     @FXML
     private void openCreateProject() {
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createProject.fxml"));
-            Scene scene = new Scene(loader.load());
-
             Stage stage = new Stage();
             stage.setTitle("Créer un projet");
-            stage.setScene(scene);
-            stage.showAndWait(); // IMPORTANT
-
+            stage.setScene(new Scene(loader.load()));
+            stage.showAndWait();
             refreshProjects();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @FXML
+    private void openKanban() {
+        // Récupère le projet sélectionné
+        int selectedIndex = projectList.getSelectionModel().getSelectedIndex();
+        if (selectedIndex < 0) return; // rien de sélectionné
 
+        Project selectedProject = projects.get(selectedIndex);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/kanban.fxml"));
+
+
+
+            Stage stage = (Stage) projectList.getScene().getWindow();
+            Scene scene = stage.getScene();
+            scene.setRoot(loader.load());
+            stage.setTitle("Kanban - " + selectedProject.getName());
+            KanbanController controller = loader.getController();
+            controller.setProject(selectedProject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleLogout() {
+        authService.logout();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+            Stage stage = (Stage) projectList.getScene().getWindow();
+            Scene scene = stage.getScene();
+            scene.setRoot(loader.load());
+            stage.setTitle("Workflow");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
