@@ -13,17 +13,17 @@
     </HBox>
 
     <HBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS">
-        <VBox spacing="5" HBox.hgrow="ALWAYS">
+        <VBox fx:id="todoColumn" spacing="5" HBox.hgrow="ALWAYS">
             <Label text="TODO"/>
-            <ListView fx:id="todoList" prefHeight="500"/>
+            <ListView fx:id="todoList" VBox.vgrow="ALWAYS"/>
         </VBox>
-        <VBox spacing="5" HBox.hgrow="ALWAYS">
+        <VBox fx:id="inProgressColumn" spacing="5" HBox.hgrow="ALWAYS">
             <Label text="IN PROGRESS"/>
-            <ListView fx:id="inProgressList" prefHeight="500"/>
+            <ListView fx:id="inProgressList" VBox.vgrow="ALWAYS"/>
         </VBox>
-        <VBox spacing="5" HBox.hgrow="ALWAYS">
+        <VBox fx:id="doneColumn" spacing="5" HBox.hgrow="ALWAYS">
             <Label text="DONE"/>
-            <ListView fx:id="doneList" prefHeight="500"/>
+            <ListView fx:id="doneList" VBox.vgrow="ALWAYS"/>
         </VBox>
     </HBox>
 
