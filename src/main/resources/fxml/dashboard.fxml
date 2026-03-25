@@ -9,7 +9,7 @@
 
     <Label text="Mes projets"/>
 
-    <ListView fx:id="projectList"/>
+    <ListView fx:id="projectList" onMouseClicked="#openKanban"/>
 
     <Button text="Créer projet" onAction="#openCreateProject"/>
 
