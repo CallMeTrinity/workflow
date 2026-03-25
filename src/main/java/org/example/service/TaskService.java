@@ -33,7 +33,7 @@ public class TaskService {
             throw new AutorisationException("Only admins or project leaders can create tasks");
         }
         Task task = new Task(null, title, description, status, priority, deadline,
-                timeEstimate, assignedUserId, projectId, userStoryId);
+                timeEstimate, projectId, userStoryId, assignedUserId);
         Long generatedId = taskRepository.save(task);
         task.setId(generatedId);
         return task;

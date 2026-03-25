@@ -3,24 +3,28 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
-<HBox spacing="20" alignment="CENTER"
+<VBox spacing="10" alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.KanbanController">
-    <Button text="Retour" onAction="#goBackToDashboard"/>
 
-    <VBox>
-        <Label text="TODO"/>
-        <ListView fx:id="todoList"/>
-    </VBox>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button text="Retour" onAction="#goBackToDashboard"/>
+        <Button text="Ajouter une tâche" onAction="#handleAddTask"/>
+    </HBox>
 
-    <VBox>
-        <Label text="IN PROGRESS"/>
-        <ListView fx:id="inProgressList"/>
-    </VBox>
+    <HBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="TODO"/>
+            <ListView fx:id="todoList" prefHeight="500"/>
+        </VBox>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="IN PROGRESS"/>
+            <ListView fx:id="inProgressList" prefHeight="500"/>
+        </VBox>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="DONE"/>
+            <ListView fx:id="doneList" prefHeight="500"/>
+        </VBox>
+    </HBox>
 
-    <VBox>
-        <Label text="DONE"/>
-        <ListView fx:id="doneList"/>
-    </VBox>
-
-</HBox>
+</VBox>
