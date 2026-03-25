@@ -152,9 +152,9 @@ public class TaskRepository {
                 Priority.valueOf(rs.getString("priority")),
                 rs.getString("deadline"),
                 rs.getObject("time_estimate") != null ? rs.getInt("time_estimate") : null,
-                rs.getObject("assigned_user_id") != null ? rs.getLong("assigned_user_id") : null,
                 rs.getLong("project_id"),
-                rs.getObject("user_story_id") != null ? rs.getLong("user_story_id") : null
+                rs.getObject("user_story_id") != null ? rs.getLong("user_story_id") : null,
+                rs.getObject("assigned_user_id") != null ? rs.getLong("assigned_user_id") : null
         );
     }
 
