@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.PlanningController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Button text="Retour" onAction="#goBackToDashboard"/>
+    </HBox>
+
+    <Label text="Planifier une réunion" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="20">
+
+        <!-- Panneau gauche : paramètres -->
+        <VBox spacing="10" prefWidth="300">
+            <Label text="Date"/>
+            <DatePicker fx:id="datePicker"/>
+
+            <Label text="Durée minimale (minutes)"/>
+            <ComboBox fx:id="durationBox" prefWidth="300"/>
+
+            <Label text="Salle (optionnel)"/>
+            <ComboBox fx:id="roomBox" prefWidth="300"/>
+
+            <Label text="Participants"/>
+            <ListView fx:id="participantList" prefHeight="200" prefWidth="300"/>
+
+            <Button text="Rechercher les créneaux"
+                    onAction="#searchSlots"
+                    prefWidth="300"/>
+        </VBox>
+
+        <!-- Panneau droit : créneaux disponibles -->
+        <VBox spacing="10" prefWidth="300">
+            <Label text="Créneaux disponibles" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <ListView fx:id="slotList" prefHeight="300" prefWidth="300"/>
+
+            <TextField fx:id="titleField" promptText="Titre de la réunion"/>
+            <TextField fx:id="descriptionField" promptText="Description (optionnel)"/>
+
+            <Button text="Confirmer la réservation"
+                    onAction="#confirmReservation"
+                    prefWidth="300"/>
+
+            <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+            <Label fx:id="successLabel" style="-fx-text-fill: green;"/>
+        </VBox>
+
+    </HBox>
+</VBox>

@@ -9,6 +9,7 @@ import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.repository.ReservationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,6 +90,100 @@ public class ReservationService {
             throw new AutorisationException("Only admins or the organizer can cancel a reservation");
         }
         reservationRepository.delete(id);
+    }
+
+    /**
+     * @param userIds list des participants (IDs)
+     * @param date     date de la réunion (ex: "2024-06-15")
+     * @param durationMinutes durée minimale du créneau recherché en minutes (ex: 30)
+     * @param roomId ID de la salle souhaitée (peut être null pour ignorer la salle)
+     * @return une liste de créneaux disponibles, chaque créneau = [startMinutes, endMinutes] depuis minuit
+     */
+    public List<int[]> findAvailableSlots(List<Long> userIds, String date,
+                                          int durationMinutes, Long roomId) {
+
+        // 1. Collecter tous les intervalles occupés en minutes
+        List<int[]> occupied = new ArrayList<>();
+
+        // Créneaux occupés par les participants
+        for (Long userId : userIds) {
+            List<Reservation> reservations =
+                    reservationRepository.findByParticipantAndDate(userId, date);
+            for (Reservation r : reservations) {
+                occupied.add(new int[]{
+                        toMinutes(r.getStartTime()),
+                        toMinutes(r.getEndTime())
+                });
+            }
+        }
+
+        // Créneaux occupés par la salle
+        if (roomId != null) {
+            List<Reservation> roomReservations =
+                    reservationRepository.findByRoomAndDate(roomId, date);
+            for (Reservation r : roomReservations) {
+                occupied.add(new int[]{
+                        toMinutes(r.getStartTime()),
+                        toMinutes(r.getEndTime())
+                });
+            }
+        }
+
+        // 2. Fusionner les intervalles
+        List<int[]> merged = mergeIntervals(occupied);
+
+        // 3. Inverser → créneaux libres
+        // Journée : 08:00 (480) → 20:00 (1200)
+        List<int[]> free = invertIntervals(merged, 480, 1200);
+
+        // 4. Filtrer par durée minimale
+        return free.stream()
+                .filter(slot -> slot[1] - slot[0] >= durationMinutes)
+                .toList();
+    }
+
+    public void addParticipant(Long reservationId, Long userId) {
+        reservationRepository.addParticipant(reservationId, userId);
+    }
+
+    private List<int[]> mergeIntervals(List<int[]> intervals) {
+        if (intervals.isEmpty()) return intervals;
+
+        // Trier par heure de début
+        intervals.sort((a, b) -> a[0] - b[0]);
+
+        List<int[]> merged = new ArrayList<>();
+        int[] current = intervals.get(0);
+
+        for (int i = 1; i < intervals.size(); i++) {
+            int[] next = intervals.get(i);
+            if (next[0] <= current[1]) {
+                // Chevauchement — étendre l'intervalle courant
+                current[1] = Math.max(current[1], next[1]);
+            } else {
+                merged.add(current);
+                current = next;
+            }
+        }
+        merged.add(current);
+        return merged;
+    }
+
+    private List<int[]> invertIntervals(List<int[]> occupied, int dayStart, int dayEnd) {
+        List<int[]> free = new ArrayList<>();
+        int cursor = dayStart;
+
+        for (int[] interval : occupied) {
+            if (cursor < interval[0]) {
+                free.add(new int[]{cursor, interval[0]});
+            }
+            cursor = Math.max(cursor, interval[1]);
+        }
+
+        if (cursor < dayEnd) {
+            free.add(new int[]{cursor, dayEnd});
+        }
+        return free;
     }
 
     private boolean hasConflict(List<Reservation> existing, String startTime, String endTime) {

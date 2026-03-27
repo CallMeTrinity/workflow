@@ -19,6 +19,7 @@
         <Button text="Ouvrir Kanban" onAction="#openKanban"/>
         <Button text="Gérer les salles" onAction="#openRooms"/>
         <Button text="Réservations" onAction="#openReservations"/>
+        <Button text="Planning" onAction="#openPlanning"/>
     </HBox>
 
 </VBox>
