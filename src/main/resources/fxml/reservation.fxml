@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.ReservationController">
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Retour" onAction="#goBackToDashboard"/>
+    </HBox>
+
+    <Label text="Réservations"/>
+
+    <TableView fx:id="reservationTable" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="titleColumn" text="Titre" prefWidth="150"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
+            <TableColumn fx:id="startColumn" text="Début" prefWidth="80"/>
+            <TableColumn fx:id="endColumn" text="Fin" prefWidth="80"/>
+            <TableColumn fx:id="roomColumn" text="Salle" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Nouvelle réservation" onAction="#openCreateReservation"/>
+        <Button text="Annuler" onAction="#cancelReservation"/>
+    </HBox>
+
+</VBox>
