@@ -30,7 +30,7 @@ public class ProjectService {
      * Creates a new project. Only admins and project leaders can create projects.
      */
     public Project createProject(String name, String description, String startDate, String endDate) {
-        if (!isAdminOrLeader()) {
+        if (!isAdminOrProjectLeader()) {
             throw new AutorisationException("Only admins or project leaders can create projects");
         }
         if (!isValidDate(startDate) || !isValidDate(endDate)) {
@@ -46,7 +46,6 @@ public class ProjectService {
 
     /**
      * Returns a project by its ID.
-     *
      * @throws NotFoundException if no project matches the given ID
      */
     public Project getProjectById(Long id) {
@@ -63,41 +62,44 @@ public class ProjectService {
     }
 
     /**
-     * Updates a project. Only admins or the project leader can update.
+     * Updates a project. Only admins or the leader of this project can update.
      */
     public void updateProject(Project project) {
-        if (!isAdminOrLeader()) {
+        if (!isAdminOrProjectLeader(project)) {
             throw new AutorisationException("Only admins or the project leader can update this project");
         }
         projectRepository.update(project);
     }
 
     /**
-     * Deletes a project. Only admins or the project leader can delete.
+     * Deletes a project. Only admins or the leader of this project can delete.
      */
     public void deleteProject(Long id) {
-        if (!isAdminOrLeader()) {
+        Project project = getProjectById(id);
+        if (!isAdminOrProjectLeader(project)) {
             throw new AutorisationException("Only admins or the project leader can delete this project");
         }
         projectRepository.delete(id);
     }
 
     /**
-     * Adds a member to a project.
+     * Adds a member to a project. Only admins or the leader of this project can add members.
      */
     public void addMember(Long projectId, Long userId) {
-        if (!isAdminOrLeader()) {
-            throw new AutorisationException("Only admins or project leaders can add members");
+        Project project = getProjectById(projectId);
+        if (!isAdminOrProjectLeader(project)) {
+            throw new AutorisationException("Only admins or the project leader can add members");
         }
         projectRepository.addMember(projectId, userId);
     }
 
     /**
-     * Removes a member from a project.
+     * Removes a member from a project. Only admins or the leader of this project can remove members.
      */
     public void removeMember(Long projectId, Long userId) {
-        if (!isAdminOrLeader()) {
-            throw new AutorisationException("Only admins or project leaders can remove members");
+        Project project = getProjectById(projectId);
+        if (!isAdminOrProjectLeader(project)) {
+            throw new AutorisationException("Only admins or the project leader can remove members");
         }
         projectRepository.removeMember(projectId, userId);
     }
@@ -106,9 +108,25 @@ public class ProjectService {
         return dateStr != null && dateStr.matches("\\d{4}-\\d{2}-\\d{2}");
     }
 
-    private boolean isAdminOrLeader() {
+    /**
+     * Vérifie si le user courant est admin ou project leader (sans contexte de projet).
+     * Utilisé pour createProject.
+     */
+    private boolean isAdminOrProjectLeader() {
         User currentUser = SessionManager.getCurrentUser();
-        return currentUser != null &&  (currentUser.getRole() == Role.ADMIN
-                || currentUser.getRole() == Role.PROJECT_LEADER);
+        if (currentUser == null) return false;
+        return currentUser.getRole() == Role.ADMIN
+                || currentUser.getRole() == Role.PROJECT_LEADER;
+    }
+
+    /**
+     * Vérifie si le user courant est admin ou leader de CE projet.
+     * Utilisé pour update, delete, addMember, removeMember.
+     */
+    private boolean isAdminOrProjectLeader(Project project) {
+        User currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) return false;
+        if (currentUser.getRole() == Role.ADMIN) return true;
+        return project.getProjectLeaderId().equals(currentUser.getId());
     }
 }
