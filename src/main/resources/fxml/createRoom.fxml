@@ -2,18 +2,28 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.ui.controller.CreateRoomController">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.CreateRoomController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <Label text="Ajouter une salle"/>
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER">
 
-    <TextField fx:id="nameField" promptText="Nom de la salle"/>
-    <TextField fx:id="capacityField" promptText="Capacité"/>
+        <Label text="Ajouter une salle" styleClass="page-title"/>
 
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+        <TextField fx:id="nameField" styleClass="form-input"
+                   promptText="Nom de la salle" maxWidth="Infinity"/>
+        <TextField fx:id="capacityField" styleClass="form-input"
+                   promptText="Capacité" maxWidth="Infinity"/>
 
-    <Button text="Valider" onAction="#handleCreate"/>
+        <Label fx:id="errorLabel" styleClass="error-label"/>
 
-</VBox>
+        <Button text="Valider" onAction="#handleCreate"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+
+</StackPane>

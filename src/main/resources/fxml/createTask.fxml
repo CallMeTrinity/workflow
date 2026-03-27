@@ -2,21 +2,33 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.ui.controller.CreateTaskController">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.CreateTaskController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <Label text="Créer une tâche"/>
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER">
 
-    <TextField fx:id="titleField" promptText="Titre"/>
-    <TextField fx:id="descriptionField" promptText="Description"/>
-    <TextField fx:id="deadlineField" promptText="Deadline (YYYY-MM-DD)"/>
+        <Label text="Créer une tâche" styleClass="page-title"/>
 
-    <ComboBox fx:id="priorityBox" promptText="Priorité"/>
+        <TextField fx:id="titleField" styleClass="form-input"
+                   promptText="Titre" maxWidth="Infinity"/>
+        <TextField fx:id="descriptionField" styleClass="form-input"
+                   promptText="Description" maxWidth="Infinity"/>
+        <TextField fx:id="deadlineField" styleClass="form-input"
+                   promptText="Deadline (YYYY-MM-DD)" maxWidth="Infinity"/>
 
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+        <ComboBox fx:id="priorityBox" styleClass="form-input"
+                  promptText="Priorité" maxWidth="Infinity"/>
 
-    <Button text="Créer" onAction="#handleCreate"/>
+        <Label fx:id="errorLabel" styleClass="error-label"/>
 
-</VBox>
+        <Button text="Créer" onAction="#handleCreate"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+
+</StackPane>

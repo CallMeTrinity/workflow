@@ -85,7 +85,7 @@ public class KanbanController {
 
                     // TITRE
                     Label title = new Label(task.getTitle());
-                    title.setStyle("-fx-font-weight: bold;");
+                    title.setStyle("-fx-font-weight: bold; -fx-text-fill: #eaeff1;");
 
                     // PRIORITÉ
                     String priorityVisual = switch (task.getPriority()) {
@@ -106,6 +106,7 @@ public class KanbanController {
                     Label deadline = new Label(
                             task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
                     );
+                    deadline.setStyle("-fx-text-fill: #9289a8; -fx-font-size: 11px;");
 
                     VBox card = new VBox(topRow, deadline);
                     card.setSpacing(5);
@@ -114,10 +115,10 @@ public class KanbanController {
                     card.setMouseTransparent(true);
 
                     switch (task.getPriority()) {
-                        case LOW -> card.setStyle(card.getStyle() + "-fx-background-color: #eeeeee;");
-                        case MEDIUM -> card.setStyle(card.getStyle() + "-fx-background-color: #bbdefb;");
-                        case HIGH -> card.setStyle(card.getStyle() + "-fx-background-color: #ffe0b2;");
-                        case CRITICAL -> card.setStyle(card.getStyle() + "-fx-background-color: #ffcdd2;");
+                        case LOW      -> card.setStyle(card.getStyle() + "-fx-background-color: #152535;");
+                        case MEDIUM   -> card.setStyle(card.getStyle() + "-fx-background-color: #0e2840;");
+                        case HIGH     -> card.setStyle(card.getStyle() + "-fx-background-color: #2a1e08;");
+                        case CRITICAL -> card.setStyle(card.getStyle() + "-fx-background-color: #2e1212;");
                     }
 
                     setGraphic(card);
