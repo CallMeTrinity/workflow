@@ -2,23 +2,36 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.ui.controller.CreateReservationController">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.CreateReservationController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <Label text="Nouvelle réservation"/>
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER">
 
-    <TextField fx:id="titleField" promptText="Titre"/>
-    <TextField fx:id="descriptionField" promptText="Description"/>
-    <DatePicker fx:id="datePicker" promptText="Date"/>
-    <ComboBox fx:id="startTimeBox" promptText="Heure début"/>
-    <ComboBox fx:id="endTimeBox" promptText="Heure fin"/>
+        <Label text="Nouvelle réservation" styleClass="page-title"/>
 
-    <ComboBox fx:id="roomBox" promptText="Sélectionner une salle"/>
+        <TextField fx:id="titleField" styleClass="form-input"
+                   promptText="Titre" maxWidth="Infinity"/>
+        <TextField fx:id="descriptionField" styleClass="form-input"
+                   promptText="Description" maxWidth="Infinity"/>
+        <DatePicker fx:id="datePicker" styleClass="form-input"
+                    promptText="Date" maxWidth="Infinity"/>
+        <ComboBox fx:id="startTimeBox" styleClass="form-input"
+                  promptText="Heure début" maxWidth="Infinity"/>
+        <ComboBox fx:id="endTimeBox" styleClass="form-input"
+                  promptText="Heure fin" maxWidth="Infinity"/>
+        <ComboBox fx:id="roomBox" styleClass="form-input"
+                  promptText="Sélectionner une salle" maxWidth="Infinity"/>
 
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+        <Label fx:id="errorLabel" styleClass="error-label"/>
 
-    <Button text="Valider" onAction="#handleCreate"/>
+        <Button text="Valider" onAction="#handleCreate"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
 
-</VBox>
+</StackPane>

@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.ui.controller.CreateProjectController">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.CreateProjectController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <Label text="Créer un projet"/>
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER">
 
-    <TextField fx:id="nameField" promptText="Nom du projet"/>
-    <TextField fx:id="descriptionField" promptText="Description"/>
-    <TextField fx:id="startDateField" promptText="Date début (YYYY-MM-DD)"/>
-    <TextField fx:id="endDateField" promptText="Date fin (YYYY-MM-DD)"/>
+        <Label text="Créer un projet" styleClass="page-title"/>
 
-    <Button text="Valider" onAction="#handleCreate"/>
+        <TextField fx:id="nameField" styleClass="form-input"
+                   promptText="Nom du projet" maxWidth="Infinity"/>
+        <TextField fx:id="descriptionField" styleClass="form-input"
+                   promptText="Description" maxWidth="Infinity"/>
+        <TextField fx:id="startDateField" styleClass="form-input"
+                   promptText="Date début (YYYY-MM-DD)" maxWidth="Infinity"/>
+        <TextField fx:id="endDateField" styleClass="form-input"
+                   promptText="Date fin (YYYY-MM-DD)" maxWidth="Infinity"/>
 
-</VBox>
+        <Button text="Valider" onAction="#handleCreate"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+
+</StackPane>
