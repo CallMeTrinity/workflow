@@ -45,16 +45,16 @@
 
 **Objectif : gestion des salles, création de réservations**
 
-| Tâche                                              | Qui | Durée |
-|----------------------------------------------------|-----|-------|
-| Amélioration de l'existant                         | B   | 3h    |
-| Modèles Salle, Reservation, Creneau                | A   | 45min |
-| SalleRepository + ReservationRepository            | A   | 1h    |
-| SalleService + ReservationService (vérif conflits) | A   | 1h    |
-| salle.fxml + SalleController (liste, CRUD admin)   | A   | 1h    |
-| reservation.fxml + ReservationController           | A   | 1h    |
-| Tests JUnit ReservationService (conflits)          | A   | 30min |
-| Branchement des vues entre elles (navigation)      | A   | 30min |
+| Tâche                                                  | Qui | Durée |
+|--------------------------------------------------------|-----|-------|
+| Amélioration de l'existant                             | B   | 3h    |
+| ~~Modèles Salle, Reservation~~                         | A   | 45min |
+| ~~SalleRepository + ReservationRepository~~            | A   | 1h    |
+| ~~SalleService + ReservationService (vérif conflits)~~ | A   | 1h    |
+| ~~salle.fxml + SalleController (liste, CRUD admin)~~   | A   | 1h    |
+| ~~reservation.fxml + ReservationController~~           | A   | 1h    |
+| ~~Tests JUnit ReservationService (conflits)~~          | A   | 30min |
+| ~~Branchement des vues entre elles (navigation)~~      | A   | 30min |
 
 **Fin de séance 3 :** on peut gérer les salles et créer des réservations sans conflit
 
