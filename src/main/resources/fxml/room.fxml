@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.RoomController">
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Retour" onAction="#goBackToDashboard"/>
+    </HBox>
+
+    <Label text="Gestion des salles"/>
+
+    <TableView fx:id="roomTable" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Nom" prefWidth="200"/>
+            <TableColumn fx:id="capacityColumn" text="Capacité" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER" fx:id="adminButtons">
+        <Button text="Ajouter une salle" onAction="#openCreateRoom"/>
+        <Button text="Supprimer" onAction="#deleteRoom"/>
+    </HBox>
+
+</VBox>
