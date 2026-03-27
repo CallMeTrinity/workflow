@@ -6,12 +6,12 @@ public class Room {
 
     private Long id;
     private String name;
-    private int capacity;
+    private Integer capacity;
 
     public Room() {
     }
 
-    public Room(Long id, String name, int capacity) {
+    public Room(Long id, String name, Integer capacity) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
@@ -33,11 +33,11 @@ public class Room {
         this.name = name;
     }
 
-    public int getCapacity() {
+    public Integer getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(Integer capacity) {
         this.capacity = capacity;
     }
 }
