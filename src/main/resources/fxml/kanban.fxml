@@ -8,8 +8,43 @@
       fx:controller="org.example.ui.controller.KanbanController">
 
     <HBox spacing="10" alignment="CENTER_LEFT">
+
+        <!-- gauche -->
         <Button text="Retour" onAction="#goBackToDashboard"/>
         <Button text="Ajouter une tâche" onAction="#handleAddTask"/>
+
+        <!-- pousse à droite -->
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- droite -->
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+
+            <VBox spacing="2">
+                <Label text="Filtrer"/>
+                <ComboBox fx:id="filterPriorityBox"
+                          style="
+              -fx-background-color: white;
+              -fx-border-color: #cccccc;
+              -fx-border-radius: 8;
+              -fx-background-radius: 8;
+              -fx-padding: 3 8 3 8;
+          "/>
+            </VBox>
+
+            <VBox spacing="2">
+                <Label text="Trier"/>
+                <ComboBox fx:id="sortBox"
+                          style="
+              -fx-background-color: white;
+              -fx-border-color: #cccccc;
+              -fx-border-radius: 8;
+              -fx-background-radius: 8;
+              -fx-padding: 3 8 3 8;
+          "/>
+            </VBox>
+
+        </HBox>
+
     </HBox>
 
     <HBox spacing="20"
@@ -29,16 +64,6 @@
             <ListView fx:id="doneList" VBox.vgrow="ALWAYS"/>
         </VBox>
     </HBox>
-
-    <VBox spacing="5">
-        <Label text="Filtrer"/>
-        <ComboBox fx:id="filterPriorityBox"/>
-    </VBox>
-
-    <VBox spacing="5">
-        <Label text="Trier"/>
-        <ComboBox fx:id="sortBox"/>
-    </VBox>
 
 
 </VBox>
