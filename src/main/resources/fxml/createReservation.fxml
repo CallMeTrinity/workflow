@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.CreateReservationController">
+
+    <Label text="Nouvelle réservation"/>
+
+    <TextField fx:id="titleField" promptText="Titre"/>
+    <TextField fx:id="descriptionField" promptText="Description"/>
+    <TextField fx:id="dateField" promptText="Date (YYYY-MM-DD)"/>
+    <TextField fx:id="startTimeField" promptText="Heure début (HH:MM)"/>
+    <TextField fx:id="endTimeField" promptText="Heure fin (HH:MM)"/>
+
+    <ComboBox fx:id="roomBox" promptText="Sélectionner une salle"/>
+
+    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+
+    <Button text="Valider" onAction="#handleCreate"/>
+
+</VBox>

@@ -102,4 +102,16 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void openReservations() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/reservation.fxml"));
+            Stage stage = (Stage) projectList.getScene().getWindow();
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Workflow - Réservations");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
