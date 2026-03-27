@@ -44,9 +44,9 @@ public class KanbanController {
         setupCellFactory(inProgressList);
         setupCellFactory(doneList);
 
-        setupDropTarget(todoColumn, Status.TODO);
-        setupDropTarget(inProgressColumn, Status.IN_PROGRESS);
-        setupDropTarget(doneColumn, Status.DONE);
+        setupDropTarget(todoList, Status.TODO);
+        setupDropTarget(inProgressList, Status.IN_PROGRESS);
+        setupDropTarget(doneList, Status.DONE);
 
         // FILTRE
         filterPriorityBox.getItems().addAll("Toutes", "Faibles", "Moyennes", "Elevées", "Critiques");
@@ -69,103 +69,110 @@ public class KanbanController {
 
     private void setupCellFactory(ListView<Task> listView) {
 
-        listView.setCellFactory(lv -> new ListCell<>() {
+        listView.setCellFactory(lv -> {
 
-            @Override
-            protected void updateItem(Task task, boolean empty) {
-                super.updateItem(task, empty);
+            ListCell<Task> cell = new ListCell<>() {
 
-                if (empty || task == null) {
-                    setGraphic(null);
-                    setText(null);
-                    return;
-                }
+                @Override
+                protected void updateItem(Task task, boolean empty) {
+                    super.updateItem(task, empty);
 
-                // TITRE
-                Label title = new Label(task.getTitle());
-                title.setStyle("-fx-font-weight: bold;");
-
-                // PRIORITÉ (étoiles)
-                String priorityVisual = switch (task.getPriority()) {
-                    case LOW -> "☆";
-                    case MEDIUM -> "☆☆";
-                    case HIGH -> "☆☆☆";
-                    case CRITICAL -> "⚠";
-                };
-
-                Label priority = new Label(priorityVisual);
-
-                Region spacer = new Region();
-                HBox.setHgrow(spacer, Priority.ALWAYS);
-
-                HBox topRow = new HBox(title, spacer, priority);
-
-                // DEADLINE
-                Label deadline = new Label(
-                        task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
-                );
-
-                // CARD
-                VBox card = new VBox(topRow, deadline);
-                card.setSpacing(5);
-                card.setStyle("""
-                    -fx-padding: 10;
-                    -fx-background-radius: 10;
-                """);
-
-                // COULEURS PASTEL
-                switch (task.getPriority()) {
-                    case LOW -> card.setStyle(card.getStyle() + "-fx-background-color: #eeeeee;");
-                    case MEDIUM -> card.setStyle(card.getStyle() + "-fx-background-color: #bbdefb;");
-                    case HIGH -> card.setStyle(card.getStyle() + "-fx-background-color: #ffe0b2;");
-                    case CRITICAL -> card.setStyle(card.getStyle() + "-fx-background-color: #ffcdd2;");
-                }
-
-                setGraphic(card);
-
-                setOnMouseClicked(event -> {
-                    if (event.getClickCount() == 2 && getItem() != null) {
-                        openEditTask(getItem());
+                    if (empty || task == null) {
+                        setGraphic(null);
+                        setText(null);
+                        return;
                     }
-                });
 
-                setOnDragDetected(event -> {
-                    if (getItem() == null) return;
+                    // TITRE
+                    Label title = new Label(task.getTitle());
+                    title.setStyle("-fx-font-weight: bold;");
 
-                    Dragboard db = startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
+                    // PRIORITÉ
+                    String priorityVisual = switch (task.getPriority()) {
+                        case LOW -> "☆";
+                        case MEDIUM -> "☆☆";
+                        case HIGH -> "☆☆☆";
+                        case CRITICAL -> "⚠";
+                    };
 
-                    content.putString(String.valueOf(getItem().getId()));
-                    db.setContent(content);
+                    Label priority = new Label(priorityVisual);
 
-                    event.consume();
-                });
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                // ESPACE ENTRE CARTES
-                setStyle("-fx-padding: 5;");
-            }
+                    HBox topRow = new HBox(title, spacer, priority);
+
+                    // DEADLINE
+                    Label deadline = new Label(
+                            task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
+                    );
+
+                    VBox card = new VBox(topRow, deadline);
+                    card.setSpacing(5);
+                    card.setStyle("-fx-padding: 10; -fx-background-radius: 10;");
+
+                    card.setMouseTransparent(true);
+
+                    switch (task.getPriority()) {
+                        case LOW -> card.setStyle(card.getStyle() + "-fx-background-color: #eeeeee;");
+                        case MEDIUM -> card.setStyle(card.getStyle() + "-fx-background-color: #bbdefb;");
+                        case HIGH -> card.setStyle(card.getStyle() + "-fx-background-color: #ffe0b2;");
+                        case CRITICAL -> card.setStyle(card.getStyle() + "-fx-background-color: #ffcdd2;");
+                    }
+
+                    setGraphic(card);
+                    setStyle("-fx-padding: 5;");
+                }
+            };
+
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && cell.getItem() != null) {
+                    openEditTask(cell.getItem());
+                }
+            });
+
+            cell.setOnDragDetected(event -> {
+                if (cell.isEmpty()) return;
+
+                Dragboard db = cell.startDragAndDrop(TransferMode.MOVE);
+
+                ClipboardContent content = new ClipboardContent();
+                content.putString(String.valueOf(cell.getItem().getId()));
+
+                db.setContent(content);
+
+                event.consume();
+            });
+
+            return cell;
         });
     }
 
     // ========================= DRAG & DROP =========================
 
-    private void setupDropTarget(VBox column, Status targetStatus) {
+    private void setupDropTarget(ListView<Task> listView, Status targetStatus) {
 
-        column.addEventFilter(DragEvent.DRAG_OVER, event -> {
-            if (event.getDragboard().hasString()) {
+        listView.setOnDragOver(event -> {
+            if (event.getGestureSource() != listView &&
+                    event.getDragboard().hasString()) {
+
                 event.acceptTransferModes(TransferMode.MOVE);
-                event.consume();
             }
+            event.consume();
         });
 
-        column.addEventFilter(DragEvent.DRAG_DROPPED, event -> {
+        listView.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
 
             if (db.hasString()) {
                 Long taskId = Long.parseLong(db.getString());
+
                 taskService.updateTaskStatus(taskId, targetStatus);
                 loadTasks();
+
                 event.setDropCompleted(true);
+            } else {
+                event.setDropCompleted(false);
             }
 
             event.consume();

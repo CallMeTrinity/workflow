@@ -2,3 +2,25 @@
     -fx-padding: 20;
     -fx-background-color: #f5f5f5;
 }
+
+.list-view {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+}
+
+.list-cell {
+    -fx-background-color: white;
+}
+
+.list-cell:filled {
+    -fx-background-color: white;
+}
+
+.list-cell:odd {
+    -fx-background-color: white;
+}
+
+.list-cell:even {
+    -fx-background-color: white;
+}
