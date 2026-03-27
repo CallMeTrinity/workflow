@@ -12,19 +12,33 @@
         <Button text="Ajouter une tâche" onAction="#handleAddTask"/>
     </HBox>
 
-    <HBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS">
-        <VBox fx:id="todoColumn" spacing="5" HBox.hgrow="ALWAYS">
-            <Label text="TODO"/>
+    <HBox spacing="20"
+          alignment="CENTER"
+          VBox.vgrow="ALWAYS"
+          style="-fx-padding: 20 40 20 40;">
+        <VBox fx:id="todoColumn" spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="A FAIRE" style="-fx-font-weight: bold;"/>
             <ListView fx:id="todoList" VBox.vgrow="ALWAYS"/>
         </VBox>
-        <VBox fx:id="inProgressColumn" spacing="5" HBox.hgrow="ALWAYS">
-            <Label text="IN PROGRESS"/>
+        <VBox fx:id="inProgressColumn" spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="EN COURS" style="-fx-font-weight: bold;"/>
             <ListView fx:id="inProgressList" VBox.vgrow="ALWAYS"/>
         </VBox>
-        <VBox fx:id="doneColumn" spacing="5" HBox.hgrow="ALWAYS">
-            <Label text="DONE"/>
+        <VBox fx:id="doneColumn" spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="TERMINE" style="-fx-font-weight: bold;"/>
             <ListView fx:id="doneList" VBox.vgrow="ALWAYS"/>
         </VBox>
     </HBox>
+
+    <VBox spacing="5">
+        <Label text="Filtrer"/>
+        <ComboBox fx:id="filterPriorityBox"/>
+    </VBox>
+
+    <VBox spacing="5">
+        <Label text="Trier"/>
+        <ComboBox fx:id="sortBox"/>
+    </VBox>
+
 
 </VBox>

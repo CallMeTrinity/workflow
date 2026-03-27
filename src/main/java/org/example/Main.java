@@ -4,8 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.model.User;
-import org.example.service.AuthService;
 
 public class Main extends Application {
 
@@ -14,6 +12,10 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         Scene scene = new Scene(loader.load());
+
+        scene.getStylesheets().add(
+                getClass().getResource("/css/app.css").toExternalForm()
+        );
 
         stage.setTitle("ProjectRoom");
         stage.setScene(scene);

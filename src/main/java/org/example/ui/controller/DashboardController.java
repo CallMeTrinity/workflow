@@ -29,6 +29,12 @@ public class DashboardController {
             welcomeLabel.setText("Bonjour, " + SessionManager.getCurrentUser().getFullName());
         }
         refreshProjects();
+
+        projectList.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                openKanban();
+            }
+        });
     }
 
     private void refreshProjects() {
