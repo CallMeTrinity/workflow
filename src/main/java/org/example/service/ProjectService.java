@@ -46,6 +46,7 @@ public class ProjectService {
 
     /**
      * Returns a project by its ID.
+     *
      * @throws NotFoundException if no project matches the given ID
      */
     public Project getProjectById(Long id) {
@@ -65,11 +66,7 @@ public class ProjectService {
      * Updates a project. Only admins or the project leader can update.
      */
     public void updateProject(Project project) {
-        User currentUser = SessionManager.getCurrentUser();
-        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
-        boolean isLeader = project.getProjectLeaderId().equals(currentUser.getId());
-
-        if (!isAdmin && !isLeader) {
+        if (!isAdminOrLeader()) {
             throw new AutorisationException("Only admins or the project leader can update this project");
         }
         projectRepository.update(project);
@@ -79,12 +76,7 @@ public class ProjectService {
      * Deletes a project. Only admins or the project leader can delete.
      */
     public void deleteProject(Long id) {
-        User currentUser = SessionManager.getCurrentUser();
-        Project project = getProjectById(id);
-        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
-        boolean isLeader = project.getProjectLeaderId().equals(currentUser.getId());
-
-        if (!isAdmin && !isLeader) {
+        if (!isAdminOrLeader()) {
             throw new AutorisationException("Only admins or the project leader can delete this project");
         }
         projectRepository.delete(id);
@@ -116,7 +108,7 @@ public class ProjectService {
 
     private boolean isAdminOrLeader() {
         User currentUser = SessionManager.getCurrentUser();
-        return currentUser.getRole() == Role.ADMIN
-                || currentUser.getRole() == Role.PROJECT_LEADER;
+        return currentUser != null &&  (currentUser.getRole() == Role.ADMIN
+                || currentUser.getRole() == Role.PROJECT_LEADER);
     }
 }
