@@ -64,71 +64,14 @@
 
 **Objectif : vue planning, recherche de créneaux, notifications**
 
-Ce qui existe déjà (utilisable tel quel)
-
-- Table reservation — avec date, start_time, end_time, room_id, organizer_id
-- Table participants_reservation — la jointure user ↔ réservation, c'est la clé pour savoir qui est occupé quand
-- Table room — avec capacité
-
-  ---
-Ce qui manque
-
-Couche Model
-
-Un POJO Reservation (id, title, description, date, startTime, endTime, roomId, projectId, organizerId).
-
-Couche Repository
-
-Un ReservationRepository avec ces requêtes :
-- findByParticipantAndDate(userId, date) — toutes les réservations d'un user sur une date donnée (via jointure participants_reservation)
-- findByRoomAndDate(roomId, date) — créneaux occupés pour une salle
-- save(reservation) + addParticipant(reservationId, userId)
-
-Couche Service
-
-Un ReservationService avec deux responsabilités principales :
-
-1. Trouver les créneaux disponibles — c'est l'algorithme central :
-   findAvailableSlots(List<Long> userIds, String date, int durationMinutes, Long roomId)
-   Logique :
-1. Pour chaque user de la liste, récupère ses créneaux occupés ce jour-là
-2. Fusionne tous les intervalles occupés (union)
-3. Inverse → créneaux libres
-4. Croise avec les créneaux libres de la salle
-5. Filtre par durée minimale souhaitée
-
-2. Créer une réservation avec vérification de conflits au moment de la confirmation.
-
-Couche UI
-
-- Un écran "Planifier une réunion" : sélection de date, durée souhaitée, participants (multi-select sur les membres du projet), salle
-- Un affichage des créneaux proposés (ex: liste "10h-11h", "14h-15h"...)
-- Confirmation → création de la réservation + ajout des participants
-
-  ---
-À quoi t'attendre en termes de complexité
-
-┌───────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│          Partie           │                                               Complexité                                               │
-├───────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ Model + Repository        │ Faible — mécanique, similaire à TaskRepository                                                         │
-├───────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ Algorithme de slots       │ Moyenne — manipulation d'intervalles de temps (comparaisons de strings HH:MM ou conversion en minutes) │
-├───────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ UI sélection participants │ Moyenne — ListView avec multi-sélection                                                                │
-├───────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ UI affichage des créneaux │ Faible si liste simple, plus élevée si tu veux un vrai calendrier visuel                               │
-└───────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-
-
 | Tâche                                                      | Qui | Durée |
 |------------------------------------------------------------|-----|-------|
-| Modèle PlanningItem + PlanningService complet              | A   | 1h30  |
-| Algorithme findCreneauxLibres                              | A   | 1h    |
-| Tests JUnit PlanningService (algo créneaux)                | A   | 30min |
-| planning.fxml + PlanningController (vue calendrier)        | B   | 1h30  |
+| ~~Modèle PlanningItem + PlanningService complet~~          | A   | 1h30  |
+| ~~Algorithme findCreneauxLibres~~                          | A   | 1h    |
+| ~~Tests JUnit PlanningService (algo créneaux)~~            | A   | 30min |
+| ~~planning.fxml + PlanningController (vue calendrier)~~    | B   | 1h30  |
 | Modèle Notification + NotificationRepository               | B   | 30min |
-| NotificationService + branchement dans les autres services | A   | 30min |
+| NotificationService + branchement dans les autres services | B   | 30min |
 | notification.fxml + NotificationController                 | B   | 30min |
 
 **Fin de séance 4 :** planning consultable, créneaux libres trouvables, notifications in-app
