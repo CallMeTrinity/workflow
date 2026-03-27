@@ -90,4 +90,16 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void openRooms() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/room.fxml"));
+            Stage stage = (Stage) projectList.getScene().getWindow();
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Workflow - Salles");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

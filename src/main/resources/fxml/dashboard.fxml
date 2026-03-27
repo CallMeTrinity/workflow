@@ -17,6 +17,7 @@
     <HBox spacing="10" alignment="CENTER">
         <Button text="Créer projet" onAction="#openCreateProject"/>
         <Button text="Ouvrir Kanban" onAction="#openKanban"/>
+        <Button text="Gérer les salles" onAction="#openRooms"/>
     </HBox>
 
 </VBox>
