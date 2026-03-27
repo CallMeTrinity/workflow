@@ -120,11 +120,6 @@ Couche UI
 │ UI affichage des créneaux │ Faible si liste simple, plus élevée si tu veux un vrai calendrier visuel                               │
 └───────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-  ---
-Point d'attention
-
-Travailler avec HH:MM (strings) pour les comparaisons d'intervalles, c'est faisable mais risque d'erreurs. Je te recommande de convertir en minutes depuis minuit dès l'entrée dans le service (ex: "14:30" →
-870), faire tous les calculs en entiers, puis reconvertir à l'affichage. C'est beaucoup plus simple.
 
 | Tâche                                                      | Qui | Durée |
 |------------------------------------------------------------|-----|-------|

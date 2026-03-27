@@ -2,10 +2,12 @@ package org.example.repository;
 
 import org.example.config.DatabaseConfig;
 import org.example.model.Reservation;
+import org.example.model.Room;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationRepository {
@@ -13,7 +15,7 @@ public class ReservationRepository {
 
         String sql = "INSERT INTO reservation (title, description, date, start_time, end_time, room_id, project_id, organizer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             setParameters(reservation, stmt);
 
             stmt.executeUpdate();
@@ -32,7 +34,7 @@ public class ReservationRepository {
     public Reservation findById(Long id) {
         String sql = "SELECT * FROM reservation WHERE id = ?";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
 
@@ -45,10 +47,49 @@ public class ReservationRepository {
         }
     }
 
+    /**
+     * Returns all reservations for a given participant on a given date.
+     */
+    public List<Reservation> findByParticipantAndDate(Long userId, String date) {
+        String sql = """
+            SELECT r.* FROM reservation r
+            JOIN participants_reservation pr ON r.id = pr.reservation_id
+            WHERE pr.user_id = ? AND r.date = ?
+            """;
+
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            stmt.setString(2, date);
+            ResultSet rs = stmt.executeQuery();
+            List<Reservation> reservations = new ArrayList<>();
+            while (rs.next()) {
+                reservations.add(mapResultSetToReservation(rs));
+            }
+            return reservations;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding reservations by participant and date: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Adds a participant to a reservation.
+     */
+    public void addParticipant(Long reservationId, Long userId) {
+        String sql = "INSERT INTO participants_reservation (reservation_id, user_id) VALUES (?, ?)";
+
+        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, reservationId);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error adding participant: " + e.getMessage(), e);
+        }
+    }
+
     public List<Reservation> findAll() {
         String sql = "SELECT * FROM reservation";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             List<Reservation> reservations = new java.util.ArrayList<>();
             while (rs.next()) {
@@ -66,7 +107,7 @@ public class ReservationRepository {
     public List<Reservation> findByRoomAndDate(Long roomId, String date) {
         String sql = "SELECT * FROM reservation WHERE room_id = ? AND date = ?";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setLong(1, roomId);
             stmt.setString(2, date);
             ResultSet rs = stmt.executeQuery();
@@ -86,7 +127,7 @@ public class ReservationRepository {
     public List<Reservation> findByOrganizer(Long organizerId) {
         String sql = "SELECT * FROM reservation WHERE organizer_id = ?";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setLong(1, organizerId);
             ResultSet rs = stmt.executeQuery();
             List<Reservation> reservations = new java.util.ArrayList<>();
@@ -102,7 +143,7 @@ public class ReservationRepository {
     public void update(Reservation reservation) {
         String sql = "UPDATE reservation SET title = ?, description = ?, date = ?, start_time = ?, end_time = ?, room_id = ?, project_id = ?, organizer_id = ? WHERE id = ?";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             setParameters(reservation, stmt);
             stmt.setLong(9, reservation.getId());
             stmt.executeUpdate();
@@ -114,7 +155,7 @@ public class ReservationRepository {
     public void delete(Long id) {
         String sql = "DELETE FROM reservation WHERE id = ?";
 
-        try (var stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (java.sql.SQLException e) {
