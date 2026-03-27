@@ -26,7 +26,7 @@ public class ProjectRepository {
 
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                return project.getId();
+                return generatedKeys.getLong(1);
             }
             throw new RuntimeException("No ID generated for project");
 
