@@ -120,4 +120,16 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void openPlanning() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/planning.fxml"));
+            Stage stage = (Stage) projectList.getScene().getWindow();
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Workflow - Planning");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

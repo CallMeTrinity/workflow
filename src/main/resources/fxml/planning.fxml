@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.PlanningController">
+
+    <HBox styleClass="topbar" spacing="10" alignment="CENTER_LEFT">
+        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+            <image><Image url="@../images/workflow_logo.png"/></image>
+        </ImageView>
+        <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Planifier une réunion" styleClass="app-name"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="20" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
+
+        <!-- Panneau gauche : paramètres -->
+        <VBox spacing="12" prefWidth="300">
+            <Label text="Date" styleClass="section-title"/>
+            <DatePicker fx:id="datePicker" styleClass="form-input" maxWidth="Infinity"/>
+
+            <Label text="Durée minimale (minutes)" styleClass="section-title"/>
+            <ComboBox fx:id="durationBox" styleClass="form-input" maxWidth="Infinity"/>
+
+            <Label text="Salle (optionnel)" styleClass="section-title"/>
+            <ComboBox fx:id="roomBox" styleClass="form-input" maxWidth="Infinity"/>
+
+            <Label text="Participants" styleClass="section-title"/>
+            <ListView fx:id="participantList" prefHeight="200" maxWidth="Infinity"/>
+
+            <Button text="Rechercher les créneaux" onAction="#searchSlots"
+                    styleClass="btn-primary" maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Panneau droit : résultats -->
+        <VBox spacing="12" prefWidth="300">
+            <Label text="Créneaux disponibles" styleClass="section-title"/>
+            <ListView fx:id="slotList" prefHeight="220" maxWidth="Infinity"/>
+
+            <TextField fx:id="titleField" styleClass="form-input"
+                       promptText="Titre de la réunion" maxWidth="Infinity"/>
+            <TextField fx:id="descriptionField" styleClass="form-input"
+                       promptText="Description (optionnel)" maxWidth="Infinity"/>
+
+            <Button text="Confirmer la réservation" onAction="#confirmReservation"
+                    styleClass="btn-primary" maxWidth="Infinity"/>
+
+            <Label fx:id="errorLabel"   styleClass="error-label"/>
+            <Label fx:id="successLabel" styleClass="success-label"/>
+        </VBox>
+
+    </HBox>
+
+</VBox>

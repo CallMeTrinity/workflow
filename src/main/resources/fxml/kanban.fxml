@@ -2,68 +2,53 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.KanbanController">
 
-    <HBox spacing="10" alignment="CENTER_LEFT">
-
-        <!-- gauche -->
-        <Button text="Retour" onAction="#goBackToDashboard"/>
-        <Button text="Ajouter une tâche" onAction="#handleAddTask"/>
-
-        <!-- pousse à droite -->
+    <!-- Topbar -->
+    <HBox styleClass="topbar" spacing="10" alignment="CENTER_LEFT">
+        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+            <image><Image url="@../images/workflow_logo.png"/></image>
+        </ImageView>
+        <Button text="← Retour"  onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Button text="+ Tâche"   onAction="#handleAddTask"     styleClass="btn-primary"/>
         <Region HBox.hgrow="ALWAYS"/>
-
-        <!-- droite -->
         <HBox spacing="15" alignment="CENTER_RIGHT">
-
             <VBox spacing="2">
-                <Label text="Filtrer"/>
-                <ComboBox fx:id="filterPriorityBox"
-                          style="
-              -fx-background-color: white;
-              -fx-border-color: #cccccc;
-              -fx-border-radius: 8;
-              -fx-background-radius: 8;
-              -fx-padding: 3 8 3 8;
-          "/>
+                <Label text="Filtrer" styleClass="muted-label"/>
+                <ComboBox fx:id="filterPriorityBox" styleClass="form-input" prefWidth="140"/>
             </VBox>
-
             <VBox spacing="2">
-                <Label text="Trier"/>
-                <ComboBox fx:id="sortBox"
-                          style="
-              -fx-background-color: white;
-              -fx-border-color: #cccccc;
-              -fx-border-radius: 8;
-              -fx-background-radius: 8;
-              -fx-padding: 3 8 3 8;
-          "/>
+                <Label text="Trier" styleClass="muted-label"/>
+                <ComboBox fx:id="sortBox" styleClass="form-input" prefWidth="140"/>
             </VBox>
-
         </HBox>
-
     </HBox>
 
-    <HBox spacing="20"
-          alignment="CENTER"
-          VBox.vgrow="ALWAYS"
-          style="-fx-padding: 20 40 20 40;">
-        <VBox fx:id="todoColumn" spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="A FAIRE" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="todoList" VBox.vgrow="ALWAYS"/>
-        </VBox>
-        <VBox fx:id="inProgressColumn" spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="EN COURS" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="inProgressList" VBox.vgrow="ALWAYS"/>
-        </VBox>
-        <VBox fx:id="doneColumn" spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="TERMINE" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="doneList" VBox.vgrow="ALWAYS"/>
-        </VBox>
-    </HBox>
+    <!-- Colonnes kanban -->
+    <HBox spacing="16" alignment="TOP_CENTER" VBox.vgrow="ALWAYS"
+          style="-fx-padding: 20 24 20 24;">
 
+        <VBox fx:id="todoColumn" styleClass="kanban-column" spacing="8"
+              alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="À FAIRE" styleClass="kanban-header"/>
+            <ListView fx:id="todoList" styleClass="kanban-list" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+        <VBox fx:id="inProgressColumn" styleClass="kanban-column" spacing="8"
+              alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="EN COURS" styleClass="kanban-header"/>
+            <ListView fx:id="inProgressList" styleClass="kanban-list" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+        <VBox fx:id="doneColumn" styleClass="kanban-column" spacing="8"
+              alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="TERMINÉ" styleClass="kanban-header"/>
+            <ListView fx:id="doneList" styleClass="kanban-list" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+    </HBox>
 
 </VBox>

@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.RoomController">
 
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Retour" onAction="#goBackToDashboard"/>
+    <HBox styleClass="topbar" spacing="10" alignment="CENTER_LEFT">
+        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+            <image><Image url="@../images/workflow_logo.png"/></image>
+        </ImageView>
+        <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Gestion des salles" styleClass="app-name"/>
+        <Region HBox.hgrow="ALWAYS"/>
     </HBox>
 
-    <Label text="Gestion des salles"/>
+    <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
+        <TableView fx:id="roomTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="nameColumn"     text="Nom"      prefWidth="250"/>
+                <TableColumn fx:id="capacityColumn" text="Capacité" prefWidth="120"/>
+            </columns>
+        </TableView>
 
-    <TableView fx:id="roomTable" prefHeight="400">
-        <columns>
-            <TableColumn fx:id="nameColumn" text="Nom" prefWidth="200"/>
-            <TableColumn fx:id="capacityColumn" text="Capacité" prefWidth="100"/>
-        </columns>
-    </TableView>
-
-    <HBox spacing="10" alignment="CENTER" fx:id="adminButtons">
-        <Button text="Ajouter une salle" onAction="#openCreateRoom"/>
-        <Button text="Supprimer" onAction="#deleteRoom"/>
-    </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT" fx:id="adminButtons">
+            <Button text="+ Ajouter une salle" onAction="#openCreateRoom"  styleClass="btn-primary"/>
+            <Button text="Supprimer"            onAction="#deleteRoom"      styleClass="btn-danger"/>
+        </HBox>
+    </VBox>
 
 </VBox>

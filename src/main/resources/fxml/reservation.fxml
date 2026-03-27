@@ -1,31 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.ReservationController">
 
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Retour" onAction="#goBackToDashboard"/>
+    <HBox styleClass="topbar" spacing="10" alignment="CENTER_LEFT">
+        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+            <image><Image url="@../images/workflow_logo.png"/></image>
+        </ImageView>
+        <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Réservations" styleClass="app-name"/>
+        <Region HBox.hgrow="ALWAYS"/>
     </HBox>
 
-    <Label text="Réservations"/>
+    <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
+        <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="titleColumn" text="Titre"  prefWidth="180"/>
+                <TableColumn fx:id="dateColumn"  text="Date"   prefWidth="110"/>
+                <TableColumn fx:id="startColumn" text="Début"  prefWidth="90"/>
+                <TableColumn fx:id="endColumn"   text="Fin"    prefWidth="90"/>
+                <TableColumn fx:id="roomColumn"  text="Salle"  prefWidth="140"/>
+            </columns>
+        </TableView>
 
-    <TableView fx:id="reservationTable" prefHeight="400">
-        <columns>
-            <TableColumn fx:id="titleColumn" text="Titre" prefWidth="150"/>
-            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
-            <TableColumn fx:id="startColumn" text="Début" prefWidth="80"/>
-            <TableColumn fx:id="endColumn" text="Fin" prefWidth="80"/>
-            <TableColumn fx:id="roomColumn" text="Salle" prefWidth="120"/>
-        </columns>
-    </TableView>
-
-    <HBox spacing="10" alignment="CENTER">
-        <Button text="Nouvelle réservation" onAction="#openCreateReservation"/>
-        <Button text="Annuler" onAction="#cancelReservation"/>
-    </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button text="+ Nouvelle réservation" onAction="#openCreateReservation" styleClass="btn-primary"/>
+            <Button text="Annuler"                onAction="#cancelReservation"      styleClass="btn-danger"/>
+        </HBox>
+    </VBox>
 
 </VBox>
