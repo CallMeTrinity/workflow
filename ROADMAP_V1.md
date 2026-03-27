@@ -47,11 +47,12 @@
 
 | Tâche                                              | Qui | Durée |
 |----------------------------------------------------|-----|-------|
-| Modèles Salle, Reservation, Creneau                | B   | 45min |
+| Amélioration de l'existant                         | B   | 3h    |
+| Modèles Salle, Reservation, Creneau                | A   | 45min |
 | SalleRepository + ReservationRepository            | A   | 1h    |
 | SalleService + ReservationService (vérif conflits) | A   | 1h    |
-| salle.fxml + SalleController (liste, CRUD admin)   | B   | 1h    |
-| reservation.fxml + ReservationController           | B   | 1h    |
+| salle.fxml + SalleController (liste, CRUD admin)   | A   | 1h    |
+| reservation.fxml + ReservationController           | A   | 1h    |
 | Tests JUnit ReservationService (conflits)          | A   | 30min |
 | Branchement des vues entre elles (navigation)      | A   | 30min |
 

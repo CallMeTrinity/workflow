@@ -19,16 +19,24 @@ public class UserRepository {
      * Saves a new user in the database.
      * @param user the user to save
      */
-    public void save(User user) {
+    public Long save(User user) {
         String sql = "INSERT INTO users (last_name, first_name, mail, password, role) VALUES (?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getLastName());
             stmt.setString(2, user.getFirstName());
             stmt.setString(3, user.getMail());
             stmt.setString(4, user.getPassword());
             stmt.setString(5, user.getRole().name());
             stmt.executeUpdate();
+
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getLong(1);
+            } else {
+                throw new RuntimeException("No ID generated for user");
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException("Error saving user: " + e.getMessage(), e);
         }
