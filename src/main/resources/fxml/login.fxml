@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 
-<VBox spacing="15" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.ui.controller.LoginController">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.LoginController">
 
-    <Label text="Connexion"/>
+    <VBox styleClass="login-card" spacing="16" alignment="CENTER"
+          StackPane.alignment="CENTER">
 
-    <TextField fx:id="emailField" promptText="Email"/>
+        <Label text="WorkFlow" styleClass="app-name"/>
+        <Label text="Connexion" styleClass="page-title"/>
 
-    <PasswordField fx:id="passwordField" promptText="Mot de passe"/>
+        <TextField fx:id="emailField" styleClass="form-input"
+                   promptText="Email" maxWidth="Infinity"/>
 
-    <Button text="Se connecter" onAction="#handleLogin"/>
+        <PasswordField fx:id="passwordField" styleClass="form-input"
+                       promptText="Mot de passe" maxWidth="Infinity"/>
 
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
-</VBox>
+        <Button text="Se connecter" onAction="#handleLogin"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+    </VBox>
+
+</StackPane>

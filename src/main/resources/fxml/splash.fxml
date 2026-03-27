@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.SplashController">
+
+    <VBox fx:id="container" alignment="CENTER" spacing="20"
+          StackPane.alignment="CENTER">
+
+        <ImageView fx:id="logoView" fitHeight="160" fitWidth="160"
+                   preserveRatio="true">
+            <image>
+                <Image url="@../images/workflow_logo.png"/>
+            </image>
+        </ImageView>
+
+        <Label text="WorkFlow" styleClass="app-name"/>
+        <Label text="Chargement..." styleClass="muted-label"/>
+
+    </VBox>
+
+</StackPane>
