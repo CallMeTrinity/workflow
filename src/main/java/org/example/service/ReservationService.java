@@ -37,6 +37,12 @@ public class ReservationService {
             throw new ReservationConflictException("Time slot is already booked for this room");
         }
 
+        int start = toMinutes(startTime);
+        int end = toMinutes(endTime);
+        if (end <= start) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
         Reservation reservation = new Reservation(null, title, description, date,
                 startTime, endTime, roomId, projectId, organizerId);
         Long generatedId = reservationRepository.save(reservation);
@@ -94,7 +100,28 @@ public class ReservationService {
         return false;
     }
 
+    /**
+     * Convertit "HH:MM" en minutes depuis minuit.
+     * Ex: "14:30" -> 870
+     */
+    private int toMinutes(String time) {
+        String[] parts = time.split(":");
+        return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
+    }
+
+    /**
+     * Convertit des minutes depuis minuit en "HH:MM".
+     * Ex: 870 -> "14:30"
+     */
+    private String toTimeString(int minutes) {
+        return String.format("%02d:%02d", minutes / 60, minutes % 60);
+    }
+
     private boolean timesOverlap(String start1, String end1, String start2, String end2) {
-        return start1.compareTo(end2) < 0 && start2.compareTo(end1) < 0;
+        int s1 = toMinutes(start1);
+        int e1 = toMinutes(end1);
+        int s2 = toMinutes(start2);
+        int e2 = toMinutes(end2);
+        return s1 < e2 && s2 < e1;
     }
 }
