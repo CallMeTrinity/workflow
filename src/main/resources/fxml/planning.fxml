@@ -22,6 +22,7 @@
         <!-- Panneau gauche : paramètres -->
         <VBox spacing="12" prefWidth="300">
             <Label text="Date" styleClass="section-title"/>
+            <CheckBox fx:id="asapCheckBox" text="Au plus tôt" onAction="#toggleAsap"/>
             <DatePicker fx:id="datePicker" styleClass="form-input" maxWidth="Infinity"/>
 
             <Label text="Durée minimale (minutes)" styleClass="section-title"/>

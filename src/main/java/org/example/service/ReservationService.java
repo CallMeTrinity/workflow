@@ -5,6 +5,7 @@ import org.example.exception.AutorisationException;
 import org.example.exception.NotFoundException;
 import org.example.exception.ReservationConflictException;
 import org.example.model.Reservation;
+import org.example.model.Room;
 import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.repository.ReservationRepository;
@@ -142,8 +143,76 @@ public class ReservationService {
                 .toList();
     }
 
+    /**
+     * Trouve les créneaux disponibles en proposant automatiquement les salles adaptées
+     * au nombre de participants (capacité >= nbParticipants, la plus proche en taille).
+     *
+     * @return liste de [startMinutes, endMinutes, roomId]
+     */
+    public List<int[]> findAvailableSlotsWithAutoRoom(List<Long> userIds, String date,
+                                                       int durationMinutes, List<Room> allRooms) {
+        int nbParticipants = userIds.size();
+
+        // Trier les salles par capacité croissante, ne garder que celles assez grandes
+        List<Room> candidates = allRooms.stream()
+                .filter(r -> r.getCapacity() >= nbParticipants)
+                .sorted((a, b) -> Integer.compare(a.getCapacity(), b.getCapacity()))
+                .toList();
+
+        // Créneaux occupés par les participants (commun à toutes les salles)
+        List<int[]> participantOccupied = new ArrayList<>();
+        for (Long userId : userIds) {
+            List<Reservation> reservations =
+                    reservationRepository.findByParticipantAndDate(userId, date);
+            for (Reservation r : reservations) {
+                participantOccupied.add(new int[]{
+                        toMinutes(r.getStartTime()),
+                        toMinutes(r.getEndTime())
+                });
+            }
+        }
+
+        List<int[]> results = new ArrayList<>();
+
+        for (Room room : candidates) {
+            // Fusionner occupations participants + occupations de cette salle
+            List<int[]> occupied = new ArrayList<>(participantOccupied);
+            List<Reservation> roomReservations =
+                    reservationRepository.findByRoomAndDate(room.getId(), date);
+            for (Reservation r : roomReservations) {
+                occupied.add(new int[]{
+                        toMinutes(r.getStartTime()),
+                        toMinutes(r.getEndTime())
+                });
+            }
+
+            List<int[]> merged = mergeIntervals(occupied);
+            List<int[]> free = invertIntervals(merged, 480, 1200);
+
+            for (int[] slot : free) {
+                if (slot[1] - slot[0] >= durationMinutes) {
+                    results.add(new int[]{slot[0], slot[1], room.getId().intValue()});
+                }
+            }
+        }
+
+        return results;
+    }
+
     public void addParticipant(Long reservationId, Long userId) {
         reservationRepository.addParticipant(reservationId, userId);
+    }
+
+    public void removeParticipant(Long reservationId, Long userId) {
+        reservationRepository.removeParticipant(reservationId, userId);
+    }
+
+    public List<Long> getParticipantIds(Long reservationId) {
+        return reservationRepository.findParticipantIds(reservationId);
+    }
+
+    public void updateReservation(Reservation reservation) {
+        reservationRepository.update(reservation);
     }
 
     private List<int[]> mergeIntervals(List<int[]> intervals) {
