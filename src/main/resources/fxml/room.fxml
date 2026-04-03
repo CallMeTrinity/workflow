@@ -22,12 +22,12 @@
             <columns>
                 <TableColumn fx:id="nameColumn"     text="Nom"      prefWidth="250"/>
                 <TableColumn fx:id="capacityColumn" text="Capacité" prefWidth="120"/>
+                <TableColumn fx:id="actionsColumn"    text=""             prefWidth="50"  sortable="false"/>
             </columns>
         </TableView>
 
         <HBox spacing="10" alignment="CENTER_LEFT" fx:id="adminButtons">
             <Button text="+ Ajouter une salle" onAction="#openCreateRoom"  styleClass="btn-primary"/>
-            <Button text="Supprimer"            onAction="#deleteRoom"      styleClass="btn-danger"/>
         </HBox>
     </VBox>
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<?import com.sun.javafx.scene.control.IntegerField?>
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.EditRoomController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER">
+
+        <Label text="Modifier la salle" styleClass="page-title"/>
+
+        <TextField fx:id="nameField" styleClass="form-input"
+                   promptText="Nom de la salle" maxWidth="Infinity"/>
+        <TextField fx:id="capacityField" styleClass="form-input"
+                   promptText="Capacité" maxWidth="Infinity"/>
+
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+
+        <Button text="Enregistrer" onAction="#handleSave"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+
+</StackPane>
