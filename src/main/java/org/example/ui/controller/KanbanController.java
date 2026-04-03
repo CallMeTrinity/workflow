@@ -65,7 +65,6 @@ public class KanbanController {
         sortBox.setOnAction(e -> loadTasks());
     }
 
-    // ========================= UI CARDS =========================
 
     private void setupCellFactory(ListView<Task> listView) {
 
@@ -149,8 +148,6 @@ public class KanbanController {
         });
     }
 
-    // ========================= DRAG & DROP =========================
-
     private void setupDropTarget(ListView<Task> listView, Status targetStatus) {
 
         listView.setOnDragOver(event -> {
@@ -180,7 +177,6 @@ public class KanbanController {
         });
     }
 
-    // ========================= LOAD + FILTER + SORT =========================
 
     private void loadTasks() {
 
@@ -244,7 +240,6 @@ public class KanbanController {
         }
     }
 
-    // ========================= ACTIONS =========================
 
     @FXML
     private void handleAddTask() {
@@ -295,4 +290,5 @@ public class KanbanController {
             e.printStackTrace();
         }
     }
+
 }

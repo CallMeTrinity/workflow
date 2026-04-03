@@ -54,7 +54,6 @@ public class TaskService {
         return taskRepository.findByProject(projectId);
     }
 
-
     public List<Task> getTasksByAssignedUser(Long userId) {
         return taskRepository.findByAssignedUser(userId);
     }
