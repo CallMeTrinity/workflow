@@ -3,6 +3,7 @@ package org.example.ui.controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
@@ -14,7 +15,11 @@ import org.example.model.Project;
 import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.service.AuthService;
+import org.example.service.NotificationService;
 import org.example.service.ProjectService;
+import org.example.service.UserService;
+
+import java.util.List;
 
 public class DashboardController {
 
@@ -30,6 +35,9 @@ public class DashboardController {
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
+    private List<Project> projects;
+    private final UserService userService = new UserService();
+    private final NotificationService notificationService = new NotificationService();
 
     /** Le menu actuellement affiché — permet de n'en avoir qu'un seul ouvert. */
     private ContextMenu activeMenu;
@@ -294,5 +302,36 @@ public class DashboardController {
     private boolean isProjectLeader(){
         User currentUser = SessionManager.getCurrentUser();
         return currentUser.getRole() == Role.PROJECT_LEADER;
+    }
+
+
+    @FXML
+    private void openProfile() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/profile.fxml"));
+            Parent root = loader.load();
+
+            ProfileController controller = loader.getController();
+            controller.init(SessionManager.getCurrentUser(), userService, notificationService);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML private Label avatarHeader;
+    @FXML private Label notifBadge;
+
+    public void updateHeader() {
+        avatarHeader.setText(SessionManager.getCurrentUser().getUsername().substring(0,1).toUpperCase());
+
+        int count = notificationService.countUnread(SessionManager.getCurrentUser().getId());
+
+        notifBadge.setText(String.valueOf(count));
+        notifBadge.setVisible(count > 0);
     }
 }
