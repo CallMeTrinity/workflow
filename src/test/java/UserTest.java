@@ -15,7 +15,8 @@ public class UserTest {
                 "Juline",
                 "jbusson@polytech.com",
                 "password123",
-                Role.MEMBER
+                Role.MEMBER,
+                null
         );
 
         String fullName = user.getFullName();

@@ -4,6 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.shape.Circle?>
 <VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.DashboardController">
 
@@ -32,10 +33,22 @@
         </TableView>
 
         <HBox spacing="10" alignment="CENTER_LEFT">
-            <Button fx:id="createProjectBtn" text="Créer un projet"   onAction="#openCreateProject" styleClass="btn-primary"/>
-            <Button text="Gérer les salles"  onAction="#openRooms"         styleClass="btn-secondary"/>
-            <Button text="Réservations"      onAction="#openReservations"  styleClass="btn-secondary"/>
-            <Button text="Planning"          onAction="#openPlanning"      styleClass="btn-secondary"/>
+            <Button fx:id="createProjectBtn" text="Créer un projet"  onAction="#openCreateProject" styleClass="btn-primary"/>
+            <Button text="Gérer les salles"   onAction="#openRooms"         styleClass="btn-secondary"/>
+            <Button text="Réservations"       onAction="#openReservations"  styleClass="btn-secondary"/>
+            <Button text="Planning"           onAction="#openPlanning"      styleClass="btn-secondary"/>
         </HBox>
     </VBox>
+
+    <StackPane onMouseClicked="#openProfile">
+
+        <Circle radius="15"/>
+        <Label fx:id="avatarHeader"/>
+
+        <Label fx:id="notifBadge"
+               style="-fx-background-color: red; -fx-text-fill: white;"
+               StackPane.alignment="TOP_RIGHT"/>
+
+    </StackPane>
+
 </VBox>
