@@ -38,9 +38,9 @@ public class TaskServiceTest {
 
     @BeforeEach
     void setUp() {
-        adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN);
-        leaderUser = new User(2L, "Leader", "John", "leader@test.com", "hash", Role.PROJECT_LEADER);
-        memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER);
+        adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN, null);
+        leaderUser = new User(2L, "Leader", "John", "leader@test.com", "hash", Role.PROJECT_LEADER, null);
+        memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER, null);
 
         sampleTask = new Task(1L, "Fix bug", "Fix the login bug",
                 Status.TODO, Priority.HIGH, "2024-06-01", 2, null, 1L, null);

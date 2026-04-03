@@ -35,8 +35,8 @@ public class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
-        adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN);
-        memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER);
+        adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN, null);
+        memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER, null);
 
         sampleReservation = new Reservation(
                 1L, "Réunion", "Desc", "2024-06-01",
@@ -204,7 +204,7 @@ public class ReservationServiceTest {
 
     @Test
     void nonOrganizerShouldNotCancelReservation() {
-        User otherUser = new User(99L, "Other", "User", "other@test.com", "hash", Role.MEMBER);
+        User otherUser = new User(99L, "Other", "User", "other@test.com", "hash", Role.MEMBER, null);
         SessionManager.setCurrentUser(otherUser);
         when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
 
