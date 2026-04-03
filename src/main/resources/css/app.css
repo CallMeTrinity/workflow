@@ -198,7 +198,7 @@
     -fx-background-color: #182130;
     -fx-background-radius: 16;
     -fx-padding: 48;
-    -fx-max-width: 440;
+    -fx-max-width: 900;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 32, 0, 0, 8);
 }
 

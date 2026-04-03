@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class Main extends Application {
 
     @Override
@@ -13,7 +15,7 @@ public class Main extends Application {
 
         // Icône de la fenêtre / taskbar
         stage.getIcons().add(
-                new Image(getClass().getResourceAsStream("/images/workflow_logo.png"))
+                new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/workflow_logo.png")))
         );
 
         // Démarre sur le splash screen
@@ -21,7 +23,7 @@ public class Main extends Application {
         Scene scene = new Scene(loader.load());
 
         scene.getStylesheets().add(
-                getClass().getResource("/css/app.css").toExternalForm()
+                Objects.requireNonNull(getClass().getResource("/css/app.css")).toExternalForm()
         );
 
         stage.setTitle("WorkFlow");

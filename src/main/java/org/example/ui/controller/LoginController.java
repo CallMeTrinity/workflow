@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.example.exception.InvalidLoginCredentialsException;
 import org.example.exception.UserNotFoundException;
@@ -13,6 +14,7 @@ import org.example.model.User;
 import org.example.service.AuthService;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class LoginController {
 
@@ -49,5 +51,14 @@ public class LoginController {
         } catch (UserNotFoundException | InvalidLoginCredentialsException e) {
             errorLabel.setText(e.getMessage());
         }
+    }
+
+    @FXML
+    public void initialize() {
+        passwordField.setOnKeyPressed(event -> {
+            if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
     }
 }
