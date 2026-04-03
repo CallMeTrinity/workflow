@@ -10,6 +10,7 @@ public class Project {
     private String description;
     private String startDate;  // format YYYY-MM-DD
     private String endDate;    // format YYYY-MM-DD
+    private String createdAt;
     private Long projectLeaderId;
 
     public Project() {
@@ -24,13 +25,18 @@ public class Project {
      * @param endDate la date de fin (YYYY-MM-DD)
      * @param projectLeaderId l'identifiant du chef de projet
      */
-    public Project(Long id, String name, String description, String startDate, String endDate, Long projectLeaderId) {
+    public Project(Long id, String name, String description, String startDate, String endDate, Long projectLeaderId, String createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.projectLeaderId = projectLeaderId;
+        this.createdAt = createdAt;
+    }
+
+    public Project(Long id, String name, String description, String startDate, String endDate, Long projectLeaderId) {
+        this(id, name, description, startDate, endDate, projectLeaderId, null);
     }
 
     public Long getId() { return id; }
@@ -47,6 +53,9 @@ public class Project {
 
     public String getEndDate() { return endDate; }
     public void setEndDate(String endDate) { this.endDate = endDate; }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 
     public Long getProjectLeaderId() { return projectLeaderId; }
     public void setProjectLeaderId(Long projectLeaderId) { this.projectLeaderId = projectLeaderId; }

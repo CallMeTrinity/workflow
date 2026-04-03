@@ -166,7 +166,8 @@ public class ProjectRepository {
                 rs.getString("description"),
                 rs.getString("start_date"),
                 rs.getString("end_date"),
-                rs.getLong("project_leader_id")
+                rs.getLong("project_leader_id"),
+                rs.getString("created_at")
         );
     }
 

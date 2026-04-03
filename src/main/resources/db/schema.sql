@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS project (
     start_date  TEXT NOT NULL, -- format YYYY-MM-DD
     end_date    TEXT NOT NULL,
     project_leader_id INTEGER NOT NULL,
+	created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (project_leader_id) REFERENCES users(id)
 );
 
