@@ -99,4 +99,46 @@ public class NotificationRepository {
             e.printStackTrace();
         }
     }
+
+    public Notification findById(Long id) {
+        String sql = "SELECT * FROM notification WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Notification(
+                        rs.getLong("id"),
+                        rs.getString("message"),
+                        rs.getLong("user_id"),
+                        rs.getBoolean("is_read")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public int countUnread(Long id) {
+        String sql = "SELECT COUNT(*) FROM notification WHERE id = ? AND is_read = false";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }

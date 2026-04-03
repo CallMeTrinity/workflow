@@ -17,8 +17,32 @@ public class NotificationService {
         return repository.findByUser(userId);
     }
 
-    public void markAsRead(Notification notif) {
-        notif.setIsRead(true);
-        repository.update(notif);
+    public void markAsRead(Long id) {
+        Notification notif = repository.findById(id);
+        if (notif != null) {
+            notif.setIsRead(true);
+            repository.update(notif);
+        }
     }
+
+    public void markAsUnread(Long id) {
+        Notification notif = repository.findById(id);
+        if (notif != null) {
+            notif.setIsRead(false);
+            repository.update(notif);
+        }
+    }
+
+    public void deleteNotification(Long id) {
+        repository.delete(id);
+    }
+
+    public int countUnread(Long id) {
+        try {
+            return repository.countUnread(id);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
 }

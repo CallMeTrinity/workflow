@@ -2,6 +2,7 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -9,7 +10,9 @@ import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Project;
 import org.example.service.AuthService;
+import org.example.service.NotificationService;
 import org.example.service.ProjectService;
+import org.example.service.UserService;
 
 import java.util.List;
 
@@ -21,6 +24,8 @@ public class DashboardController {
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
     private List<Project> projects;
+    private final UserService userService = new UserService();
+    private final NotificationService notificationService = new NotificationService();
 
     @FXML
     public void initialize() {
@@ -131,5 +136,36 @@ public class DashboardController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @FXML
+    private void openProfile() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProfileView.fxml"));
+            Parent root = loader.load();
+
+            ProfilController controller = loader.getController();
+            controller.init(SessionManager.getCurrentUser(), userService, notificationService);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML private Label avatarHeader;
+    @FXML private Label notifBadge;
+
+    public void updateHeader() {
+        avatarHeader.setText(SessionManager.getCurrentUser().getUsername().substring(0,1).toUpperCase());
+
+        int count = notificationService.countUnread(SessionManager.getCurrentUser().getId());
+
+        notifBadge.setText(String.valueOf(count));
+        notifBadge.setVisible(count > 0);
     }
 }

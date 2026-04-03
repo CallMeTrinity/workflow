@@ -12,19 +12,21 @@ public class User {
     private String mail;
     private String password;
     private Role role;
+    private String username;
 
     public User() {
     }
 
     // Constructeur principal
 
-    public User(Long id, String lastName, String firstName, String mail, String password, Role role) {
+    public User(Long id, String lastName, String firstName, String username, String mail, String password, Role role) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.mail = mail;
         this.password = password;
         this.role = role;
+        this.username = username;
     }
 
     // Getter et Setter
@@ -75,6 +77,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     // Retourne le nom complet de l'utilisateur
