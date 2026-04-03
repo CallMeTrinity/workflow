@@ -7,11 +7,10 @@ import org.example.model.Notification;
 import org.example.service.UserService;
 import org.example.service.NotificationService;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import java.util.List;
 
-public class ProfilController {
+public class ProfileController {
 
     @FXML private Label avatarLabel;
     @FXML private Circle avatarCircle;

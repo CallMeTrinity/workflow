@@ -19,6 +19,8 @@ import org.example.service.NotificationService;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
 
+import java.util.List;
+
 public class DashboardController {
 
     @FXML private TableView<Project> projectTable;
@@ -306,10 +308,10 @@ public class DashboardController {
     @FXML
     private void openProfile() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProfileView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/profile.fxml"));
             Parent root = loader.load();
 
-            ProfilController controller = loader.getController();
+            ProfileController controller = loader.getController();
             controller.init(SessionManager.getCurrentUser(), userService, notificationService);
 
             Stage stage = new Stage();

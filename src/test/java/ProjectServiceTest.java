@@ -35,9 +35,9 @@ public class ProjectServiceTest {
 
     @BeforeEach
     void setUp() {
-        adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN);
-        leaderUser = new User(2L, "Leader", "John", "leader@test.com", "hash", Role.PROJECT_LEADER);
-        memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER);
+        adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN, null);
+        leaderUser = new User(2L, "Leader", "John", "leader@test.com", "hash", Role.PROJECT_LEADER, null);
+        memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER, null);
     }
 
     // --- createProject ---
