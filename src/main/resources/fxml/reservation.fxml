@@ -24,13 +24,14 @@
                 <TableColumn fx:id="dateColumn"  text="Date"   prefWidth="110"/>
                 <TableColumn fx:id="startColumn" text="Début"  prefWidth="90"/>
                 <TableColumn fx:id="endColumn"   text="Fin"    prefWidth="90"/>
-                <TableColumn fx:id="roomColumn"  text="Salle"  prefWidth="140"/>
+                <TableColumn fx:id="roomColumn"         text="Salle"        prefWidth="140"/>
+                <TableColumn fx:id="participantsColumn" text="Participants" prefWidth="200"/>
+                <TableColumn fx:id="actionsColumn"      text=""             prefWidth="50" sortable="false"/>
             </columns>
         </TableView>
 
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Button text="+ Nouvelle réservation" onAction="#openCreateReservation" styleClass="btn-primary"/>
-            <Button text="Annuler"                onAction="#cancelReservation"      styleClass="btn-danger"/>
         </HBox>
     </VBox>
 

@@ -163,6 +163,38 @@ public class ReservationRepository {
         }
     }
 
+    /**
+     * Returns the list of participant user IDs for a given reservation.
+     */
+    public List<Long> findParticipantIds(Long reservationId) {
+        String sql = "SELECT user_id FROM participants_reservation WHERE reservation_id = ?";
+        List<Long> ids = new ArrayList<>();
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, reservationId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getLong("user_id"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding participants: " + e.getMessage(), e);
+        }
+        return ids;
+    }
+
+    /**
+     * Removes a participant from a reservation.
+     */
+    public void removeParticipant(Long reservationId, Long userId) {
+        String sql = "DELETE FROM participants_reservation WHERE reservation_id = ? AND user_id = ?";
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, reservationId);
+            stmt.setLong(2, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error removing participant: " + e.getMessage(), e);
+        }
+    }
+
     private void setParameters(Reservation reservation, PreparedStatement stmt) throws SQLException {
         stmt.setString(1, reservation.getTitle());
         stmt.setString(2, reservation.getDescription());

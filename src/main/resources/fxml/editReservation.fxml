@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.EditReservationController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER" prefWidth="500">
+
+        <Label text="Détail de la réservation" styleClass="page-title"/>
+
+        <TextField fx:id="titleField" styleClass="form-input"
+                   promptText="Titre" maxWidth="Infinity"/>
+        <TextField fx:id="descriptionField" styleClass="form-input"
+                   promptText="Description" maxWidth="Infinity"/>
+
+        <DatePicker fx:id="datePicker" styleClass="form-input" maxWidth="Infinity"
+                    promptText="Date"/>
+        <HBox spacing="10">
+            <ComboBox fx:id="startTimeBox" styleClass="form-input" HBox.hgrow="ALWAYS"
+                      maxWidth="Infinity" minWidth="120" promptText="Heure début"/>
+            <ComboBox fx:id="endTimeBox" styleClass="form-input" HBox.hgrow="ALWAYS"
+                      maxWidth="Infinity" minWidth="120" promptText="Heure fin"/>
+        </HBox>
+
+        <ComboBox fx:id="roomBox" styleClass="form-input" maxWidth="Infinity"
+                  promptText="Salle"/>
+
+        <Label text="Participants" styleClass="section-title"/>
+        <ListView fx:id="participantList" prefHeight="150" maxWidth="Infinity"/>
+
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+
+        <Button text="Enregistrer" onAction="#handleSave"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+
+</StackPane>
