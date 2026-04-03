@@ -6,6 +6,7 @@ import org.example.repository.UserRepository;
 import java.util.List;
 
 public class UserService {
+
     private final UserRepository userRepository;
 
     public UserService() {
@@ -18,5 +19,13 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public void updateProfile(Long id, String username) {
+        userRepository.updateUsername(id, username);
     }
 }
