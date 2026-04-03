@@ -4,21 +4,24 @@
 <?import javafx.scene.layout.*?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.ui.controller.LoginController">
+           fx:controller="org.example.ui.controller.LoginController"
+           style="-fx-padding: 40;"
+>
 
     <VBox styleClass="login-card" spacing="16" alignment="CENTER"
-          StackPane.alignment="CENTER">
+          StackPane.alignment="CENTER"
+    >
 
         <Label text="WorkFlow" styleClass="app-name"/>
         <Label text="Connexion" styleClass="page-title"/>
 
-        <TextField fx:id="emailField" styleClass="form-input"
+        <TextField fx:id="emailField" styleClass="form-input" style="-fx-max-width: 300"
                    promptText="Email" maxWidth="Infinity"/>
 
-        <PasswordField fx:id="passwordField" styleClass="form-input"
+        <PasswordField fx:id="passwordField" styleClass="form-input" style="-fx-max-width: 300"
                        promptText="Mot de passe" maxWidth="Infinity"/>
 
-        <Button text="Se connecter" onAction="#handleLogin"
+        <Button text="Se connecter" onAction="#handleLogin" style="-fx-max-width: 300"
                 styleClass="btn-primary" maxWidth="Infinity"/>
 
         <Label fx:id="errorLabel" styleClass="error-label"/>

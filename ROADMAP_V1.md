@@ -73,6 +73,8 @@
 | Modèle Notification + NotificationRepository               | B   | 30min |
 | NotificationService + branchement dans les autres services | B   | 30min |
 | notification.fxml + NotificationController                 | B   | 30min |
+| Amélioration UX et UI                                      | A   | 2h    |
+| Améliorer réservation salle en fonction du nombre de gens  | A   | 2h    |
 
 **Fin de séance 4 :** planning consultable, créneaux libres trouvables, notifications in-app
 
@@ -94,25 +96,4 @@
 | Tests de bout en bout manuels                  | A+B | 30min |
 
 **Fin de séance 5 :** projet complet, propre, documenté, prêt pour la démo
-
 ---
-
-## Ce que Dev B doit apprendre avant la séance 1
-
-- Bases JavaFX : `Label`, `Button`, `TextField`, `@FXML`, `initialize()`
-- Lire le schema.sql pour comprendre la structure des tables
-- Installer IntelliJ + plugin JavaFX si pas déjà fait
-
----
-
-## Règles d'équipe
-
-- **Chaque fin de séance** : commit + push sur GitLab, même si c'est incomplet
-- **Branches Git** : une branche par fonctionnalité, merge sur `main` quand ça marche
-- **Jamais de logique métier dans les controllers** — si Dev B est tenté, Dev A relit
-- **Les tests** passent toujours avant de merger
-
----
-
-Par quoi vous voulez commencer concrètement ? Je peux vous générer le `schema.sql`, le `DatabaseConfig.java`, ou les
-premiers modèles.
