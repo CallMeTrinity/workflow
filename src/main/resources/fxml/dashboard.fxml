@@ -7,7 +7,6 @@
 <VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.DashboardController">
 
-    <!-- Topbar -->
     <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
         <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
             <image><Image url="@../images/workflow_logo.png"/></image>
@@ -18,17 +17,27 @@
         <Button text="Se déconnecter" onAction="#handleLogout" styleClass="btn-back"/>
     </HBox>
 
-    <!-- Content -->
     <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
         <Label text="Mes projets" styleClass="page-title"/>
-        <ListView fx:id="projectList" VBox.vgrow="ALWAYS"/>
+
+        <TableView fx:id="projectTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="nameColumn"        text="Nom"          prefWidth="200"/>
+                <TableColumn fx:id="descriptionColumn" text="Description"  prefWidth="300"/>
+                <TableColumn fx:id="startDateColumn"   text="Début"        prefWidth="100"/>
+                <TableColumn fx:id="endDateColumn"     text="Fin"          prefWidth="100"/>
+                <TableColumn fx:id="createdAtColumn"   text="Créé le"      prefWidth="100"/>
+            </columns>
+        </TableView>
+
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Button text="Créer un projet"   onAction="#openCreateProject" styleClass="btn-primary"/>
-            <Button text="Ouvrir Kanban"      onAction="#openKanban"        styleClass="btn-secondary"/>
-            <Button text="Gérer les salles"   onAction="#openRooms"         styleClass="btn-secondary"/>
-            <Button text="Réservations"       onAction="#openReservations"  styleClass="btn-secondary"/>
-            <Button text="Planning"           onAction="#openPlanning"      styleClass="btn-secondary"/>
+            <Button text="Ouvrir Kanban"     onAction="#openKanban"        styleClass="btn-secondary"/>
+            <Button text="Modifier"          onAction="#openEditProject"   styleClass="btn-secondary"/>
+            <Button text="Supprimer"         onAction="#deleteProject"     styleClass="btn-secondary"/>
+            <Button text="Gérer les salles"  onAction="#openRooms"         styleClass="btn-secondary"/>
+            <Button text="Réservations"      onAction="#openReservations"  styleClass="btn-secondary"/>
+            <Button text="Planning"          onAction="#openPlanning"      styleClass="btn-secondary"/>
         </HBox>
     </VBox>
-
 </VBox>
