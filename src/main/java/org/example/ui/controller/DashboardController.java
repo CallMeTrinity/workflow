@@ -11,6 +11,8 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Project;
+import org.example.model.User;
+import org.example.model.enums.Role;
 import org.example.service.AuthService;
 import org.example.service.ProjectService;
 
@@ -24,6 +26,7 @@ public class DashboardController {
     @FXML private TableColumn<Project, String> createdAtColumn;
     @FXML private TableColumn<Project, Void> actionsColumn;
     @FXML private Label welcomeLabel;
+    @FXML private Button createProjectBtn;
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
@@ -51,7 +54,15 @@ public class DashboardController {
         setupActionsColumn();
         setupRowContextMenu();
 
+        updateButtonVisibility();
+
         refreshProjects();
+    }
+
+    private void updateButtonVisibility(){
+        boolean canCreate = isAdmin() || isProjectLeader();
+        createProjectBtn.setVisible(canCreate);
+        createProjectBtn.setManaged(canCreate);
     }
 
     /* ------------------------------------------------------------------ */
@@ -106,14 +117,22 @@ public class DashboardController {
         MenuItem openKanban = new MenuItem("Ouvrir Kanban");
         openKanban.setOnAction(e -> openKanban(project));
 
-        MenuItem edit = new MenuItem("Modifier");
-        edit.setOnAction(e -> openEditProject(project));
+        ContextMenu menu = new ContextMenu(openKanban);
+        // Ajouter "Supprimer" seulement si l'utilisateur est admin
+        if (isAdmin() || isProjectLeader()) {
+            MenuItem edit = new MenuItem("Modifier");
+            edit.setOnAction(e -> openEditProject(project));
+            menu.getItems().add(edit);
+        }
+        if (isAdmin()) {
+            menu.getItems().add(new SeparatorMenuItem());
+            MenuItem delete = new MenuItem("Supprimer");
+            delete.setStyle("-fx-text-fill: #dc2626;");
+            delete.setOnAction(e -> deleteProject(project));
+            menu.getItems().add(delete);
+        }
 
-        MenuItem delete = new MenuItem("Supprimer");
-        delete.setStyle("-fx-text-fill: #dc2626;");
-        delete.setOnAction(e -> deleteProject(project));
-
-        return new ContextMenu(openKanban, edit, new SeparatorMenuItem(), delete);
+        return menu;
     }
 
     /** Affiche à côté d'un nœud (bouton ⋮). */
@@ -172,6 +191,11 @@ public class DashboardController {
     }
 
     private void deleteProject(Project project) {
+        if (!isAdmin()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Vous n'avez pas les droits pour supprimer ce projet.");
+            alert.showAndWait();
+            return;
+        }
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "Supprimer le projet \"" + project.getName() + "\" ?",
                 ButtonType.YES, ButtonType.NO);
@@ -194,6 +218,11 @@ public class DashboardController {
 
     @FXML
     private void openCreateProject() {
+        if (!isAdmin() && !isProjectLeader()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Vous n'avez pas les droits pour créer un projet.");
+            alert.showAndWait();
+            return;
+        }
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createProject.fxml"));
             Stage stage = new Stage();
@@ -253,5 +282,17 @@ public class DashboardController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // user roles
+
+    private boolean isAdmin(){
+        User currentUser = SessionManager.getCurrentUser();
+        return currentUser.getRole() == Role.ADMIN;
+    }
+
+    private boolean isProjectLeader(){
+        User currentUser = SessionManager.getCurrentUser();
+        return currentUser.getRole() == Role.PROJECT_LEADER;
     }
 }
