@@ -19,7 +19,7 @@ public class User {
 
     // Constructeur principal
 
-    public User(Long id, String lastName, String firstName, String username, String mail, String password, Role role) {
+    public User(Long id, String lastName, String firstName, String mail, String password, Role role, String username) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;

@@ -158,8 +158,8 @@ public class UserRepository {
                 rs.getString("first_name"),
                 rs.getString("mail"),
                 rs.getString("password"),
-                rs.getString("username"),
-                Role.valueOf(rs.getString("role"))
+                Role.valueOf(rs.getString("role")),
+                rs.getString("username")
         );
     }
 
