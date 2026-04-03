@@ -1,23 +1,17 @@
 package org.example.ui.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.service.ProjectService;
 
 public class CreateProjectController {
 
-    @FXML
-    private TextField nameField;
-
-    @FXML
-    private TextField descriptionField;
-
-    @FXML
-    private TextField startDateField;
-
-    @FXML
-    private TextField endDateField;
+    @FXML private TextField nameField;
+    @FXML private TextField descriptionField;
+    @FXML private DatePicker startDatePicker;
+    @FXML private DatePicker endDatePicker;
 
     private ProjectService projectService = new ProjectService();
 
@@ -25,11 +19,14 @@ public class CreateProjectController {
     private void handleCreate() {
 
         try {
+            String startDate = startDatePicker.getValue() != null ? startDatePicker.getValue().toString() : null;
+            String endDate = endDatePicker.getValue() != null ? endDatePicker.getValue().toString() : null;
+
             projectService.createProject(
                     nameField.getText(),
                     descriptionField.getText(),
-                    startDateField.getText(),
-                    endDateField.getText()
+                    startDate,
+                    endDate
             );
 
             // fermer la fenêtre

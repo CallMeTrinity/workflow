@@ -2,19 +2,32 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
-<VBox spacing="10" alignment="CENTER"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.ui.controller.EditProjectController">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.EditProjectController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <Label text="Modifier le projet"/>
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER">
 
-    <TextField fx:id="nameField"        promptText="Nom du projet"/>
-    <TextField fx:id="descriptionField" promptText="Description"/>
-    <TextField fx:id="startDateField"   promptText="Date début (YYYY-MM-DD)"/>
-    <TextField fx:id="endDateField"     promptText="Date fin (YYYY-MM-DD)"/>
+        <Label text="Modifier le projet" styleClass="page-title"/>
 
-    <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+        <TextField fx:id="nameField" styleClass="form-input"
+                   promptText="Nom du projet" maxWidth="Infinity"/>
+        <TextField fx:id="descriptionField" styleClass="form-input"
+                   promptText="Description" maxWidth="Infinity"/>
+        <DatePicker fx:id="startDatePicker" styleClass="form-input"
+                    promptText="Date début" maxWidth="Infinity"/>
+        <DatePicker fx:id="endDatePicker" styleClass="form-input"
+                    promptText="Date fin" maxWidth="Infinity"/>
 
-    <Button text="Enregistrer" onAction="#handleSave"/>
-</VBox>
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+
+        <Button text="Enregistrer" onAction="#handleSave"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+
+</StackPane>

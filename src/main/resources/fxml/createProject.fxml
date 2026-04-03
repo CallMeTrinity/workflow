@@ -19,10 +19,10 @@
                    promptText="Nom du projet" maxWidth="Infinity"/>
         <TextField fx:id="descriptionField" styleClass="form-input"
                    promptText="Description" maxWidth="Infinity"/>
-        <TextField fx:id="startDateField" styleClass="form-input"
-                   promptText="Date début (YYYY-MM-DD)" maxWidth="Infinity"/>
-        <TextField fx:id="endDateField" styleClass="form-input"
-                   promptText="Date fin (YYYY-MM-DD)" maxWidth="Infinity"/>
+        <DatePicker fx:id="startDatePicker" styleClass="form-input"
+                    promptText="Date début" maxWidth="Infinity"/>
+        <DatePicker fx:id="endDatePicker" styleClass="form-input"
+                    promptText="Date fin" maxWidth="Infinity"/>
 
         <Button text="Valider" onAction="#handleCreate"
                 styleClass="btn-primary" maxWidth="Infinity"/>

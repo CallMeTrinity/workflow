@@ -19,8 +19,8 @@
                    promptText="Titre" maxWidth="Infinity"/>
         <TextField fx:id="descriptionField" styleClass="form-input"
                    promptText="Description" maxWidth="Infinity"/>
-        <TextField fx:id="deadlineField" styleClass="form-input"
-                   promptText="Deadline (YYYY-MM-DD)" maxWidth="Infinity"/>
+        <DatePicker fx:id="deadlinePicker" styleClass="form-input"
+                    promptText="Deadline" maxWidth="Infinity"/>
 
         <ComboBox fx:id="priorityBox" styleClass="form-input"
                   promptText="Priorité" maxWidth="Infinity"/>
