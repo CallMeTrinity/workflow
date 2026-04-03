@@ -20,7 +20,7 @@ public class UserRepository {
      * @param user the user to save
      */
     public Long save(User user) {
-        String sql = "INSERT INTO users (last_name, first_name, mail, password, role) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (last_name, first_name, mail, password, role, username) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getLastName());
@@ -28,6 +28,7 @@ public class UserRepository {
             stmt.setString(3, user.getMail());
             stmt.setString(4, user.getPassword());
             stmt.setString(5, user.getRole().name());
+            stmt.setString(6, user.getUsername());
             stmt.executeUpdate();
 
             ResultSet generatedKeys = stmt.getGeneratedKeys();
@@ -57,12 +58,14 @@ public class UserRepository {
             if (rs.next()) {
                 return mapResultSetToUser(rs);
             }
+
             return null;
 
         } catch (SQLException e) {
             throw new RuntimeException("Error finding user", e);
         }
     }
+
 
     /**
      * Finds a user by their email address.
@@ -112,7 +115,7 @@ public class UserRepository {
      * @param user the user to update (must have a valid id)
      */
     public void update(User user) {
-        String sql = "UPDATE users SET last_name = ?, first_name = ?, mail = ?, password = ?, role = ? WHERE id = ?";
+        String sql = "UPDATE users SET last_name = ?, first_name = ?, mail = ?, password = ?, role = ?, username = ? WHERE id = ?";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             stmt.setString(1, user.getLastName());
@@ -120,7 +123,8 @@ public class UserRepository {
             stmt.setString(3, user.getMail());
             stmt.setString(4, user.getPassword());
             stmt.setString(5, user.getRole().name());
-            stmt.setLong(6, user.getId());
+            stmt.setString(6, user.getUsername());
+            stmt.setLong(7, user.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error updating user: " + e.getMessage(), e);
@@ -154,7 +158,20 @@ public class UserRepository {
                 rs.getString("first_name"),
                 rs.getString("mail"),
                 rs.getString("password"),
+                rs.getString("username"),
                 Role.valueOf(rs.getString("role"))
         );
+    }
+
+    public void updateUsername(Long id, String username) {
+        String sql = "UPDATE users SET username = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setLong(2, id);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
