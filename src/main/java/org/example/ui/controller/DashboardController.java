@@ -3,15 +3,16 @@ package org.example.ui.controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Project;
 import org.example.service.AuthService;
 import org.example.service.ProjectService;
-
-import java.util.List;
 
 public class DashboardController {
 
@@ -21,10 +22,14 @@ public class DashboardController {
     @FXML private TableColumn<Project, String> startDateColumn;
     @FXML private TableColumn<Project, String> endDateColumn;
     @FXML private TableColumn<Project, String> createdAtColumn;
+    @FXML private TableColumn<Project, Void> actionsColumn;
     @FXML private Label welcomeLabel;
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
+
+    /** Le menu actuellement affiché — permet de n'en avoir qu'un seul ouvert. */
+    private ContextMenu activeMenu;
 
     @FXML
     public void initialize() {
@@ -43,15 +48,144 @@ public class DashboardController {
         createdAtColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getCreatedAt()));
 
-        // Double clic → kanban
-        projectTable.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                openKanban();
-            }
-        });
+        setupActionsColumn();
+        setupRowContextMenu();
 
         refreshProjects();
     }
+
+    /* ------------------------------------------------------------------ */
+    /*  Colonne "⋮"                                                       */
+    /* ------------------------------------------------------------------ */
+
+    private void setupActionsColumn() {
+        actionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("⋮");
+
+            {
+                btn.setStyle("-fx-background-color: transparent; -fx-font-size: 16px; "
+                        + "-fx-text-fill: #64748b; -fx-cursor: hand; -fx-padding: 0 6 0 6;");
+                btn.setOnAction(e -> {
+                    Project project = getTableView().getItems().get(getIndex());
+                    showProjectMenu(project, btn, Side.BOTTOM);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : btn);
+                setAlignment(Pos.CENTER);
+            }
+        });
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Clic droit sur une ligne                                          */
+    /* ------------------------------------------------------------------ */
+
+    private void setupRowContextMenu() {
+        projectTable.setRowFactory(tv -> {
+            TableRow<Project> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.SECONDARY && !row.isEmpty()) {
+                    showProjectMenu(row.getItem(), row, event.getScreenX(), event.getScreenY());
+                } else if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && !row.isEmpty()) {
+                    openKanban(row.getItem());
+                }
+            });
+            return row;
+        });
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Construction + affichage du menu contextuel                        */
+    /* ------------------------------------------------------------------ */
+
+    private ContextMenu buildProjectMenu(Project project) {
+        MenuItem openKanban = new MenuItem("Ouvrir Kanban");
+        openKanban.setOnAction(e -> openKanban(project));
+
+        MenuItem edit = new MenuItem("Modifier");
+        edit.setOnAction(e -> openEditProject(project));
+
+        MenuItem delete = new MenuItem("Supprimer");
+        delete.setStyle("-fx-text-fill: #dc2626;");
+        delete.setOnAction(e -> deleteProject(project));
+
+        return new ContextMenu(openKanban, edit, new SeparatorMenuItem(), delete);
+    }
+
+    /** Affiche à côté d'un nœud (bouton ⋮). */
+    private void showProjectMenu(Project project, javafx.scene.Node anchor, Side side) {
+        closeActiveMenu();
+        activeMenu = buildProjectMenu(project);
+        activeMenu.show(anchor, side, 0, 0);
+    }
+
+    /** Affiche à une position écran (clic droit). */
+    private void showProjectMenu(Project project, javafx.scene.Node anchor, double screenX, double screenY) {
+        closeActiveMenu();
+        activeMenu = buildProjectMenu(project);
+        activeMenu.show(anchor, screenX, screenY);
+    }
+
+    private void closeActiveMenu() {
+        if (activeMenu != null) {
+            activeMenu.hide();
+            activeMenu = null;
+        }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Actions projet                                                    */
+    /* ------------------------------------------------------------------ */
+
+    private void openKanban(Project project) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/kanban.fxml"));
+            Stage stage = (Stage) projectTable.getScene().getWindow();
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Kanban - " + project.getName());
+            KanbanController controller = loader.getController();
+            controller.setProject(project);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openEditProject(Project project) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editProject.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Modifier le projet");
+            stage.setScene(new Scene(loader.load()));
+
+            EditProjectController controller = loader.getController();
+            controller.setProject(project);
+
+            stage.showAndWait();
+            refreshProjects();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteProject(Project project) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Supprimer le projet \"" + project.getName() + "\" ?",
+                ButtonType.YES, ButtonType.NO);
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                projectService.deleteProject(project.getId());
+                refreshProjects();
+            }
+        });
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Refresh + navigation                                              */
+    /* ------------------------------------------------------------------ */
 
     private void refreshProjects() {
         projectTable.getItems().clear();
@@ -67,60 +201,6 @@ public class DashboardController {
             stage.setScene(new Scene(loader.load()));
             stage.showAndWait();
             refreshProjects();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void openEditProject() {
-        Project selected = projectTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editProject.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Modifier le projet");
-            stage.setScene(new Scene(loader.load()));
-
-            EditProjectController controller = loader.getController();
-            controller.setProject(selected);
-
-            stage.showAndWait();
-            refreshProjects();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void deleteProject() {
-        Project selected = projectTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Supprimer le projet \"" + selected.getName() + "\" ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                projectService.deleteProject(selected.getId());
-                refreshProjects();
-            }
-        });
-    }
-
-    @FXML
-    private void openKanban() {
-        Project selected = projectTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/kanban.fxml"));
-            Stage stage = (Stage) projectTable.getScene().getWindow();
-            stage.getScene().setRoot(loader.load());
-            stage.setTitle("Kanban - " + selected.getName());
-            KanbanController controller = loader.getController();
-            controller.setProject(selected);
         } catch (Exception e) {
             e.printStackTrace();
         }

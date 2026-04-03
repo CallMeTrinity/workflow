@@ -27,14 +27,12 @@
                 <TableColumn fx:id="startDateColumn"   text="Début"        prefWidth="100"/>
                 <TableColumn fx:id="endDateColumn"     text="Fin"          prefWidth="100"/>
                 <TableColumn fx:id="createdAtColumn"   text="Créé le"      prefWidth="100"/>
+                <TableColumn fx:id="actionsColumn"    text=""             prefWidth="50"  sortable="false"/>
             </columns>
         </TableView>
 
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Button text="Créer un projet"   onAction="#openCreateProject" styleClass="btn-primary"/>
-            <Button text="Ouvrir Kanban"     onAction="#openKanban"        styleClass="btn-secondary"/>
-            <Button text="Modifier"          onAction="#openEditProject"   styleClass="btn-secondary"/>
-            <Button text="Supprimer"         onAction="#deleteProject"     styleClass="btn-secondary"/>
             <Button text="Gérer les salles"  onAction="#openRooms"         styleClass="btn-secondary"/>
             <Button text="Réservations"      onAction="#openReservations"  styleClass="btn-secondary"/>
             <Button text="Planning"          onAction="#openPlanning"      styleClass="btn-secondary"/>
