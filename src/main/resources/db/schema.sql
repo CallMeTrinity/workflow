@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name      TEXT NOT NULL,
     mail       TEXT NOT NULL UNIQUE,
     password    TEXT NOT NULL,
-    role        TEXT NOT NULL CHECK(role IN ('ADMIN', 'PROJECT_LEADER', 'MEMBER'))
+    role        TEXT NOT NULL CHECK(role IN ('ADMIN', 'PROJECT_LEADER', 'MEMBER')),
+    username TEXT
 );
 
 CREATE TABLE IF NOT EXISTS project (
@@ -84,13 +85,14 @@ CREATE TABLE IF NOT EXISTS participants_reservation (
 
 -- @TODO : Table for notifications.
 
-INSERT INTO users (last_name, first_name, mail, password, role) VALUES
+INSERT INTO users (last_name, first_name, mail, password, role, username) VALUES
 (
  'Administrateur',
  'Admin',
  'admin@project.com',
  '$2a$12$n1CPDG.hPhT2Co40sU72c.9anLxYE1lJRF6BGGhzEhW1ftbBuCEzC', -- password: admin123
- 'ADMIN'
+ 'ADMIN',
+ 'x'
 );
 
 
