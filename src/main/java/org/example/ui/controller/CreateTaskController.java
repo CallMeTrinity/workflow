@@ -8,13 +8,14 @@ import org.example.model.enums.Priority;
 import org.example.model.enums.Status;
 import org.example.service.TaskService;
 import org.example.model.Task;
-import org.example.repository.TaskRepository;
+
+import java.time.LocalDate;
 
 public class CreateTaskController {
 
     @FXML private TextField titleField;
     @FXML private TextField descriptionField;
-    @FXML private TextField deadlineField;
+    @FXML private DatePicker deadlinePicker;
     @FXML private ComboBox<Priority> priorityBox;
     @FXML private Label errorLabel;
 
@@ -37,7 +38,9 @@ public class CreateTaskController {
 
         titleField.setText(task.getTitle());
         descriptionField.setText(task.getDescription());
-        deadlineField.setText(task.getDeadline());
+        if (task.getDeadline() != null && !task.getDeadline().isEmpty()) {
+            deadlinePicker.setValue(LocalDate.parse(task.getDeadline()));
+        }
         priorityBox.setValue(task.getPriority());
     }
 
@@ -50,6 +53,8 @@ public class CreateTaskController {
             return;
         }
 
+        String deadline = deadlinePicker.getValue() != null ? deadlinePicker.getValue().toString() : null;
+
         try {
             if (taskToEdit == null) {
                 // CREATE
@@ -58,7 +63,7 @@ public class CreateTaskController {
                         descriptionField.getText(),
                         Status.TODO,
                         priorityBox.getValue(),
-                        deadlineField.getText().isEmpty() ? null : deadlineField.getText(),
+                        deadline,
                         null,
                         null,
                         project.getId(),
@@ -68,10 +73,10 @@ public class CreateTaskController {
                 // UPDATE
                 taskToEdit.setTitle(title);
                 taskToEdit.setDescription(descriptionField.getText());
-                taskToEdit.setDeadline(deadlineField.getText());
+                taskToEdit.setDeadline(deadline);
                 taskToEdit.setPriority(priorityBox.getValue());
 
-                taskService.updateTask(taskToEdit); //
+                taskService.updateTask(taskToEdit);
             }
 
             ((Stage) titleField.getScene().getWindow()).close();
