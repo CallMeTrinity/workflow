@@ -7,30 +7,36 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.shape.Circle?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.ui.controller.ProfileController">
 
-<!-- LEFT -->
-<VBox spacing="15" alignment="CENTER" prefWidth="250">
+    <!-- LEFT -->
+    <left>
+        <VBox spacing="15" alignment="CENTER" prefWidth="250">
 
-    <StackPane>
-        <Circle fx:id="avatarCircle" radius="40"/>
-        <Label fx:id="avatarLabel" style="-fx-text-fill: white; -fx-font-size: 24px;"/>
-    </StackPane>
+            <Label text="Profil" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <StackPane>
+                <Circle fx:id="avatarCircle" radius="40"/>
+                <Label fx:id="avatarLabel" style="-fx-text-fill: white; -fx-font-size: 24px;"/>
+            </StackPane>
 
-    <TextField fx:id="pseudoField" promptText="Pseudo"/>
+            <TextField fx:id="pseudoField" promptText="Pseudo"/>
 
-    <TextField fx:id="emailField" editable="false" style="-fx-opacity: 0.6;"/>
-    <TextField fx:id="roleField" editable="false" style="-fx-opacity: 0.6;"/>
+            <TextField fx:id="emailField" editable="false" style="-fx-opacity: 0.6;"/>
+            <TextField fx:id="roleField" editable="false" style="-fx-opacity: 0.6;"/>
 
-</VBox>
+        </VBox>
+    </left>
 
-<!-- RIGHT -->
-<VBox spacing="10">
+    <!-- RIGHT -->
+    <center>
+        <VBox spacing="10">
 
-    <Label text="Notifications" style="-fx-font-size: 18px;"/>
+            <Label text="Notifications" style="-fx-font-size: 18px;"/>
 
-    <ListView fx:id="notificationList"/>
+            <ListView fx:id="notificationList"/>
 
-</VBox>
+        </VBox>
+    </center>
 
 </BorderPane>
