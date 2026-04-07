@@ -363,6 +363,7 @@ public class KanbanController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
             stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
                 if (!focused) stage.close();
             });
@@ -395,6 +396,7 @@ public class KanbanController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
             stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
                 if (!focused) stage.close();
             });
@@ -419,6 +421,7 @@ public class KanbanController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/userStory.fxml"));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
             stage.setTitle("User Stories - " + project.getName());
 
             UserStoryController controller = loader.getController();
@@ -437,7 +440,8 @@ public class KanbanController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/members.fxml"));
             Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load(), 700, 500));
+            stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
             stage.setTitle("Membres - " + project.getName());
 
             MembersController controller = loader.getController();

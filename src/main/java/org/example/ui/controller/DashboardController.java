@@ -14,18 +14,22 @@ import org.example.config.SessionManager;
 import org.example.model.Project;
 import org.example.model.User;
 import org.example.model.enums.Role;
+import org.example.repository.UserRepository;
 import org.example.service.AuthService;
 import org.example.service.NotificationService;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DashboardController {
 
     @FXML private TableView<Project> projectTable;
     @FXML private TableColumn<Project, String> nameColumn;
     @FXML private TableColumn<Project, String> descriptionColumn;
+    @FXML private TableColumn<Project, String> leaderColumn;
     @FXML private TableColumn<Project, String> startDateColumn;
     @FXML private TableColumn<Project, String> endDateColumn;
     @FXML private TableColumn<Project, String> createdAtColumn;
@@ -35,7 +39,9 @@ public class DashboardController {
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
+    private final UserRepository userRepository = new UserRepository();
     private List<Project> projects;
+    private Map<Long, String> userNames;
     private final UserService userService = new UserService();
     private final NotificationService notificationService = new NotificationService();
 
@@ -48,10 +54,15 @@ public class DashboardController {
             welcomeLabel.setText("Bonjour, " + SessionManager.getCurrentUser().getFullName());
         }
 
+        userNames = userRepository.findAll().stream()
+                .collect(Collectors.toMap(User::getId, User::getFullName));
+
         nameColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getName()));
         descriptionColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getDescription()));
+        leaderColumn.setCellValueFactory(data ->
+                new SimpleStringProperty(userNames.getOrDefault(data.getValue().getProjectLeaderId(), "—")));
         startDateColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getStartDate()));
         endDateColumn.setCellValueFactory(data ->
@@ -187,6 +198,7 @@ public class DashboardController {
             Stage stage = new Stage();
             stage.setTitle("Modifier le projet");
             stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
 
             EditProjectController controller = loader.getController();
             controller.setProject(project);
@@ -220,6 +232,8 @@ public class DashboardController {
     /* ------------------------------------------------------------------ */
 
     private void refreshProjects() {
+        userNames = userRepository.findAll().stream()
+                .collect(Collectors.toMap(User::getId, User::getFullName));
         projectTable.getItems().clear();
         projectTable.getItems().addAll(projectService.getAllProjects());
     }
@@ -236,6 +250,7 @@ public class DashboardController {
             Stage stage = new Stage();
             stage.setTitle("Créer un projet");
             stage.setScene(new Scene(loader.load()));
+            stage.sizeToScene();
             stage.showAndWait();
             refreshProjects();
         } catch (Exception e) {

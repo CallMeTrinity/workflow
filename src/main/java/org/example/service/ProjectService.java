@@ -30,6 +30,10 @@ public class ProjectService {
      * Creates a new project. Only admins and project leaders can create projects.
      */
     public Project createProject(String name, String description, String startDate, String endDate) {
+        return createProject(name, description, startDate, endDate, SessionManager.getCurrentUser().getId());
+    }
+
+    public Project createProject(String name, String description, String startDate, String endDate, Long leaderId) {
         if (!isAdminOrProjectLeader()) {
             throw new AutorisationException("Only admins or project leaders can create projects");
         }
@@ -37,10 +41,11 @@ public class ProjectService {
             throw new InvalidDateInputException("Invalid date format. Expected format: YYYY-MM-DD");
         }
 
-        User currentUser = SessionManager.getCurrentUser();
-        Project project = new Project(null, name, description, startDate, endDate, currentUser.getId());
+        Project project = new Project(null, name, description, startDate, endDate, leaderId);
         Long generatedId = projectRepository.save(project);
         project.setId(generatedId);
+        // Le chef de projet est automatiquement membre du projet
+        projectRepository.addMember(generatedId, leaderId);
         return project;
     }
 
@@ -69,6 +74,11 @@ public class ProjectService {
             throw new AutorisationException("Only admins or the project leader can update this project");
         }
         projectRepository.update(project);
+        // S'assurer que le chef (potentiellement nouveau) est membre
+        List<Long> memberIds = projectRepository.findMemberIds(project.getId());
+        if (!memberIds.contains(project.getProjectLeaderId())) {
+            projectRepository.addMember(project.getId(), project.getProjectLeaderId());
+        }
     }
 
     /**

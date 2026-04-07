@@ -10,21 +10,34 @@
         <URL value="@../css/app.css"/>
     </stylesheets>
 
-    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+    <VBox styleClass="dialog-card" spacing="10" alignment="TOP_CENTER"
           StackPane.alignment="CENTER">
 
         <Label text="Créer un projet" styleClass="page-title"/>
 
+        <Label text="Nom *" styleClass="form-label"/>
         <TextField fx:id="nameField" styleClass="form-input"
                    promptText="Nom du projet" maxWidth="Infinity"/>
+
+        <Label text="Description" styleClass="form-label"/>
         <TextField fx:id="descriptionField" styleClass="form-input"
                    promptText="Description" maxWidth="Infinity"/>
+
+        <Label text="Date de début *" styleClass="form-label"/>
         <DatePicker fx:id="startDatePicker" styleClass="form-input"
                     promptText="Date début" maxWidth="Infinity"/>
+
+        <Label text="Date de fin *" styleClass="form-label"/>
         <DatePicker fx:id="endDatePicker" styleClass="form-input"
                     promptText="Date fin" maxWidth="Infinity"/>
 
-        <Button text="Valider" onAction="#handleCreate"
+        <Label text="Chef de projet" styleClass="form-label"/>
+        <ComboBox fx:id="leaderBox" styleClass="form-input"
+                  promptText="Chef de projet" maxWidth="Infinity"/>
+
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+
+        <Button text="Créer" onAction="#handleCreate"
                 styleClass="btn-primary" maxWidth="Infinity"/>
     </VBox>
 

@@ -1,14 +1,17 @@
 package org.example.ui.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.example.model.Project;
+import org.example.model.User;
+import org.example.model.enums.Role;
+import org.example.repository.UserRepository;
 import org.example.service.ProjectService;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class EditProjectController {
 
@@ -16,10 +19,26 @@ public class EditProjectController {
     @FXML private TextField descriptionField;
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
+    @FXML private ComboBox<User> leaderBox;
     @FXML private Label errorLabel;
 
     private final ProjectService projectService = new ProjectService();
+    private final UserRepository userRepository = new UserRepository();
     private Project project;
+
+    @FXML
+    public void initialize() {
+        List<User> users = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.ADMIN || u.getRole() == Role.PROJECT_LEADER)
+                .toList();
+        leaderBox.getItems().setAll(users);
+        leaderBox.setConverter(new StringConverter<>() {
+            @Override public String toString(User u) {
+                return u == null ? "" : u.getFirstName() + " " + u.getLastName();
+            }
+            @Override public User fromString(String s) { return null; }
+        });
+    }
 
     public void setProject(Project project) {
         this.project = project;
@@ -31,6 +50,12 @@ public class EditProjectController {
         if (project.getEndDate() != null && !project.getEndDate().isEmpty()) {
             endDatePicker.setValue(LocalDate.parse(project.getEndDate()));
         }
+
+        // Pré-sélectionner le chef actuel
+        leaderBox.getItems().stream()
+                .filter(u -> u.getId().equals(project.getProjectLeaderId()))
+                .findFirst()
+                .ifPresent(leaderBox::setValue);
     }
 
     @FXML
@@ -40,12 +65,17 @@ public class EditProjectController {
             errorLabel.setText("Le nom est obligatoire");
             return;
         }
+        if (leaderBox.getValue() == null) {
+            errorLabel.setText("Le chef de projet est obligatoire");
+            return;
+        }
 
         try {
             project.setName(name);
             project.setDescription(descriptionField.getText());
             project.setStartDate(startDatePicker.getValue() != null ? startDatePicker.getValue().toString() : null);
             project.setEndDate(endDatePicker.getValue() != null ? endDatePicker.getValue().toString() : null);
+            project.setProjectLeaderId(leaderBox.getValue().getId());
             projectService.updateProject(project);
             ((Stage) nameField.getScene().getWindow()).close();
         } catch (Exception e) {
