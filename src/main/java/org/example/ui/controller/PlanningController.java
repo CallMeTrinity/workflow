@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -279,6 +280,26 @@ public class PlanningController {
         long roomId = chosen[2];
         Long organizerId = SessionManager.getCurrentUser().getId();
 
+        List<User> selectedUsers = participantList.getSelectionModel().getSelectedItems();
+        List<Long> participantIds = selectedUsers.stream().map(User::getId).toList();
+        List<Long> conflictingIds = reservationService.findConflictingUserIds(
+                participantIds, date.toString(), startTime, endTime);
+        if (!conflictingIds.isEmpty()) {
+            String names = conflictingIds.stream()
+                    .map(id -> selectedUsers.stream()
+                            .filter(u -> u.getId().equals(id))
+                            .findFirst()
+                            .map(User::getFullName)
+                            .orElse("?"))
+                    .collect(Collectors.joining(", "));
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Ces participants ont déjà une réunion sur ce créneau :\n" + names
+                            + "\n\nContinuer quand même ?",
+                    ButtonType.YES, ButtonType.NO);
+            Optional<ButtonType> response = confirm.showAndWait();
+            if (response.isEmpty() || response.get() != ButtonType.YES) return;
+        }
+
         try {
             var reservation = reservationService.createReservation(
                     title,
@@ -291,7 +312,6 @@ public class PlanningController {
                     organizerId
             );
 
-            List<User> selectedUsers = participantList.getSelectionModel().getSelectedItems();
             for (User user : selectedUsers) {
                 reservationService.addParticipant(reservation.getId(), user.getId());
             }

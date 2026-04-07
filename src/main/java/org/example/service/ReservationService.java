@@ -12,6 +12,7 @@ import org.example.repository.ReservationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service for managing reservations.
@@ -197,6 +198,42 @@ public class ReservationService {
         }
 
         return results;
+    }
+
+    public List<Reservation> getReservationsForUser(Long userId, String dateFrom, String dateTo) {
+        return reservationRepository.findForUserInRange(userId, dateFrom, dateTo);
+    }
+
+    public Map<Long, String> getMyStatusForReservations(Long userId, String dateFrom, String dateTo) {
+        return reservationRepository.findParticipantStatusesForUser(userId, dateFrom, dateTo);
+    }
+
+    public void declineReservation(Long reservationId) {
+        Long userId = SessionManager.getCurrentUser().getId();
+        reservationRepository.updateParticipantStatus(reservationId, userId, "declined");
+    }
+
+    public void acceptReservation(Long reservationId) {
+        Long userId = SessionManager.getCurrentUser().getId();
+        reservationRepository.updateParticipantStatus(reservationId, userId, "accepted");
+    }
+
+    /**
+     * Returns IDs of participants who already have a reservation overlapping the given time slot.
+     */
+    public List<Long> findConflictingUserIds(List<Long> participantIds, String date,
+                                              String startTime, String endTime) {
+        List<Long> conflicting = new ArrayList<>();
+        for (Long userId : participantIds) {
+            List<Reservation> existing = reservationRepository.findForUserInRange(userId, date, date);
+            for (Reservation r : existing) {
+                if (timesOverlap(r.getStartTime(), r.getEndTime(), startTime, endTime)) {
+                    conflicting.add(userId);
+                    break;
+                }
+            }
+        }
+        return conflicting;
     }
 
     public void addParticipant(Long reservationId, Long userId) {

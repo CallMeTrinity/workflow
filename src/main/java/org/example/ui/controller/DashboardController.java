@@ -326,6 +326,18 @@ public class DashboardController {
 
 
     @FXML
+    private void openCalendar() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/calendarView.fxml"));
+            Stage stage = (Stage) projectTable.getScene().getWindow();
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Workflow - Agenda");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void openProfile() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/profile.fxml"));

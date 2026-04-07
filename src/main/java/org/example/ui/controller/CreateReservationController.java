@@ -4,10 +4,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.config.SessionManager;
+import org.example.model.Reservation;
 import org.example.model.Room;
 import org.example.service.ReservationService;
 import org.example.service.RoomService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ public class CreateReservationController {
 
     private final ReservationService reservationService = new ReservationService();
     private final RoomService roomService = new RoomService();
+
+    private Reservation reservationToEdit = null;
 
     @FXML
     public void initialize() {
@@ -76,6 +80,29 @@ public class CreateReservationController {
         String[] parts = time.split(":");
         return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
     }
+    /** Pre-fills date and time for a new reservation (e.g. from calendar slot click). */
+    public void prefill(LocalDate date, String startTime, String endTime) {
+        datePicker.setValue(date);
+        startTimeBox.setValue(startTime);
+        // The startTimeBox action listener rebuilds endTimeBox items; set value after
+        int startMins = toMinutes(startTime);
+        List<String> allSlots = generateTimeSlots();
+        endTimeBox.getItems().setAll(allSlots.stream().filter(s -> toMinutes(s) > startMins).toList());
+        endTimeBox.setValue(endTime);
+    }
+
+    /** Populates all fields for editing an existing reservation. */
+    public void setReservation(Reservation r) {
+        this.reservationToEdit = r;
+        titleField.setText(r.getTitle());
+        if (r.getDescription() != null) descriptionField.setText(r.getDescription());
+        prefill(LocalDate.parse(r.getDate()), r.getStartTime(), r.getEndTime());
+        roomBox.getItems().stream()
+                .filter(room -> room != null && room.getId().equals(r.getRoomId()))
+                .findFirst()
+                .ifPresent(roomBox::setValue);
+    }
+
     @FXML
     private void handleCreate() {
         String title = titleField.getText().trim();
@@ -95,17 +122,27 @@ public class CreateReservationController {
         }
 
         try {
-            Long organizerId = SessionManager.getCurrentUser().getId();
-            reservationService.createReservation(
-                    title,
-                    descriptionField.getText(),
-                    date,
-                    startTime,
-                    endTime,
-                    selectedRoom.getId(),
-                    null,
-                    organizerId
-            );
+            if (reservationToEdit != null) {
+                reservationToEdit.setTitle(title);
+                reservationToEdit.setDescription(descriptionField.getText());
+                reservationToEdit.setDate(date);
+                reservationToEdit.setStartTime(startTime);
+                reservationToEdit.setEndTime(endTime);
+                reservationToEdit.setRoomId(selectedRoom.getId());
+                reservationService.updateReservation(reservationToEdit);
+            } else {
+                Long organizerId = SessionManager.getCurrentUser().getId();
+                reservationService.createReservation(
+                        title,
+                        descriptionField.getText(),
+                        date,
+                        startTime,
+                        endTime,
+                        selectedRoom.getId(),
+                        null,
+                        organizerId
+                );
+            }
             ((Stage) titleField.getScene().getWindow()).close();
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());

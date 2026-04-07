@@ -70,5 +70,12 @@ public class DatabaseConfig {
         } catch (SQLException ignored) {
             // Colonne déjà présente — migration déjà appliquée
         }
+
+        // Migration : ajouter status à participants_reservation
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE participants_reservation ADD COLUMN status TEXT DEFAULT 'pending'");
+        } catch (SQLException ignored) {
+            // Colonne déjà présente — migration déjà appliquée
+        }
     }
 }
