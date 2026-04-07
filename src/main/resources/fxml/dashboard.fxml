@@ -16,6 +16,16 @@
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="welcomeLabel" styleClass="muted-label"/>
         <Button text="Se déconnecter" onAction="#handleLogout" styleClass="btn-back"/>
+        <StackPane onMouseClicked="#openProfile">
+
+            <Circle fx:id="avatarCircle" radius="15"/>
+            <Label fx:id="avatarHeader" style="-fx-text-fill: white;"/>
+
+            <Label fx:id="notifBadge"
+                   style="-fx-background-color: red; -fx-text-fill: white;"
+                   StackPane.alignment="TOP_RIGHT"/>
+
+        </StackPane>
     </HBox>
 
     <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
@@ -39,16 +49,5 @@
             <Button text="Planning"           onAction="#openPlanning"      styleClass="btn-secondary"/>
         </HBox>
     </VBox>
-
-    <StackPane onMouseClicked="#openProfile">
-
-        <Circle radius="15"/>
-        <Label fx:id="avatarHeader"/>
-
-        <Label fx:id="notifBadge"
-               style="-fx-background-color: red; -fx-text-fill: white;"
-               StackPane.alignment="TOP_RIGHT"/>
-
-    </StackPane>
 
 </VBox>
