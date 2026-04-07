@@ -306,7 +306,7 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/planning.fxml"));
             Stage stage = (Stage) projectTable.getScene().getWindow();
             stage.getScene().setRoot(loader.load());
-            stage.setTitle("Workflow - Planning");
+            stage.setTitle("Workflow - Réunions");
         } catch (Exception e) {
             e.printStackTrace();
         }
