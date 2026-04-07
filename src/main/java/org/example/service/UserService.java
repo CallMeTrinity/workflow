@@ -17,6 +17,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public void updateUsername(Long userId, String username) {
+        userRepository.updateUsername(userId, username);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
