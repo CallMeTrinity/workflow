@@ -9,6 +9,7 @@ import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Project;
@@ -19,7 +20,6 @@ import org.example.service.AuthService;
 import org.example.service.NotificationService;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
-import javafx.scene.shape.Circle;
 import org.example.ui.util.AvatarUtil;
 
 import java.util.List;
@@ -38,6 +38,8 @@ public class DashboardController {
     @FXML private TableColumn<Project, Void> actionsColumn;
     @FXML private Label welcomeLabel;
     @FXML private Button createProjectBtn;
+    @FXML private Label avatarHeader;
+    @FXML private Circle avatarCircle;
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
@@ -47,7 +49,6 @@ public class DashboardController {
     private final UserService userService = new UserService();
     private final NotificationService notificationService = new NotificationService();
 
-    /** Le menu actuellement affiché — permet de n'en avoir qu'un seul ouvert. */
     private ContextMenu activeMenu;
 
     private Stage createProjectStage;
@@ -351,9 +352,6 @@ public class DashboardController {
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
-
-            stage.setOnHidden(e -> refreshAvatar());
-
             stage.show();
 
         } catch (Exception e) {
@@ -361,29 +359,15 @@ public class DashboardController {
         }
     }
 
-    @FXML private Label avatarHeader;
-    @FXML private Label notifBadge;
-    @FXML private Circle avatarCircle;
-
-    public void updateHeader() {
-        avatarHeader.setText(SessionManager.getCurrentUser().getUsername().substring(0,1).toUpperCase());
-
-        int count = notificationService.countUnread(SessionManager.getCurrentUser().getId());
-
-        notifBadge.setText(String.valueOf(count));
-        notifBadge.setVisible(count > 0);
-    }
 
     public void refreshAvatar() {
         String pseudo = SessionManager.getCurrentUser().getUsername();
 
         if (pseudo != null && !pseudo.isEmpty()) {
             avatarHeader.setText(pseudo.substring(0,1).toUpperCase());
-
             avatarCircle.setStyle("-fx-fill: " + AvatarUtil.generateColor(pseudo));
         } else {
             avatarHeader.setText("?");
         }
     }
-
 }
