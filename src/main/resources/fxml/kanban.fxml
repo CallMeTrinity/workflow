@@ -14,8 +14,13 @@
         </ImageView>
         <Button text="← Retour"  onAction="#goBackToDashboard" styleClass="btn-back"/>
         <Button text="+ Tâche"   onAction="#handleAddTask"     styleClass="btn-primary"/>
+        <Button text="User Stories" onAction="#handleOpenUserStories" styleClass="btn-back"/>
         <Region HBox.hgrow="ALWAYS"/>
         <HBox spacing="15" alignment="CENTER_RIGHT">
+            <VBox spacing="2">
+                <Label text="User Story" styleClass="muted-label"/>
+                <ComboBox fx:id="filterUserStoryBox" styleClass="form-input" prefWidth="160"/>
+            </VBox>
             <VBox spacing="2">
                 <Label text="Filtrer" styleClass="muted-label"/>
                 <ComboBox fx:id="filterPriorityBox" styleClass="form-input" prefWidth="140"/>

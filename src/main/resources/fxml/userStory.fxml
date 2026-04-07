@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import java.net.URL?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.UserStoryController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <VBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER">
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="User Stories" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="addButton" text="+ Ajouter une User Story"
+                    onAction="#handleAdd" styleClass="btn-primary"/>
+        </HBox>
+
+        <TableView fx:id="userStoryTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="titleColumn" text="Titre" prefWidth="300">
+                    <cellValueFactory><PropertyValueFactory property="title"/></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="priorityColumn" text="Priorité" prefWidth="120">
+                    <cellValueFactory><PropertyValueFactory property="priority"/></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100"/>
+            </columns>
+        </TableView>
+
+    </VBox>
+
+</StackPane>

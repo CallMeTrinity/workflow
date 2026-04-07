@@ -5,7 +5,7 @@
 <?import java.net.URL?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.ui.controller.CreateTaskController">
+           fx:controller="org.example.ui.controller.CreateUserStoryController">
     <stylesheets>
         <URL value="@../css/app.css"/>
     </stylesheets>
@@ -13,24 +13,19 @@
     <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
           StackPane.alignment="CENTER">
 
-        <Label text="Créer une tâche" styleClass="page-title"/>
+        <Label fx:id="formTitle" text="Créer une User Story" styleClass="page-title"/>
 
         <TextField fx:id="titleField" styleClass="form-input"
                    promptText="Titre" maxWidth="Infinity"/>
-        <TextField fx:id="descriptionField" styleClass="form-input"
-                   promptText="Description" maxWidth="Infinity"/>
-        <DatePicker fx:id="deadlinePicker" styleClass="form-input"
-                    promptText="Deadline" maxWidth="Infinity"/>
+        <TextArea fx:id="descriptionField" styleClass="form-input"
+                  promptText="Description" maxWidth="Infinity" prefRowCount="4"/>
 
         <ComboBox fx:id="priorityBox" styleClass="form-input"
                   promptText="Priorité" maxWidth="Infinity"/>
 
-        <ComboBox fx:id="userStoryBox" styleClass="form-input"
-                  promptText="User Story" maxWidth="Infinity"/>
-
         <Label fx:id="errorLabel" styleClass="error-label"/>
 
-        <Button text="Créer" onAction="#handleCreate"
+        <Button fx:id="submitButton" text="Créer" onAction="#handleCreate"
                 styleClass="btn-primary" maxWidth="Infinity"/>
     </VBox>
 
