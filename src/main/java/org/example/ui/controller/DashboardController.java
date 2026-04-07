@@ -19,6 +19,8 @@ import org.example.service.AuthService;
 import org.example.service.NotificationService;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
+import javafx.scene.shape.Circle;
+import org.example.ui.util.AvatarUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -79,6 +81,7 @@ public class DashboardController {
         updateButtonVisibility();
 
         refreshProjects();
+        refreshAvatar();
     }
 
     private void updateButtonVisibility(){
@@ -348,6 +351,9 @@ public class DashboardController {
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
+
+            stage.setOnHidden(e -> refreshAvatar());
+
             stage.show();
 
         } catch (Exception e) {
@@ -357,6 +363,7 @@ public class DashboardController {
 
     @FXML private Label avatarHeader;
     @FXML private Label notifBadge;
+    @FXML private Circle avatarCircle;
 
     public void updateHeader() {
         avatarHeader.setText(SessionManager.getCurrentUser().getUsername().substring(0,1).toUpperCase());
@@ -366,4 +373,17 @@ public class DashboardController {
         notifBadge.setText(String.valueOf(count));
         notifBadge.setVisible(count > 0);
     }
+
+    public void refreshAvatar() {
+        String pseudo = SessionManager.getCurrentUser().getUsername();
+
+        if (pseudo != null && !pseudo.isEmpty()) {
+            avatarHeader.setText(pseudo.substring(0,1).toUpperCase());
+
+            avatarCircle.setStyle("-fx-fill: " + AvatarUtil.generateColor(pseudo));
+        } else {
+            avatarHeader.setText("?");
+        }
+    }
+
 }

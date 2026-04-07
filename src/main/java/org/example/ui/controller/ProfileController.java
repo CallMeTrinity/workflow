@@ -2,12 +2,15 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.example.model.User;
 import org.example.model.Notification;
 import org.example.service.UserService;
 import org.example.service.NotificationService;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.example.ui.util.AvatarUtil;
+
 import java.util.List;
 
 public class ProfileController {
@@ -38,11 +41,17 @@ public class ProfileController {
         updateAvatar(user.getUsername());
         loadNotifications();
 
-        pseudoField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) return;
+        pseudoField.setOnAction(e -> {
+            String newPseudo = pseudoField.getText().trim();
 
-            userService.updateProfile(user.getId(), newVal);
-            updateAvatar(newVal);
+            if (newPseudo.isEmpty()) return;
+
+            userService.updateUsername(currentUser.getId(), newPseudo);
+            currentUser.setUsername(newPseudo);
+            updateAvatar(newPseudo);
+
+            Stage stage = (Stage) pseudoField.getScene().getWindow();
+            stage.close();
         });
     }
 
@@ -55,12 +64,7 @@ public class ProfileController {
         pseudo = pseudo.trim();
 
         avatarLabel.setText(pseudo.substring(0, 1).toUpperCase());
-        avatarCircle.setStyle("-fx-fill: " + generateColor(pseudo));
-    }
-
-    private String generateColor(String pseudo) {
-        String[] colors = {"#6C63FF", "#FF6B6B", "#4ECDC4", "#FFA94D"};
-        return colors[Math.abs(pseudo.hashCode()) % colors.length];
+        avatarCircle.setStyle("-fx-fill: " + AvatarUtil.generateColor(pseudo));
     }
 
     private void loadNotifications() {
