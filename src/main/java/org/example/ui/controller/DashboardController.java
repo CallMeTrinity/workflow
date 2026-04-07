@@ -48,6 +48,9 @@ public class DashboardController {
     /** Le menu actuellement affiché — permet de n'en avoir qu'un seul ouvert. */
     private ContextMenu activeMenu;
 
+    private Stage createProjectStage;
+    private Stage editProjectStage;
+
     @FXML
     public void initialize() {
         if (SessionManager.getCurrentUser() != null) {
@@ -193,18 +196,19 @@ public class DashboardController {
     }
 
     private void openEditProject(Project project) {
+        if (editProjectStage != null && editProjectStage.isShowing()) editProjectStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editProject.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Modifier le projet");
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
+            editProjectStage = new Stage();
+            editProjectStage.setTitle("Modifier le projet");
+            editProjectStage.setScene(new Scene(loader.load()));
+            editProjectStage.sizeToScene();
+            editProjectStage.setOnHidden(e -> refreshProjects());
 
             EditProjectController controller = loader.getController();
             controller.setProject(project);
 
-            stage.showAndWait();
-            refreshProjects();
+            editProjectStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -245,14 +249,15 @@ public class DashboardController {
             alert.showAndWait();
             return;
         }
+        if (createProjectStage != null && createProjectStage.isShowing()) createProjectStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createProject.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Créer un projet");
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.showAndWait();
-            refreshProjects();
+            createProjectStage = new Stage();
+            createProjectStage.setTitle("Créer un projet");
+            createProjectStage.setScene(new Scene(loader.load()));
+            createProjectStage.sizeToScene();
+            createProjectStage.setOnHidden(e -> refreshProjects());
+            createProjectStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

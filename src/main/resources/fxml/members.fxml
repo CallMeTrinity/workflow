@@ -19,10 +19,10 @@
 
             <TableView fx:id="membersTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="nameColumn"   text="Nom"    prefWidth="180"/>
-                    <TableColumn fx:id="mailColumn"   text="Email"  prefWidth="200"/>
-                    <TableColumn fx:id="roleColumn"   text="Rôle"   prefWidth="110"/>
-                    <TableColumn fx:id="actionColumn" text=""       prefWidth="80" sortable="false"/>
+                    <TableColumn fx:id="nameColumn"   text="Nom"   prefWidth="160"/>
+                    <TableColumn fx:id="mailColumn"   text="Email" prefWidth="220"/>
+                    <TableColumn fx:id="roleColumn"   text="Rôle"  prefWidth="130" sortable="false"/>
+                    <TableColumn fx:id="actionColumn" text=""      prefWidth="80"  sortable="false"/>
                 </columns>
             </TableView>
         </VBox>

@@ -29,7 +29,7 @@
                 <TableColumn fx:id="priorityColumn" text="Priorité" prefWidth="120">
                     <cellValueFactory><PropertyValueFactory property="priority"/></cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="100" sortable="false"/>
             </columns>
         </TableView>
 
