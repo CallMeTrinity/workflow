@@ -8,7 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationRepository {
     public Long save(Reservation reservation) {
@@ -122,6 +124,31 @@ public class ReservationRepository {
     }
 
     /**
+     * Returns all reservations where the user is organizer or participant, within a date range.
+     */
+    public List<Reservation> findForUserInRange(Long userId, String dateFrom, String dateTo) {
+        String sql = """
+                SELECT DISTINCT r.* FROM reservation r
+                LEFT JOIN participants_reservation pr ON r.id = pr.reservation_id
+                WHERE (r.organizer_id = ? OR pr.user_id = ?)
+                  AND r.date >= ? AND r.date <= ?
+                ORDER BY r.date, r.start_time
+                """;
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            stmt.setLong(2, userId);
+            stmt.setString(3, dateFrom);
+            stmt.setString(4, dateTo);
+            ResultSet rs = stmt.executeQuery();
+            List<Reservation> result = new ArrayList<>();
+            while (rs.next()) result.add(mapResultSetToReservation(rs));
+            return result;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding reservations for user in range: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Returns all reservations for a given organizer.
      */
     public List<Reservation> findByOrganizer(Long organizerId) {
@@ -179,6 +206,46 @@ public class ReservationRepository {
             throw new RuntimeException("Error finding participants: " + e.getMessage(), e);
         }
         return ids;
+    }
+
+    /**
+     * Updates the participation status for a user on a reservation.
+     */
+    public void updateParticipantStatus(Long reservationId, Long userId, String status) {
+        String sql = "UPDATE participants_reservation SET status = ? WHERE reservation_id = ? AND user_id = ?";
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setLong(2, reservationId);
+            stmt.setLong(3, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating participant status: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Returns a map of reservationId -> status for all reservations where the user is a participant,
+     * within a date range.
+     */
+    public Map<Long, String> findParticipantStatusesForUser(Long userId, String dateFrom, String dateTo) {
+        String sql = """
+                SELECT pr.reservation_id, pr.status FROM participants_reservation pr
+                JOIN reservation r ON r.id = pr.reservation_id
+                WHERE pr.user_id = ? AND r.date >= ? AND r.date <= ?
+                """;
+        Map<Long, String> result = new HashMap<>();
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            stmt.setString(2, dateFrom);
+            stmt.setString(3, dateTo);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.put(rs.getLong("reservation_id"), rs.getString("status"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding participant statuses: " + e.getMessage(), e);
+        }
+        return result;
     }
 
     /**

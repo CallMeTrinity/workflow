@@ -373,6 +373,95 @@
 .table-view:focused    { -fx-background-color: #ffffff; }
 
 /* ============================================================
+   CALENDAR (agenda view)
+   ============================================================ */
+
+.cal-corner,
+.cal-time-bg {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: transparent #dde1e8 #e2e8f0 transparent;
+    -fx-border-width: 0 1 1 0;
+}
+
+.cal-day-header {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: transparent transparent #dde1e8 #dde1e8;
+    -fx-border-width: 0 0 2 1;
+    -fx-padding: 8 4 8 4;
+}
+.cal-day-today {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: transparent transparent #2e7dd4 #dde1e8;
+}
+
+.cal-day-name {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748b;
+}
+.cal-day-date {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+.cal-day-date-today {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7dd4;
+}
+
+.cal-time-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+
+.cal-slot {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent #e2e8f0 #f0f2f5 #dde1e8;
+    -fx-border-width: 0 0 1 1;
+}
+.cal-slot-hour {
+    -fx-border-color: transparent #e2e8f0 #cbd5e1 #dde1e8;
+}
+
+.cal-event {
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 5;
+    -fx-border-color: #2e7dd4;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 4;
+    -fx-padding: 4 6 4 7;
+    -fx-cursor: hand;
+}
+.cal-event-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: #1e40af;
+    -fx-wrap-text: true;
+}
+.cal-event-detail {
+    -fx-font-size: 11px;
+    -fx-text-fill: #3730a3;
+    -fx-wrap-text: true;
+}
+.cal-event-pending {
+    -fx-background-color: #fef9c3;
+    -fx-border-color: #fde047;
+}
+.cal-event-declined {
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: #cbd5e1;
+    -fx-opacity: 0.65;
+}
+.cal-event-title-declined {
+    -fx-strikethrough: true;
+    -fx-text-fill: #94a3b8;
+}
+.cal-overlay {
+    -fx-background-color: transparent;
+}
+
+/* ============================================================
    SCROLLBARS
    ============================================================ */
 

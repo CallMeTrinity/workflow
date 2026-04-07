@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.CalendarController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <!-- Topbar -->
+    <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
+        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+            <image><Image url="@../images/workflow_logo.png"/></image>
+        </ImageView>
+        <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Mon agenda" styleClass="app-name"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Navigation semaine -->
+    <HBox styleClass="kanban-toolbar" spacing="10" alignment="CENTER_LEFT">
+        <Button text="‹" onAction="#prevWeek" styleClass="btn-back" prefWidth="32"/>
+        <Label fx:id="weekLabel" styleClass="section-title"/>
+        <Button text="›" onAction="#nextWeek" styleClass="btn-back" prefWidth="32"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Aujourd'hui" onAction="#goToToday" styleClass="btn-secondary"/>
+    </HBox>
+
+    <!-- Grille calendrier -->
+    <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS" fitToWidth="true"
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+        <GridPane fx:id="calendarGrid"/>
+    </ScrollPane>
+
+</VBox>
