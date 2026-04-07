@@ -64,17 +64,17 @@
 
 **Objectif : vue planning, recherche de créneaux, notifications**
 
-| Tâche                                                      | Qui | Durée |
-|------------------------------------------------------------|-----|-------|
-| ~~Modèle PlanningItem + PlanningService complet~~          | A   | 1h30  |
-| ~~Algorithme findCreneauxLibres~~                          | A   | 1h    |
-| ~~Tests JUnit PlanningService (algo créneaux)~~            | A   | 30min |
-| ~~planning.fxml + PlanningController (vue calendrier)~~    | B   | 1h30  |
-| Modèle Notification + NotificationRepository               | B   | 30min |
-| NotificationService + branchement dans les autres services | B   | 30min |
-| notification.fxml + NotificationController                 | B   | 30min |
-| Amélioration UX et UI                                      | A   | 2h    |
-| Améliorer réservation salle en fonction du nombre de gens  | A   | 2h    |
+| Tâche                                                         | Qui | Durée |
+|---------------------------------------------------------------|-----|-------|
+| ~~Modèle PlanningItem + PlanningService complet~~             | A   | 1h30  |
+| ~~Algorithme findCreneauxLibres~~                             | A   | 1h    |
+| ~~Tests JUnit PlanningService (algo créneaux)~~               | A   | 30min |
+| ~~planning.fxml + PlanningController (vue calendrier)~~       | B   | 1h30  |
+| Modèle Notification + NotificationRepository                  | B   | 30min |
+| NotificationService + branchement dans les autres services    | B   | 30min |
+| notification.fxml + NotificationController                    | B   | 30min |
+| ~~Amélioration UX et UI~~                                     | A   | 2h    |
+| ~~Améliorer réservation salle en fonction du nombre de gens~~ | A   | 2h    |
 
 **Fin de séance 4 :** planning consultable, créneaux libres trouvables, notifications in-app
 
@@ -88,7 +88,7 @@
 |------------------------------------------------|-----|-------|
 | AdminController (gestion users, salles)        | B   | 1h    |
 | Vérification des restrictions par rôle partout | A   | 45min |
-| UserStoryRepository + UserStoryService         | A   | 45min |
+| ~~UserStoryRepository + UserStoryService~~     | A   | 45min |
 | Amélioration UI (CSS, cohérence visuelle)      | B   | 1h30  |
 | Checkstyle — corriger les violations           | A+B | 30min |
 | Javadoc sur les services et repositories       | A+B | 30min |

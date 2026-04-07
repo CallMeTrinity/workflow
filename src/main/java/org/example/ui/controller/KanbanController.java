@@ -9,12 +9,16 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.example.model.Project;
 import org.example.model.Task;
+import org.example.model.UserStory;
 import org.example.model.enums.Status;
 import org.example.service.TaskService;
+import org.example.service.UserStoryService;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KanbanController {
 
@@ -28,13 +32,40 @@ public class KanbanController {
 
     @FXML private ComboBox<String> filterPriorityBox;
     @FXML private ComboBox<String> sortBox;
+    @FXML private ComboBox<String> filterUserStoryBox;
 
     private final TaskService taskService = new TaskService();
+    private final UserStoryService userStoryService = new UserStoryService();
     private Project project;
+    private List<UserStory> projectUserStories;
+    private Map<Long, String> userStoryNames = new HashMap<>();
 
     public void setProject(Project project) {
         this.project = project;
+        loadUserStories();
         loadTasks();
+    }
+
+    private void loadUserStories() {
+        projectUserStories = userStoryService.getUserStoriesByProject(project.getId());
+        userStoryNames.clear();
+        for (UserStory us : projectUserStories) {
+            userStoryNames.put(us.getId(), us.getTitle());
+        }
+
+        String previousSelection = filterUserStoryBox.getValue();
+        filterUserStoryBox.getItems().clear();
+        filterUserStoryBox.getItems().add("Toutes");
+        for (UserStory us : projectUserStories) {
+            filterUserStoryBox.getItems().add(us.getTitle());
+        }
+        filterUserStoryBox.getItems().add("Sans User Story");
+
+        if (previousSelection != null && filterUserStoryBox.getItems().contains(previousSelection)) {
+            filterUserStoryBox.setValue(previousSelection);
+        } else {
+            filterUserStoryBox.setValue("Toutes");
+        }
     }
 
     @FXML
@@ -48,10 +79,14 @@ public class KanbanController {
         setupDropTarget(inProgressList, Status.IN_PROGRESS);
         setupDropTarget(doneList, Status.DONE);
 
-        // FILTRE
+        // FILTRE PRIORITÉ
         filterPriorityBox.getItems().addAll("Toutes", "Faibles", "Moyennes", "Elevées", "Critiques");
         filterPriorityBox.setValue("Toutes");
         filterPriorityBox.setOnAction(e -> loadTasks());
+
+        // FILTRE USER STORY
+        filterUserStoryBox.setValue("Toutes");
+        filterUserStoryBox.setOnAction(e -> loadTasks());
 
         // TRI
         sortBox.getItems().addAll(
@@ -101,13 +136,29 @@ public class KanbanController {
 
                     HBox topRow = new HBox(title, spacer, priority);
 
-                    // DEADLINE
-                    Label deadline = new Label(
-                            task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
-                    );
-                    deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
+                    // USER STORY LABEL
+                    VBox card;
+                    if (task.getUserStoryId() != null && userStoryNames.containsKey(task.getUserStoryId())) {
+                        Label usLabel = new Label("\uD83D\uDCD6 " + userStoryNames.get(task.getUserStoryId()));
+                        usLabel.setStyle("-fx-text-fill: #7c3aed; -fx-font-size: 11px; -fx-font-weight: bold;");
 
-                    VBox card = new VBox(topRow, deadline);
+                        // DEADLINE
+                        Label deadline = new Label(
+                                task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
+                        );
+                        deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
+
+                        card = new VBox(topRow, usLabel, deadline);
+                    } else {
+                        // DEADLINE
+                        Label deadline = new Label(
+                                task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
+                        );
+                        deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
+
+                        card = new VBox(topRow, deadline);
+                    }
+
                     card.setSpacing(5);
                     card.setStyle("-fx-padding: 10; -fx-background-radius: 10;");
 
@@ -187,9 +238,10 @@ public class KanbanController {
         List<Task> tasks = taskService.getTasksByProject(project.getId());
 
         String selectedPriority = filterPriorityBox.getValue();
+        String selectedUserStory = filterUserStoryBox.getValue();
         String sort = sortBox.getValue();
 
-        // FILTRE
+        // FILTRE PRIORITÉ
         if (!selectedPriority.equals("Toutes")) {
 
             String mappedPriority = switch (selectedPriority) {
@@ -203,6 +255,29 @@ public class KanbanController {
             tasks = tasks.stream()
                     .filter(t -> t.getPriority().name().equals(mappedPriority))
                     .toList();
+        }
+
+        // FILTRE USER STORY
+        if (selectedUserStory != null && !selectedUserStory.equals("Toutes")) {
+            if (selectedUserStory.equals("Sans User Story")) {
+                tasks = tasks.stream()
+                        .filter(t -> t.getUserStoryId() == null)
+                        .toList();
+            } else {
+                Long usId = null;
+                for (UserStory us : projectUserStories) {
+                    if (us.getTitle().equals(selectedUserStory)) {
+                        usId = us.getId();
+                        break;
+                    }
+                }
+                Long finalUsId = usId;
+                if (finalUsId != null) {
+                    tasks = tasks.stream()
+                            .filter(t -> finalUsId.equals(t.getUserStoryId()))
+                            .toList();
+                }
+            }
         }
 
         // TRI
@@ -286,6 +361,25 @@ public class KanbanController {
 
             loadTasks(); // refresh
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleOpenUserStories() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/userStory.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(loader.load()));
+            stage.setTitle("User Stories - " + project.getName());
+
+            UserStoryController controller = loader.getController();
+            controller.setProject(project);
+
+            stage.showAndWait();
+            loadUserStories();
+            loadTasks();
         } catch (Exception e) {
             e.printStackTrace();
         }
