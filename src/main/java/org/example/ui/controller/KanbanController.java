@@ -7,10 +7,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.example.config.SessionManager;
 import org.example.model.Project;
 import org.example.model.Task;
+import org.example.model.User;
 import org.example.model.UserStory;
 import org.example.model.enums.Status;
+import org.example.repository.ProjectRepository;
 import org.example.service.TaskService;
 import org.example.service.UserStoryService;
 
@@ -33,17 +36,28 @@ public class KanbanController {
     @FXML private ComboBox<String> filterPriorityBox;
     @FXML private ComboBox<String> sortBox;
     @FXML private ComboBox<String> filterUserStoryBox;
+    @FXML private ToggleButton myTasksBtn;
 
     private final TaskService taskService = new TaskService();
     private final UserStoryService userStoryService = new UserStoryService();
+    private final ProjectRepository projectRepository = new ProjectRepository();
     private Project project;
     private List<UserStory> projectUserStories;
     private Map<Long, String> userStoryNames = new HashMap<>();
+    private Map<Long, String> memberNames = new HashMap<>();
 
     public void setProject(Project project) {
         this.project = project;
         loadUserStories();
+        loadMemberNames();
         loadTasks();
+    }
+
+    private void loadMemberNames() {
+        memberNames.clear();
+        for (User u : projectRepository.findMembers(project.getId())) {
+            memberNames.put(u.getId(), u.getFirstName() + " " + u.getLastName());
+        }
     }
 
     private void loadUserStories() {
@@ -136,6 +150,24 @@ public class KanbanController {
 
                     HBox topRow = new HBox(title, spacer, priority);
 
+                    // ASSIGNÉ + CHEF DE PROJET
+                    String assigneeName = task.getAssignedUserId() != null
+                            ? memberNames.getOrDefault(task.getAssignedUserId(), null) : null;
+                    String leaderName = task.getTaskLeaderId() != null
+                            ? memberNames.getOrDefault(task.getTaskLeaderId(), null) : null;
+
+                    HBox peopleRow = new HBox(8);
+                    if (assigneeName != null) {
+                        Label al = new Label("\uD83D\uDC64 " + assigneeName);
+                        al.setStyle("-fx-text-fill: #374151; -fx-font-size: 11px;");
+                        peopleRow.getChildren().add(al);
+                    }
+                    if (leaderName != null) {
+                        Label ll = new Label("\uD83C\uDFAF " + leaderName);
+                        ll.setStyle("-fx-text-fill: #374151; -fx-font-size: 11px;");
+                        peopleRow.getChildren().add(ll);
+                    }
+
                     // USER STORY LABEL
                     VBox card;
                     if (task.getUserStoryId() != null && userStoryNames.containsKey(task.getUserStoryId())) {
@@ -148,7 +180,7 @@ public class KanbanController {
                         );
                         deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
 
-                        card = new VBox(topRow, usLabel, deadline);
+                        card = new VBox(topRow, usLabel, deadline, peopleRow);
                     } else {
                         // DEADLINE
                         Label deadline = new Label(
@@ -156,7 +188,7 @@ public class KanbanController {
                         );
                         deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
 
-                        card = new VBox(topRow, deadline);
+                        card = new VBox(topRow, deadline, peopleRow);
                     }
 
                     card.setSpacing(5);
@@ -229,6 +261,7 @@ public class KanbanController {
     }
 
 
+    @FXML
     private void loadTasks() {
 
         todoList.getItems().clear();
@@ -236,6 +269,14 @@ public class KanbanController {
         doneList.getItems().clear();
 
         List<Task> tasks = taskService.getTasksByProject(project.getId());
+
+        // FILTRE "MES TÂCHES"
+        if (myTasksBtn != null && myTasksBtn.isSelected()) {
+            Long currentUserId = SessionManager.getCurrentUser().getId();
+            tasks = tasks.stream()
+                    .filter(t -> currentUserId.equals(t.getAssignedUserId()))
+                    .toList();
+        }
 
         String selectedPriority = filterPriorityBox.getValue();
         String selectedUserStory = filterUserStoryBox.getValue();
@@ -322,6 +363,9 @@ public class KanbanController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) stage.close();
+            });
 
             CreateTaskController controller = loader.getController();
             controller.setProject(project);
@@ -351,6 +395,9 @@ public class KanbanController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
+            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) stage.close();
+            });
 
             CreateTaskController controller = loader.getController();
             controller.setProject(project);
@@ -359,7 +406,7 @@ public class KanbanController {
             stage.setTitle("Modifier la tâche");
             stage.showAndWait();
 
-            loadTasks(); // refresh
+            loadTasks();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -380,6 +427,24 @@ public class KanbanController {
             stage.showAndWait();
             loadUserStories();
             loadTasks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleOpenMembers() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/members.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(loader.load(), 700, 500));
+            stage.setTitle("Membres - " + project.getName());
+
+            MembersController controller = loader.getController();
+            controller.setProject(project);
+
+            stage.showAndWait();
+            loadMemberNames();
         } catch (Exception e) {
             e.printStackTrace();
         }

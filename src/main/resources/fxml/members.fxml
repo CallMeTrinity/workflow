@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.MembersController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <HBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER">
+
+        <!-- Colonne gauche : membres actuels -->
+        <VBox spacing="12" HBox.hgrow="ALWAYS">
+            <Label text="Membres du projet" styleClass="page-title"/>
+
+            <TableView fx:id="membersTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="nameColumn"   text="Nom"    prefWidth="180"/>
+                    <TableColumn fx:id="mailColumn"   text="Email"  prefWidth="200"/>
+                    <TableColumn fx:id="roleColumn"   text="Rôle"   prefWidth="110"/>
+                    <TableColumn fx:id="actionColumn" text=""       prefWidth="80" sortable="false"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Séparateur -->
+        <Separator orientation="VERTICAL"/>
+
+        <!-- Colonne droite : ajout de membres -->
+        <VBox fx:id="addPanel" spacing="12" prefWidth="260">
+            <Label text="Ajouter des membres" styleClass="section-title"/>
+            <Label text="Ctrl+clic pour sélection multiple" styleClass="muted-label"/>
+
+            <ListView fx:id="availableList" VBox.vgrow="ALWAYS" prefHeight="300"/>
+
+            <Button text="Ajouter la sélection" onAction="#handleAdd"
+                    styleClass="btn-primary" maxWidth="Infinity"/>
+
+            <Label fx:id="errorLabel" styleClass="error-label"/>
+        </VBox>
+
+    </HBox>
+
+</StackPane>

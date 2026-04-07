@@ -10,23 +10,38 @@
         <URL value="@../css/app.css"/>
     </stylesheets>
 
-    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+    <VBox styleClass="dialog-card" spacing="10" alignment="TOP_CENTER"
           StackPane.alignment="CENTER">
 
         <Label text="Créer une tâche" styleClass="page-title"/>
 
+        <Label text="Titre *" styleClass="form-label"/>
         <TextField fx:id="titleField" styleClass="form-input"
                    promptText="Titre" maxWidth="Infinity"/>
+
+        <Label text="Description" styleClass="form-label"/>
         <TextField fx:id="descriptionField" styleClass="form-input"
                    promptText="Description" maxWidth="Infinity"/>
+
+        <Label text="Deadline" styleClass="form-label"/>
         <DatePicker fx:id="deadlinePicker" styleClass="form-input"
                     promptText="Deadline" maxWidth="Infinity"/>
 
+        <Label text="Priorité" styleClass="form-label"/>
         <ComboBox fx:id="priorityBox" styleClass="form-input"
                   promptText="Priorité" maxWidth="Infinity"/>
 
+        <Label text="User Story" styleClass="form-label"/>
         <ComboBox fx:id="userStoryBox" styleClass="form-input"
-                  promptText="User Story" maxWidth="Infinity"/>
+                  promptText="Aucune" maxWidth="Infinity"/>
+
+        <Label text="Assigné" styleClass="form-label"/>
+        <ComboBox fx:id="assigneeBox" styleClass="form-input"
+                  promptText="Aucun" maxWidth="Infinity"/>
+
+        <Label text="Chef de projet" styleClass="form-label"/>
+        <ComboBox fx:id="taskLeaderBox" styleClass="form-input"
+                  promptText="Aucun" maxWidth="Infinity"/>
 
         <Label fx:id="errorLabel" styleClass="error-label"/>
 

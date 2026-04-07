@@ -16,6 +16,7 @@ public class Task {
     private Long projectId;
     private Long userStoryId; // peut être null
     private Long assignedUserId; // peut être null
+    private Long taskLeaderId;   // peut être null
 
 
 
@@ -33,6 +34,11 @@ public class Task {
         this.assignedUserId = assignedUserId;
         this.projectId = projectId;
         this.userStoryId = userStoryId;
+    }
+
+    public Task(Long id, String title, String description, Status status, Priority priority, String deadline, Integer timeEstimate, Long projectId, Long userStoryId, Long assignedUserId, Long taskLeaderId) {
+        this(id, title, description, status, priority, deadline, timeEstimate, projectId, userStoryId, assignedUserId);
+        this.taskLeaderId = taskLeaderId;
     }
 
     public Long getId() {
@@ -113,5 +119,13 @@ public class Task {
 
     public void setAssignedUserId(Long assignedUserId) {
         this.assignedUserId = assignedUserId;
+    }
+
+    public Long getTaskLeaderId() {
+        return taskLeaderId;
+    }
+
+    public void setTaskLeaderId(Long taskLeaderId) {
+        this.taskLeaderId = taskLeaderId;
     }
 }

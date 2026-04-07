@@ -63,5 +63,12 @@ public class DatabaseConfig {
                 }
             }
         }
+
+        // Migration : ajouter task_leader_id si absent
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE task ADD COLUMN task_leader_id INTEGER REFERENCES users(id) ON DELETE SET NULL");
+        } catch (SQLException ignored) {
+            // Colonne déjà présente — migration déjà appliquée
+        }
     }
 }

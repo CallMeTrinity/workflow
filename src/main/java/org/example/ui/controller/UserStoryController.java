@@ -78,6 +78,9 @@ public class UserStoryController {
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("Créer une User Story");
+            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) stage.close();
+            });
 
             CreateUserStoryController controller = loader.getController();
             controller.setProjectId(project.getId());
@@ -95,6 +98,9 @@ public class UserStoryController {
             Stage stage = new Stage();
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("Modifier la User Story");
+            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) stage.close();
+            });
 
             CreateUserStoryController controller = loader.getController();
             controller.setProjectId(project.getId());

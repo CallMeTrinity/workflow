@@ -49,9 +49,11 @@ CREATE TABLE IF NOT EXISTS task (
     assigned_user_id INTEGER,
     project_id       INTEGER NOT NULL,
     user_story_id   INTEGER,
+    task_leader_id  INTEGER,
     FOREIGN KEY (assigned_user_id) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (user_story_id) REFERENCES user_story(id) ON DELETE SET NULL,
-    FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
+    FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_leader_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS room (
