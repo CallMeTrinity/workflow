@@ -1,10 +1,16 @@
 package org.example.ui.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import org.example.config.SessionManager;
+import org.example.model.User;
+import org.example.model.enums.Role;
+import org.example.repository.UserRepository;
 import org.example.service.ProjectService;
+
+import java.util.List;
 
 public class CreateProjectController {
 
@@ -12,29 +18,59 @@ public class CreateProjectController {
     @FXML private TextField descriptionField;
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
+    @FXML private ComboBox<User> leaderBox;
+    @FXML private Label errorLabel;
 
-    private ProjectService projectService = new ProjectService();
+    private final ProjectService projectService = new ProjectService();
+    private final UserRepository userRepository = new UserRepository();
+
+    @FXML
+    public void initialize() {
+        List<User> users = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.ADMIN || u.getRole() == Role.PROJECT_LEADER)
+                .toList();
+        leaderBox.getItems().setAll(users);
+        leaderBox.setConverter(new StringConverter<>() {
+            @Override public String toString(User u) {
+                return u == null ? "" : u.getFirstName() + " " + u.getLastName();
+            }
+            @Override public User fromString(String s) { return null; }
+        });
+
+        // Pré-sélectionner l'utilisateur courant
+        Long currentId = SessionManager.getCurrentUser().getId();
+        users.stream().filter(u -> u.getId().equals(currentId)).findFirst()
+                .ifPresent(leaderBox::setValue);
+    }
 
     @FXML
     private void handleCreate() {
+        String name = nameField.getText().trim();
+        if (name.isEmpty()) {
+            errorLabel.setText("Le nom est obligatoire");
+            return;
+        }
+        if (leaderBox.getValue() == null) {
+            errorLabel.setText("Le chef de projet est obligatoire");
+            return;
+        }
 
         try {
             String startDate = startDatePicker.getValue() != null ? startDatePicker.getValue().toString() : null;
-            String endDate = endDatePicker.getValue() != null ? endDatePicker.getValue().toString() : null;
+            String endDate   = endDatePicker.getValue()   != null ? endDatePicker.getValue().toString()   : null;
 
             projectService.createProject(
-                    nameField.getText(),
+                    name,
                     descriptionField.getText(),
                     startDate,
-                    endDate
+                    endDate,
+                    leaderBox.getValue().getId()
             );
 
-            // fermer la fenêtre
-            Stage stage = (Stage) nameField.getScene().getWindow();
-            stage.close();
+            ((Stage) nameField.getScene().getWindow()).close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            errorLabel.setText(e.getMessage());
         }
     }
 }

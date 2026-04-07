@@ -11,7 +11,8 @@
         <URL value="@../css/app.css"/>
     </stylesheets>
 
-    <VBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER">
+    <VBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER"
+          prefWidth="600" prefHeight="480">
 
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Label text="User Stories" styleClass="page-title"/>

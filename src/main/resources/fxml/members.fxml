@@ -10,7 +10,8 @@
         <URL value="@../css/app.css"/>
     </stylesheets>
 
-    <HBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER">
+    <HBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER"
+          prefWidth="900" prefHeight="560">
 
         <!-- Colonne gauche : membres actuels -->
         <VBox spacing="12" HBox.hgrow="ALWAYS">

@@ -110,6 +110,26 @@
 .btn-back:hover   { -fx-text-fill: #1e293b; -fx-border-color: #2e7dd4; }
 .btn-back:pressed { -fx-background-color: #f0f2f5; }
 
+/* role badges */
+.role-badge {
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 20;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.role-badge-admin {
+    -fx-background-color: #fef2f2;
+    -fx-text-fill: #dc2626;
+}
+.role-badge-project_leader {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #2e7dd4;
+}
+.role-badge-member {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #16a34a;
+}
+
 /* toggle switch — "Mes tâches" style */
 .toggle-switch {
     -fx-background-color: transparent;
