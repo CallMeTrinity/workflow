@@ -93,6 +93,10 @@ public class KanbanController {
         setupCellFactory(inProgressList);
         setupCellFactory(doneList);
 
+        setupColumnRightClick(todoList);
+        setupColumnRightClick(inProgressList);
+        setupColumnRightClick(doneList);
+
         setupDropTarget(todoList, Status.TODO);
         setupDropTarget(inProgressList, Status.IN_PROGRESS);
         setupDropTarget(doneList, Status.DONE);
@@ -213,7 +217,14 @@ public class KanbanController {
             };
 
             cell.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && cell.getItem() != null) {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    if (!cell.isEmpty() && cell.getItem() != null) {
+                        buildTaskContextMenu(cell.getItem()).show(cell, event.getScreenX(), event.getScreenY());
+                    } else {
+                        buildColumnContextMenu().show(cell, event.getScreenX(), event.getScreenY());
+                    }
+                    event.consume();
+                } else if (event.getClickCount() == 2 && !cell.isEmpty() && cell.getItem() != null) {
                     openEditTask(cell.getItem());
                 }
             });
@@ -436,6 +447,72 @@ public class KanbanController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Menus contextuels                                                 */
+    /* ------------------------------------------------------------------ */
+
+    /** Clic droit sur la zone vide d'une colonne (pas sur une tâche). */
+    private void setupColumnRightClick(ListView<Task> listView) {
+        listView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                buildColumnContextMenu().show(listView, event.getScreenX(), event.getScreenY());
+                event.consume();
+            }
+        });
+    }
+
+    private ContextMenu buildColumnContextMenu() {
+        MenuItem addTask = new MenuItem("＋ Ajouter une tâche");
+        addTask.setOnAction(e -> handleAddTask());
+
+        MenuItem addUserStory = new MenuItem("＋ Ajouter une User Story");
+        addUserStory.setOnAction(e -> handleOpenUserStories());
+
+        MenuItem addMember = new MenuItem("＋ Ajouter un membre");
+        addMember.setOnAction(e -> handleOpenMembers());
+
+        return new ContextMenu(addTask, addUserStory, addMember);
+    }
+
+    private ContextMenu buildTaskContextMenu(Task task) {
+        // Changement de statut — flèche selon la direction
+        int cur = task.getStatus().ordinal();
+
+        MenuItem toTodo = new MenuItem((cur > Status.TODO.ordinal() ? "← " : "→ ") + "À faire");
+        toTodo.setDisable(task.getStatus() == Status.TODO);
+        toTodo.setOnAction(e -> { taskService.updateTaskStatus(task.getId(), Status.TODO); loadTasks(); });
+
+        MenuItem toInProgress = new MenuItem((cur > Status.IN_PROGRESS.ordinal() ? "← " : "→ ") + "En cours");
+        toInProgress.setDisable(task.getStatus() == Status.IN_PROGRESS);
+        toInProgress.setOnAction(e -> { taskService.updateTaskStatus(task.getId(), Status.IN_PROGRESS); loadTasks(); });
+
+        MenuItem toDone = new MenuItem((cur > Status.DONE.ordinal() ? "← " : "→ ") + "Terminé");
+        toDone.setDisable(task.getStatus() == Status.DONE);
+        toDone.setOnAction(e -> { taskService.updateTaskStatus(task.getId(), Status.DONE); loadTasks(); });
+
+        MenuItem edit = new MenuItem("Modifier");
+        edit.setOnAction(e -> openEditTask(task));
+
+        MenuItem delete = new MenuItem("Supprimer");
+        delete.setStyle("-fx-text-fill: #dc2626;");
+        delete.setOnAction(e -> handleDeleteTask(task));
+
+        return new ContextMenu(toTodo, toInProgress, toDone, new SeparatorMenuItem(), edit, delete);
+    }
+
+    private void handleDeleteTask(Task task) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Supprimer la tâche \"" + task.getTitle() + "\" ?",
+                ButtonType.YES, ButtonType.NO);
+        confirm.setHeaderText("Confirmation");
+        confirm.showAndWait().ifPresent(btn -> {
+            if (btn == ButtonType.YES) {
+                taskService.deleteTask(task.getId());
+                loadTasks();
+            }
+        });
     }
 
     @FXML
