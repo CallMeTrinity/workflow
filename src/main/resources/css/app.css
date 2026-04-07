@@ -264,6 +264,14 @@
    KANBAN
    ============================================================ */
 
+.kanban-toolbar {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 8 24 8 24;
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+
 .kanban-column {
     -fx-background-color: #f0f2f5;
     -fx-background-radius: 12;

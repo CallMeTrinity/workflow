@@ -7,31 +7,29 @@
 <VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.KanbanController">
 
-    <!-- Topbar -->
-    <HBox styleClass="topbar" spacing="10" alignment="CENTER_LEFT">
+    <!-- Topbar : navigation + action principale -->
+    <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
         <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
             <image><Image url="@../images/workflow_logo.png"/></image>
         </ImageView>
-        <Button text="← Retour"  onAction="#goBackToDashboard" styleClass="btn-back"/>
-        <Button text="+ Tâche"   onAction="#handleAddTask"     styleClass="btn-primary"/>
+        <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="+ Tâche" onAction="#handleAddTask" styleClass="btn-primary"/>
+    </HBox>
+
+    <!-- Barre d'outils : gestion projet + filtres -->
+    <HBox styleClass="kanban-toolbar" spacing="10" alignment="CENTER_LEFT">
         <Button text="User Stories" onAction="#handleOpenUserStories" styleClass="btn-back"/>
-        <Button text="Membres" onAction="#handleOpenMembers" styleClass="btn-back"/>
+        <Button text="Membres"      onAction="#handleOpenMembers"      styleClass="btn-back"/>
+        <Separator orientation="VERTICAL" style="-fx-padding: 0 4 0 4;"/>
         <ToggleButton fx:id="myTasksBtn" text="Mes tâches" onAction="#loadTasks" styleClass="toggle-switch"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <HBox spacing="15" alignment="CENTER_RIGHT">
-            <VBox spacing="2">
-                <Label text="User Story" styleClass="muted-label"/>
-                <ComboBox fx:id="filterUserStoryBox" styleClass="form-input" prefWidth="160"/>
-            </VBox>
-            <VBox spacing="2">
-                <Label text="Filtrer" styleClass="muted-label"/>
-                <ComboBox fx:id="filterPriorityBox" styleClass="form-input" prefWidth="140"/>
-            </VBox>
-            <VBox spacing="2">
-                <Label text="Trier" styleClass="muted-label"/>
-                <ComboBox fx:id="sortBox" styleClass="form-input" prefWidth="140"/>
-            </VBox>
-        </HBox>
+        <Label text="User Story :" styleClass="muted-label"/>
+        <ComboBox fx:id="filterUserStoryBox" prefWidth="150"/>
+        <Label text="Priorité :" styleClass="muted-label"/>
+        <ComboBox fx:id="filterPriorityBox" prefWidth="120"/>
+        <Label text="Tri :" styleClass="muted-label"/>
+        <ComboBox fx:id="sortBox" prefWidth="130"/>
     </HBox>
 
     <!-- Colonnes kanban -->
