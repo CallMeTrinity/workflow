@@ -1,5 +1,4 @@
 package org.example.model;
-
 public class Notification {
 
     private Long id;
@@ -7,8 +6,7 @@ public class Notification {
     private Long userId;
     private boolean isRead;
 
-    public Notification() {
-    }
+    public Notification() {}
 
     public Notification(Long id, String message, Long userId, boolean isRead) {
         this.id = id;
@@ -18,14 +16,12 @@ public class Notification {
     }
 
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
     public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-
     public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
     public boolean isRead() { return isRead; }
+
+    public void setId(Long id) { this.id = id; }
+    public void setMessage(String message) { this.message = message; }
+    public void setUserId(Long userId) { this.userId = userId; }
     public void setIsRead(boolean isRead) { this.isRead = isRead; }
 }

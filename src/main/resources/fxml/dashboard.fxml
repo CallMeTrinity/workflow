@@ -25,6 +25,16 @@
                    StackPane.alignment="TOP_RIGHT"/>
         </StackPane>
         <Button text="Se déconnecter" onAction="#handleLogout" styleClass="btn-back"/>
+        <StackPane onMouseClicked="#openProfile">
+
+            <Circle fx:id="avatarCircle" radius="15"/>
+            <Label fx:id="avatarHeader" style="-fx-text-fill: white;"/>
+
+            <Label fx:id="notifBadge"
+                   style="-fx-background-color: red; -fx-text-fill: white;"
+                   StackPane.alignment="TOP_RIGHT"/>
+
+        </StackPane>
     </HBox>
 
     <!-- Barre secondaire : navigation + action principale -->
