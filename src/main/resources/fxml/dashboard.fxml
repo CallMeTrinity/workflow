@@ -23,12 +23,12 @@
 
         <TableView fx:id="projectTable" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="nameColumn"        text="Nom"             prefWidth="180"/>
+                <TableColumn fx:id="nameColumn"        text="Nom"            prefWidth="160"/>
                 <TableColumn fx:id="descriptionColumn" text="Description"    prefWidth="240"/>
-                <TableColumn fx:id="leaderColumn"      text="Chef de projet" prefWidth="160"/>
-                <TableColumn fx:id="startDateColumn"   text="Début"          prefWidth="90"/>
-                <TableColumn fx:id="endDateColumn"     text="Fin"            prefWidth="90"/>
-                <TableColumn fx:id="createdAtColumn"   text="Créé le"        prefWidth="90"/>
+                <TableColumn fx:id="leaderColumn"      text="Chef de projet" prefWidth="150"/>
+                <TableColumn fx:id="startDateColumn"   text="Début"          prefWidth="100"/>
+                <TableColumn fx:id="endDateColumn"     text="Fin"            prefWidth="100"/>
+                <TableColumn fx:id="createdAtColumn"   text="Créé le"        prefWidth="100"/>
                 <TableColumn fx:id="actionsColumn"     text=""               prefWidth="50" sortable="false"/>
             </columns>
         </TableView>

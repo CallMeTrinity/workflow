@@ -21,6 +21,7 @@ public class UserStoryController {
 
     private final UserStoryService userStoryService = new UserStoryService();
     private Project project;
+    private Stage createUserStoryStage;
 
     public void setProject(Project project) {
         this.project = project;
@@ -73,43 +74,45 @@ public class UserStoryController {
 
     @FXML
     private void handleAdd() {
+        if (createUserStoryStage != null && createUserStoryStage.isShowing()) createUserStoryStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUserStory.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.setTitle("Créer une User Story");
-            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) stage.close();
+            createUserStoryStage = new Stage();
+            createUserStoryStage.setScene(new Scene(loader.load()));
+            createUserStoryStage.sizeToScene();
+            createUserStoryStage.setTitle("Créer une User Story");
+            createUserStoryStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) createUserStoryStage.close();
             });
+            createUserStoryStage.setOnHidden(e -> loadUserStories());
 
             CreateUserStoryController controller = loader.getController();
             controller.setProjectId(project.getId());
 
-            stage.showAndWait();
-            loadUserStories();
+            createUserStoryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void handleEdit(UserStory userStory) {
+        if (createUserStoryStage != null && createUserStoryStage.isShowing()) createUserStoryStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUserStory.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.setTitle("Modifier la User Story");
-            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) stage.close();
+            createUserStoryStage = new Stage();
+            createUserStoryStage.setScene(new Scene(loader.load()));
+            createUserStoryStage.sizeToScene();
+            createUserStoryStage.setTitle("Modifier la User Story");
+            createUserStoryStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) createUserStoryStage.close();
             });
+            createUserStoryStage.setOnHidden(e -> loadUserStories());
 
             CreateUserStoryController controller = loader.getController();
             controller.setProjectId(project.getId());
             controller.setUserStory(userStory);
 
-            stage.showAndWait();
-            loadUserStories();
+            createUserStoryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -46,6 +46,10 @@ public class KanbanController {
     private Map<Long, String> userStoryNames = new HashMap<>();
     private Map<Long, String> memberNames = new HashMap<>();
 
+    private Stage createTaskStage;
+    private Stage userStoriesStage;
+    private Stage membersStage;
+
     public void setProject(Project project) {
         this.project = project;
         loadUserStories();
@@ -359,21 +363,21 @@ public class KanbanController {
 
     @FXML
     private void handleAddTask() {
+        if (createTaskStage != null && createTaskStage.isShowing()) createTaskStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) stage.close();
+            createTaskStage = new Stage();
+            createTaskStage.setScene(new Scene(loader.load()));
+            createTaskStage.sizeToScene();
+            createTaskStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) createTaskStage.close();
             });
+            createTaskStage.setOnHidden(e -> loadTasks());
 
             CreateTaskController controller = loader.getController();
             controller.setProject(project);
 
-            stage.showAndWait();
-            loadTasks();
-
+            createTaskStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -392,24 +396,23 @@ public class KanbanController {
 
     @FXML
     private void openEditTask(Task task) {
+        if (createTaskStage != null && createTaskStage.isShowing()) createTaskStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) stage.close();
+            createTaskStage = new Stage();
+            createTaskStage.setScene(new Scene(loader.load()));
+            createTaskStage.sizeToScene();
+            createTaskStage.setTitle("Modifier la tâche");
+            createTaskStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
+                if (!focused) createTaskStage.close();
             });
+            createTaskStage.setOnHidden(e -> loadTasks());
 
             CreateTaskController controller = loader.getController();
             controller.setProject(project);
             controller.setTask(task);
 
-            stage.setTitle("Modifier la tâche");
-            stage.showAndWait();
-
-            loadTasks();
-
+            createTaskStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -417,19 +420,19 @@ public class KanbanController {
 
     @FXML
     private void handleOpenUserStories() {
+        if (userStoriesStage != null && userStoriesStage.isShowing()) userStoriesStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/userStory.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.setTitle("User Stories - " + project.getName());
+            userStoriesStage = new Stage();
+            userStoriesStage.setScene(new Scene(loader.load()));
+            userStoriesStage.sizeToScene();
+            userStoriesStage.setTitle("User Stories - " + project.getName());
+            userStoriesStage.setOnHidden(e -> { loadUserStories(); loadTasks(); });
 
             UserStoryController controller = loader.getController();
             controller.setProject(project);
 
-            stage.showAndWait();
-            loadUserStories();
-            loadTasks();
+            userStoriesStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -437,18 +440,19 @@ public class KanbanController {
 
     @FXML
     private void handleOpenMembers() {
+        if (membersStage != null && membersStage.isShowing()) membersStage.close();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/members.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            stage.sizeToScene();
-            stage.setTitle("Membres - " + project.getName());
+            membersStage = new Stage();
+            membersStage.setScene(new Scene(loader.load()));
+            membersStage.sizeToScene();
+            membersStage.setTitle("Membres - " + project.getName());
+            membersStage.setOnHidden(e -> loadMemberNames());
 
             MembersController controller = loader.getController();
             controller.setProject(project);
 
-            stage.showAndWait();
-            loadMemberNames();
+            membersStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
