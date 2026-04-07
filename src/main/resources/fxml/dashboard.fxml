@@ -3,11 +3,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.shape.Circle?>
+
 <VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.example.ui.controller.DashboardController">
 
+    <!-- Topbar : marque + utilisateur -->
     <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
         <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
             <image><Image url="@../images/workflow_logo.png"/></image>
@@ -15,9 +16,27 @@
         <Label text="WorkFlow" styleClass="app-name"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="welcomeLabel" styleClass="muted-label"/>
+        <StackPane onMouseClicked="#openProfile" style="-fx-cursor: hand;" prefWidth="36" prefHeight="36">
+            <Circle radius="15" style="-fx-fill: #dbeafe; -fx-stroke: #93c5fd; -fx-stroke-width: 1.5;"/>
+            <Label fx:id="avatarHeader" style="-fx-font-weight: bold; -fx-text-fill: #2e7dd4; -fx-font-size: 13px;"/>
+            <Label fx:id="notifBadge"
+                   style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-size: 9px;
+                          -fx-background-radius: 10; -fx-padding: 1 4 1 4; -fx-font-weight: bold;"
+                   StackPane.alignment="TOP_RIGHT"/>
+        </StackPane>
         <Button text="Se déconnecter" onAction="#handleLogout" styleClass="btn-back"/>
     </HBox>
 
+    <!-- Barre secondaire : navigation + action principale -->
+    <HBox styleClass="kanban-toolbar" spacing="10" alignment="CENTER_LEFT">
+        <Button text="Salles"        onAction="#openRooms"         styleClass="btn-back"/>
+        <Button text="Réservations"  onAction="#openReservations"  styleClass="btn-back"/>
+        <Button text="Réunions"      onAction="#openPlanning"      styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="createProjectBtn" text="+ Créer un projet" onAction="#openCreateProject" styleClass="btn-primary"/>
+    </HBox>
+
+    <!-- Contenu principal -->
     <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
         <Label text="Mes projets" styleClass="page-title"/>
 
@@ -32,24 +51,6 @@
                 <TableColumn fx:id="actionsColumn"     text=""               prefWidth="50" sortable="false"/>
             </columns>
         </TableView>
-
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Button fx:id="createProjectBtn" text="Créer un projet"  onAction="#openCreateProject" styleClass="btn-primary"/>
-            <Button text="Gérer les salles"   onAction="#openRooms"         styleClass="btn-secondary"/>
-            <Button text="Réservations"       onAction="#openReservations"  styleClass="btn-secondary"/>
-            <Button text="Planning"           onAction="#openPlanning"      styleClass="btn-secondary"/>
-        </HBox>
     </VBox>
-
-    <StackPane onMouseClicked="#openProfile">
-
-        <Circle radius="15"/>
-        <Label fx:id="avatarHeader"/>
-
-        <Label fx:id="notifBadge"
-               style="-fx-background-color: red; -fx-text-fill: white;"
-               StackPane.alignment="TOP_RIGHT"/>
-
-    </StackPane>
 
 </VBox>

@@ -13,7 +13,7 @@
         </ImageView>
         <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Planifier une réunion" styleClass="app-name"/>
+        <Label text="Réunions" styleClass="app-name"/>
         <Region HBox.hgrow="ALWAYS"/>
     </HBox>
 
