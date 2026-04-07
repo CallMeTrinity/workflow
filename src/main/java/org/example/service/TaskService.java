@@ -29,11 +29,18 @@ public class TaskService {
     public Task createTask(String title, String description, Status status, Priority priority,
                            String deadline, Integer timeEstimate, Long assignedUserId,
                            Long projectId, Long userStoryId) {
+        return createTask(title, description, status, priority, deadline, timeEstimate,
+                assignedUserId, projectId, userStoryId, null);
+    }
+
+    public Task createTask(String title, String description, Status status, Priority priority,
+                           String deadline, Integer timeEstimate, Long assignedUserId,
+                           Long projectId, Long userStoryId, Long taskLeaderId) {
         if (!isAdminOrLeader()) {
             throw new AutorisationException("Only admins or project leaders can create tasks");
         }
         Task task = new Task(null, title, description, status, priority, deadline,
-                timeEstimate, projectId, userStoryId, assignedUserId);
+                timeEstimate, projectId, userStoryId, assignedUserId, taskLeaderId);
         Long generatedId = taskRepository.save(task);
         task.setId(generatedId);
         return task;

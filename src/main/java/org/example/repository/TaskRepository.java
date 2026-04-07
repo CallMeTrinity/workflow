@@ -15,7 +15,7 @@ import java.util.List;
 public class TaskRepository {
 
     public Long save(Task task) {
-        String sql = "INSERT INTO task (title, description, status, priority, deadline, time_estimate, assigned_user_id, project_id, user_story_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO task (title, description, status, priority, deadline, time_estimate, assigned_user_id, project_id, user_story_id, task_leader_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setParameters(task, stmt);
@@ -96,11 +96,11 @@ public class TaskRepository {
     }
 
     public void update(Task task) {
-        String sql = "UPDATE task SET title = ?, description = ?, status = ?, priority = ?, deadline = ?, time_estimate = ?, assigned_user_id = ?, project_id = ?, user_story_id = ? WHERE id = ?";
+        String sql = "UPDATE task SET title = ?, description = ?, status = ?, priority = ?, deadline = ?, time_estimate = ?, assigned_user_id = ?, project_id = ?, user_story_id = ?, task_leader_id = ? WHERE id = ?";
 
         try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
             setParameters(task, stmt);
-            stmt.setLong(10, task.getId());
+            stmt.setLong(11, task.getId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -130,6 +130,11 @@ public class TaskRepository {
         } else {
             stmt.setNull(9, java.sql.Types.BIGINT);
         }
+        if (task.getTaskLeaderId() != null) {
+            stmt.setLong(10, task.getTaskLeaderId());
+        } else {
+            stmt.setNull(10, java.sql.Types.BIGINT);
+        }
     }
 
     public void delete(Long id) {
@@ -154,7 +159,8 @@ public class TaskRepository {
                 rs.getObject("time_estimate") != null ? rs.getInt("time_estimate") : null,
                 rs.getLong("project_id"),
                 rs.getObject("user_story_id") != null ? rs.getLong("user_story_id") : null,
-                rs.getObject("assigned_user_id") != null ? rs.getLong("assigned_user_id") : null
+                rs.getObject("assigned_user_id") != null ? rs.getLong("assigned_user_id") : null,
+                rs.getObject("task_leader_id") != null ? rs.getLong("task_leader_id") : null
         );
     }
 

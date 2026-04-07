@@ -2,6 +2,8 @@ package org.example.repository;
 
 import org.example.config.DatabaseConfig;
 import org.example.model.Project;
+import org.example.model.User;
+import org.example.model.enums.Role;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -141,7 +143,36 @@ public class ProjectRepository {
     }
 
     /**
-     * Returns all members of a project.
+     * Returns all members of a project as User objects.
+     */
+    public List<User> findMembers(Long projectId) {
+        String sql = "SELECT u.* FROM users u " +
+                     "JOIN project_member pm ON u.id = pm.user_id " +
+                     "WHERE pm.project_id = ?";
+
+        try (PreparedStatement stmt = DatabaseConfig.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, projectId);
+            ResultSet rs = stmt.executeQuery();
+            List<User> members = new ArrayList<>();
+            while (rs.next()) {
+                members.add(new User(
+                        rs.getLong("id"),
+                        rs.getString("last_name"),
+                        rs.getString("first_name"),
+                        rs.getString("mail"),
+                        rs.getString("password"),
+                        Role.valueOf(rs.getString("role")),
+                        rs.getString("username")
+                ));
+            }
+            return members;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding project members: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Returns all member IDs of a project.
      */
     public List<Long> findMemberIds(Long projectId) {
         String sql = "SELECT user_id FROM project_member WHERE project_id = ?";
