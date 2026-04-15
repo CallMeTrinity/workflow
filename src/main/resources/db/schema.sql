@@ -86,11 +86,13 @@ CREATE TABLE IF NOT EXISTS participants_reservation (
 );
 
 CREATE TABLE IF NOT EXISTS notification (
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    message TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
-    is_read INTEGER NOT NULL DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    message    TEXT NOT NULL,
+    user_id    INTEGER NOT NULL,
+    is_read    INTEGER NOT NULL DEFAULT 0,
+    project_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE SET NULL
 );
 
 INSERT OR IGNORE INTO users (last_name, first_name, mail, password, role, username) VALUES

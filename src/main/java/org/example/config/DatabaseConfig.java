@@ -77,5 +77,12 @@ public class DatabaseConfig {
         } catch (SQLException ignored) {
             // Colonne déjà présente — migration déjà appliquée
         }
+
+        // Migration : ajouter project_id à notification
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE notification ADD COLUMN project_id INTEGER REFERENCES project(id) ON DELETE SET NULL");
+        } catch (SQLException ignored) {
+            // Colonne déjà présente — migration déjà appliquée
+        }
     }
 }

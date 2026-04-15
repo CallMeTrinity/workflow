@@ -10,9 +10,14 @@ public class NotificationService {
     private final NotificationRepository repository = new NotificationRepository();
 
     public void createNotification(Long userId, String message) {
+        createNotification(userId, message, null);
+    }
+
+    public void createNotification(Long userId, String message, Long projectId) {
         Notification notif = new Notification();
         notif.setUserId(userId);
         notif.setMessage(message);
+        notif.setProjectId(projectId);
         repository.save(notif);
     }
 
@@ -20,20 +25,16 @@ public class NotificationService {
         return repository.findByUser(userId);
     }
 
-    public void markAllAsRead(Long userId) {
-        List<Notification> notifications = repository.findByUser(userId);
+    public int getUnreadCount(Long userId) {
+        return repository.countUnread(userId);
+    }
 
-        for (Notification notif : notifications) {
-            if (!notif.isRead()) {
-                notif.setIsRead(true);
-                repository.update(notif);
-            }
-        }
+    public void markAllAsRead(Long userId) {
+        repository.markAllAsRead(userId);
     }
 
     public void toggleRead(Long id) {
         Notification notif = repository.findById(id);
-
         if (notif != null) {
             notif.setIsRead(!notif.isRead());
             repository.update(notif);

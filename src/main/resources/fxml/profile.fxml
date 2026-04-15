@@ -1,46 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.shape.Circle?>
+<?import java.net.URL?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.ui.controller.ProfileController">
+<VBox spacing="0" prefWidth="600" prefHeight="500" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.ProfileController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
 
-    <left>
-        <VBox spacing="15" alignment="CENTER" prefWidth="250">
+    <!-- Header -->
+    <HBox styleClass="topbar" spacing="12" alignment="CENTER_LEFT">
+        <Label text="Mon profil" styleClass="app-name"/>
+    </HBox>
 
-            <Label text="Profil" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <HBox VBox.vgrow="ALWAYS" spacing="0">
+        <!-- Left panel: profile info -->
+        <VBox spacing="16" alignment="TOP_CENTER" prefWidth="220"
+              style="-fx-padding: 24; -fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-width: 0 1 0 0;">
 
             <StackPane>
                 <Circle fx:id="avatarCircle" radius="40"/>
                 <Label fx:id="avatarLabel"
-                       style="-fx-text-fill: white; -fx-font-size: 24px;"/>
+                       style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
             </StackPane>
 
-            <TextField fx:id="pseudoField" promptText="Pseudo"/>
-            <TextField fx:id="emailField" editable="false" style="-fx-opacity: 0.6;"/>
-            <TextField fx:id="roleField" editable="false" style="-fx-opacity: 0.6;"/>
+            <VBox spacing="8" alignment="CENTER" maxWidth="Infinity">
+                <Label text="Pseudo" styleClass="muted-label" style="-fx-font-size: 11px;"/>
+                <TextField fx:id="pseudoField" promptText="Pseudo" styleClass="form-input" maxWidth="180"/>
+            </VBox>
 
+            <VBox spacing="8" alignment="CENTER" maxWidth="Infinity">
+                <Label text="Email" styleClass="muted-label" style="-fx-font-size: 11px;"/>
+                <TextField fx:id="emailField" editable="false" styleClass="form-input"
+                           maxWidth="180" style="-fx-opacity: 0.7;"/>
+            </VBox>
+
+            <VBox spacing="8" alignment="CENTER" maxWidth="Infinity">
+                <Label text="Rôle" styleClass="muted-label" style="-fx-font-size: 11px;"/>
+                <Label fx:id="roleLabel" styleClass="role-badge" style="-fx-font-size: 12px;"/>
+            </VBox>
         </VBox>
-    </left>
 
-    <center>
-        <VBox spacing="10" style="-fx-padding: 20;">
-
+        <!-- Right panel: notifications -->
+        <VBox spacing="12" HBox.hgrow="ALWAYS" style="-fx-padding: 20;">
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Notifications" style="-fx-font-size: 18px;"/>
-                <Button text="Tout marquer comme lu"
-                        onAction="#markAllAsRead"/>
+                <Label text="Notifications" styleClass="section-title"/>
+                <Label fx:id="unreadCountLabel" styleClass="muted-label"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="↻ Rafraîchir" onAction="#refreshNotifications" styleClass="btn-back"/>
+                <Button text="Tout marquer lu" onAction="#markAllAsRead" styleClass="btn-secondary"/>
             </HBox>
 
-            <ListView fx:id="notificationList"/>
-
+            <ListView fx:id="notificationList" VBox.vgrow="ALWAYS"/>
         </VBox>
-    </center>
-
-</BorderPane>
+    </HBox>
+</VBox>
