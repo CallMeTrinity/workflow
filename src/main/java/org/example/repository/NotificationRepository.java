@@ -68,6 +68,18 @@ public class NotificationRepository {
         return null;
     }
 
+    public void save(Notification notification) {
+        String sql = "INSERT INTO notification (message, user_id, is_read) VALUES (?, ?, 0)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, notification.getMessage());
+            stmt.setLong(2, notification.getUserId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void update(Notification notification) {
         String sql = "UPDATE notification SET message = ?, user_id = ?, is_read = ? WHERE id = ?";
 

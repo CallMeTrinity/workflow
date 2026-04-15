@@ -9,6 +9,13 @@ public class NotificationService {
 
     private final NotificationRepository repository = new NotificationRepository();
 
+    public void createNotification(Long userId, String message) {
+        Notification notif = new Notification();
+        notif.setUserId(userId);
+        notif.setMessage(message);
+        repository.save(notif);
+    }
+
     public List<Notification> getUserNotifications(Long userId) {
         return repository.findByUser(userId);
     }

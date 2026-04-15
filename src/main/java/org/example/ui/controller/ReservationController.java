@@ -29,6 +29,7 @@ public class ReservationController {
     @FXML private TableColumn<Reservation, String> startColumn;
     @FXML private TableColumn<Reservation, String> endColumn;
     @FXML private TableColumn<Reservation, String> roomColumn;
+    @FXML private TableColumn<Reservation, String> organizerColumn;
     @FXML private TableColumn<Reservation, String> participantsColumn;
     @FXML private TableColumn<Reservation, Void> actionsColumn;
 
@@ -59,6 +60,11 @@ public class ReservationController {
         roomColumn.setCellValueFactory(data -> {
             Room room = roomById.get(data.getValue().getRoomId());
             return new SimpleStringProperty(room != null ? room.getName() : "Inconnue");
+        });
+        organizerColumn.setCellValueFactory(data -> {
+            User organizer = userById.get(data.getValue().getOrganizerId());
+            return new SimpleStringProperty(organizer != null
+                    ? organizer.getFirstName() + " " + organizer.getLastName() : "—");
         });
         participantsColumn.setCellValueFactory(data -> {
             List<Long> ids = reservationService.getParticipantIds(data.getValue().getId());

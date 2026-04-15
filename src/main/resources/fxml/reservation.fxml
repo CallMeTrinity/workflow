@@ -25,6 +25,7 @@
                 <TableColumn fx:id="startColumn" text="Début"  prefWidth="90"/>
                 <TableColumn fx:id="endColumn"   text="Fin"    prefWidth="90"/>
                 <TableColumn fx:id="roomColumn"         text="Salle"        prefWidth="140"/>
+                <TableColumn fx:id="organizerColumn"    text="Créateur"    prefWidth="140"/>
                 <TableColumn fx:id="participantsColumn" text="Participants" prefWidth="200"/>
                 <TableColumn fx:id="actionsColumn"      text=""             prefWidth="50" sortable="false"/>
             </columns>

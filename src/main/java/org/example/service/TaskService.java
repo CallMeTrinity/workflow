@@ -16,13 +16,21 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final NotificationService notificationService;
 
     public TaskService() {
         this.taskRepository = new TaskRepository();
+        this.notificationService = new NotificationService();
     }
 
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
+        this.notificationService = new NotificationService();
+    }
+
+    public TaskService(TaskRepository taskRepository, NotificationService notificationService) {
+        this.taskRepository = taskRepository;
+        this.notificationService = notificationService;
     }
 
 
@@ -43,6 +51,10 @@ public class TaskService {
                 timeEstimate, projectId, userStoryId, assignedUserId, taskLeaderId);
         Long generatedId = taskRepository.save(task);
         task.setId(generatedId);
+        if (assignedUserId != null) {
+            notificationService.createNotification(assignedUserId,
+                    "Vous avez été assigné à la tâche : " + title);
+        }
         return task;
     }
 
@@ -73,6 +85,8 @@ public class TaskService {
         Task task = getTaskById(taskId);
         task.setAssignedUserId(userId);
         taskRepository.update(task);
+        notificationService.createNotification(userId,
+                "Vous avez été assigné à la tâche : " + task.getTitle());
     }
 
 
