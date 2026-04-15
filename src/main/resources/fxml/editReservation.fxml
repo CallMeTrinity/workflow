@@ -15,6 +15,8 @@
 
         <Label text="Détail de la réservation" styleClass="page-title"/>
 
+        <Label fx:id="organizerLabel" styleClass="cal-event-detail" style="-fx-font-size: 13px;"/>
+
         <TextField fx:id="titleField" styleClass="form-input"
                    promptText="Titre" maxWidth="Infinity"/>
         <TextField fx:id="descriptionField" styleClass="form-input"
@@ -33,7 +35,9 @@
                   promptText="Salle"/>
 
         <Label text="Participants" styleClass="section-title"/>
-        <ListView fx:id="participantList" prefHeight="150" maxWidth="Infinity"/>
+        <FlowPane fx:id="participantChips" hgap="6" vgap="6" maxWidth="Infinity"/>
+        <ComboBox fx:id="addParticipantBox" styleClass="form-input" maxWidth="Infinity"
+                  promptText="Ajouter un participant..."/>
 
         <Label fx:id="errorLabel" styleClass="error-label"/>
 

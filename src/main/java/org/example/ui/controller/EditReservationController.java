@@ -1,8 +1,12 @@
 package org.example.ui.controller;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.example.config.SessionManager;
 import org.example.model.Reservation;
 import org.example.model.Room;
 import org.example.model.User;
@@ -22,7 +26,9 @@ public class EditReservationController {
     @FXML private ComboBox<String> startTimeBox;
     @FXML private ComboBox<String> endTimeBox;
     @FXML private ComboBox<Room> roomBox;
-    @FXML private ListView<User> participantList;
+    @FXML private FlowPane participantChips;
+    @FXML private ComboBox<User> addParticipantBox;
+    @FXML private Label organizerLabel;
     @FXML private Label errorLabel;
 
     private final ReservationService reservationService = new ReservationService();
@@ -30,6 +36,8 @@ public class EditReservationController {
     private final UserService userService = new UserService();
 
     private Reservation reservation;
+    private final List<User> selectedParticipants = new ArrayList<>();
+    private List<User> allUsers;
 
     @FXML
     public void initialize() {
@@ -50,16 +58,31 @@ public class EditReservationController {
         roomBox.setCellFactory(lv -> roomCell());
         roomBox.setButtonCell(roomCell());
 
-        // Participants — multi-sélection
-        participantList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        participantList.getItems().addAll(userService.getAllUsers());
-        participantList.setCellFactory(lv -> new ListCell<>() {
-            @Override
-            protected void updateItem(User user, boolean empty) {
-                super.updateItem(user, empty);
-                setText(empty || user == null ? null : user.getFullName());
+        // Load all users (exclude current user from the add list)
+        allUsers = userService.getAllUsers();
+        Long myId = SessionManager.getCurrentUser().getId();
+
+        // Add current user as automatic participant
+        allUsers.stream()
+                .filter(u -> u.getId().equals(myId))
+                .findFirst()
+                .ifPresent(selectedParticipants::add);
+
+        // ComboBox for adding participants
+        addParticipantBox.setCellFactory(lv -> userCell());
+        addParticipantBox.setButtonCell(userCell());
+        addParticipantBox.setOnAction(e -> {
+            User selected = addParticipantBox.getValue();
+            if (selected != null && selectedParticipants.stream().noneMatch(u -> u.getId().equals(selected.getId()))) {
+                selectedParticipants.add(selected);
+                refreshChips();
+                refreshAddComboBox();
             }
+            addParticipantBox.setValue(null);
         });
+
+        refreshChips();
+        refreshAddComboBox();
     }
 
     public void setReservation(Reservation reservation) {
@@ -68,6 +91,12 @@ public class EditReservationController {
         titleField.setText(reservation.getTitle());
         descriptionField.setText(reservation.getDescription());
         datePicker.setValue(LocalDate.parse(reservation.getDate()));
+
+        // Show organizer name
+        User organizer = userService.getUserById(reservation.getOrganizerId());
+        if (organizer != null) {
+            organizerLabel.setText("Créé par " + organizer.getFirstName() + " " + organizer.getLastName());
+        }
         startTimeBox.setValue(reservation.getStartTime());
         endTimeBox.setValue(reservation.getEndTime());
 
@@ -79,14 +108,56 @@ public class EditReservationController {
             }
         }
 
-        // Select participants
+        // Load existing participants
         List<Long> participantIds = reservationService.getParticipantIds(reservation.getId());
-        participantList.getSelectionModel().clearSelection();
-        for (int i = 0; i < participantList.getItems().size(); i++) {
-            if (participantIds.contains(participantList.getItems().get(i).getId())) {
-                participantList.getSelectionModel().select(i);
+        selectedParticipants.clear();
+        Long myId = SessionManager.getCurrentUser().getId();
+        // Always include current user
+        allUsers.stream().filter(u -> u.getId().equals(myId)).findFirst().ifPresent(selectedParticipants::add);
+        for (Long pid : participantIds) {
+            if (!pid.equals(myId)) {
+                allUsers.stream().filter(u -> u.getId().equals(pid)).findFirst().ifPresent(selectedParticipants::add);
             }
         }
+        refreshChips();
+        refreshAddComboBox();
+    }
+
+    private void refreshChips() {
+        participantChips.getChildren().clear();
+        Long myId = SessionManager.getCurrentUser().getId();
+
+        for (User user : selectedParticipants) {
+            boolean isMe = user.getId().equals(myId);
+            HBox chip = new HBox(4);
+            chip.setAlignment(Pos.CENTER_LEFT);
+            chip.getStyleClass().add("participant-chip");
+
+            Label name = new Label(user.getFullName() + (isMe ? " (vous)" : ""));
+            name.getStyleClass().add("participant-chip-name");
+            chip.getChildren().add(name);
+
+            if (!isMe) {
+                Button remove = new Button("×");
+                remove.getStyleClass().add("participant-chip-remove");
+                remove.setOnAction(e -> {
+                    selectedParticipants.removeIf(u -> u.getId().equals(user.getId()));
+                    refreshChips();
+                    refreshAddComboBox();
+                });
+                chip.getChildren().add(remove);
+            }
+
+            participantChips.getChildren().add(chip);
+        }
+    }
+
+    private void refreshAddComboBox() {
+        addParticipantBox.getItems().clear();
+        List<Long> selectedIds = selectedParticipants.stream().map(User::getId).toList();
+        allUsers.stream()
+                .filter(u -> !selectedIds.contains(u.getId()))
+                .forEach(addParticipantBox.getItems()::add);
     }
 
     @FXML
@@ -123,8 +194,7 @@ public class EditReservationController {
 
             // Sync participants: remove old, add new
             List<Long> oldIds = reservationService.getParticipantIds(reservation.getId());
-            List<User> selectedUsers = new ArrayList<>(participantList.getSelectionModel().getSelectedItems());
-            List<Long> newIds = selectedUsers.stream().map(User::getId).toList();
+            List<Long> newIds = selectedParticipants.stream().map(User::getId).toList();
 
             for (Long oldId : oldIds) {
                 if (!newIds.contains(oldId)) {
@@ -160,6 +230,16 @@ public class EditReservationController {
             protected void updateItem(Room room, boolean empty) {
                 super.updateItem(room, empty);
                 setText(empty || room == null ? null : room.getName() + " (" + room.getCapacity() + " places)");
+            }
+        };
+    }
+
+    private ListCell<User> userCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(User user, boolean empty) {
+                super.updateItem(user, empty);
+                setText(empty || user == null ? null : user.getFullName());
             }
         };
     }

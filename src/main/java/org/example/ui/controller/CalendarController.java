@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Reservation;
@@ -40,6 +41,7 @@ public class CalendarController {
     private Map<Long, Room> roomById;
     private Map<Long, User> userById;
     private LocalDate currentWeekStart;
+    private ContextMenu activeContextMenu;
 
     private static final int DAY_START  = 8 * 60;   // 8h = 480 min
     private static final int DAY_END    = 20 * 60;  // 20h = 1200 min
@@ -54,6 +56,18 @@ public class CalendarController {
                 .collect(Collectors.toMap(Room::getId, Function.identity()));
         userById = userService.getAllUsers().stream()
                 .collect(Collectors.toMap(User::getId, Function.identity()));
+
+        // Force equal day column widths regardless of content
+        calendarGrid.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (calendarGrid.getColumnConstraints().size() >= 8) {
+                double dayW = (newVal.doubleValue() - TIME_W) / 7.0;
+                for (int i = 1; i <= 7; i++) {
+                    ColumnConstraints cc = calendarGrid.getColumnConstraints().get(i);
+                    cc.setPrefWidth(dayW);
+                    cc.setMaxWidth(dayW);
+                }
+            }
+        });
 
         currentWeekStart = LocalDate.now().with(DayOfWeek.MONDAY);
         showWeek(currentWeekStart);
@@ -92,11 +106,12 @@ public class CalendarController {
         ColumnConstraints timeCol = new ColumnConstraints(TIME_W, TIME_W, TIME_W);
         calendarGrid.getColumnConstraints().add(timeCol);
 
-        // Columns 1-7: days (equal, grow)
+        // Columns 1-7: days (equal width)
         for (int i = 0; i < 7; i++) {
             ColumnConstraints dayCol = new ColumnConstraints();
             dayCol.setHgrow(Priority.ALWAYS);
             dayCol.setMinWidth(80);
+            dayCol.setFillWidth(true);
             calendarGrid.getColumnConstraints().add(dayCol);
         }
 
@@ -191,15 +206,66 @@ public class CalendarController {
             Pane overlay = new Pane();
             overlay.getStyleClass().add("cal-overlay");
             overlay.setPrefHeight(NUM_SLOTS * ROW_H);
+            overlay.setMinWidth(0);
+            overlay.setPrefWidth(0);
             overlay.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-            // Click on empty area → open create dialog pre-filled with that time slot
-            overlay.setOnMouseClicked(event -> {
+            // Clip so card labels don't push column width
+            Rectangle clip = new Rectangle();
+            clip.widthProperty().bind(overlay.widthProperty());
+            clip.heightProperty().bind(overlay.heightProperty());
+            overlay.setClip(clip);
+
+            // Drag on empty area → select time range and open create dialog
+            Region dragPreview = new Region();
+            dragPreview.getStyleClass().add("cal-drag-preview");
+            dragPreview.setVisible(false);
+            dragPreview.setMouseTransparent(true);
+            overlay.getChildren().add(dragPreview);
+
+            final double[] dragStartY = {-1};
+
+            overlay.setOnMousePressed(event -> {
                 if (event.getButton() == MouseButton.PRIMARY) {
-                    double y = event.getY();
-                    int slot = Math.max(0, Math.min(NUM_SLOTS - 1, (int) (y / ROW_H)));
-                    int startMins = DAY_START + slot * SLOT_MIN;
-                    int endMins = Math.min(DAY_END, startMins + 60);
+                    // Close any open context menu
+                    if (activeContextMenu != null) {
+                        activeContextMenu.hide();
+                        activeContextMenu = null;
+                    }
+                    dragStartY[0] = event.getY();
+                    int slot = Math.max(0, Math.min(NUM_SLOTS - 1, (int) (event.getY() / ROW_H)));
+                    double snapY = slot * ROW_H;
+                    dragPreview.setLayoutX(0);
+                    dragPreview.setLayoutY(snapY);
+                    dragPreview.setPrefHeight(ROW_H);
+                    dragPreview.prefWidthProperty().bind(overlay.widthProperty());
+                    dragPreview.setVisible(true);
+                }
+            });
+
+            overlay.setOnMouseDragged(event -> {
+                if (dragStartY[0] >= 0) {
+                    int startSlot = Math.max(0, Math.min(NUM_SLOTS - 1, (int) (dragStartY[0] / ROW_H)));
+                    int endSlot = Math.max(0, Math.min(NUM_SLOTS, (int) Math.ceil(event.getY() / ROW_H)));
+                    if (endSlot <= startSlot) endSlot = startSlot + 1;
+                    endSlot = Math.min(endSlot, NUM_SLOTS);
+                    double snapStartY = startSlot * ROW_H;
+                    double h = (endSlot - startSlot) * ROW_H;
+                    dragPreview.setLayoutY(snapStartY);
+                    dragPreview.setPrefHeight(h);
+                }
+            });
+
+            overlay.setOnMouseReleased(event -> {
+                if (dragStartY[0] >= 0 && event.getButton() == MouseButton.PRIMARY) {
+                    dragPreview.setVisible(false);
+                    int startSlot = Math.max(0, Math.min(NUM_SLOTS - 1, (int) (dragStartY[0] / ROW_H)));
+                    int endSlot = Math.max(0, Math.min(NUM_SLOTS, (int) Math.ceil(event.getY() / ROW_H)));
+                    if (endSlot <= startSlot) endSlot = startSlot + 1;
+                    endSlot = Math.min(endSlot, NUM_SLOTS);
+                    int startMins = DAY_START + startSlot * SLOT_MIN;
+                    int endMins = DAY_START + endSlot * SLOT_MIN;
+                    dragStartY[0] = -1;
                     openCreateReservationPrefilled(day,
                             String.format("%02d:%02d", startMins / 60, startMins % 60),
                             String.format("%02d:%02d", endMins / 60, endMins % 60));
@@ -240,11 +306,15 @@ public class CalendarController {
 
                 final Reservation fr = r;
                 final String fs = status;
-                card.setOnMouseClicked(event -> {
+                card.setOnMousePressed(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
-                        buildEventContextMenu(fr, fs).show(card, event.getScreenX(), event.getScreenY());
+                        if (activeContextMenu != null) {
+                            activeContextMenu.hide();
+                        }
+                        activeContextMenu = buildEventContextMenu(fr, fs);
+                        activeContextMenu.show(card, event.getScreenX(), event.getScreenY());
                     }
-                    event.consume(); // prevent click from reaching the overlay
+                    event.consume(); // prevent event from reaching the overlay
                 });
 
                 overlay.getChildren().add(card);
@@ -382,13 +452,13 @@ public class CalendarController {
 
     private void openEditReservation(Reservation r) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createReservation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editReservation.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("Modifier la réunion");
+            stage.setTitle("Détail de la réunion");
             stage.setScene(new Scene(loader.load()));
             stage.sizeToScene();
             stage.setOnHidden(e -> showWeek(currentWeekStart));
-            CreateReservationController controller = loader.getController();
+            EditReservationController controller = loader.getController();
             controller.setReservation(r);
             stage.show();
         } catch (Exception e) {

@@ -85,9 +85,15 @@ CREATE TABLE IF NOT EXISTS participants_reservation (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- @TODO : Table for notifications.
+CREATE TABLE IF NOT EXISTS notification (
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    message TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    is_read INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
-INSERT INTO users (last_name, first_name, mail, password, role, username) VALUES
+INSERT OR IGNORE INTO users (last_name, first_name, mail, password, role, username) VALUES
 (
  'Administrateur',
  'Admin',
