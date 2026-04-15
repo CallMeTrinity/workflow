@@ -11,8 +11,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository d'acces aux donnees des salles.
+ * Gere les requetes JDBC pour la table room.
+ */
 public class RoomRepository {
 
+    /**
+     * Enregistre une nouvelle salle en base de donnees.
+     * @param room la salle a enregistrer
+     * @return l'identifiant genere
+     */
     public Long save(Room room) {
         String sql ="INSERT INTO room (name, capacity) VALUES (?, ?)";
 
@@ -32,6 +41,11 @@ public class RoomRepository {
         }
     }
 
+    /**
+     * Retourne une salle par son identifiant.
+     * @param id l'identifiant de la salle
+     * @return la salle trouvee ou null
+     */
     public Room findById(Long id){
         String sql = "SELECT * FROM room where id = ?";
 
@@ -48,6 +62,10 @@ public class RoomRepository {
         }
     }
 
+    /**
+     * Retourne toutes les salles.
+     * @return la liste de toutes les salles
+     */
     public List<Room> findAll(){
         String sql = "SELECT * FROM room";
 
@@ -63,6 +81,10 @@ public class RoomRepository {
         }
     }
 
+    /**
+     * Met a jour une salle existante.
+     * @param room la salle avec les nouvelles valeurs
+     */
     public void update(Room room) {
         String sql = "UPDATE room SET name = ?, capacity = ? WHERE id = ?";
 
@@ -76,6 +98,10 @@ public class RoomRepository {
         }
     }
 
+    /**
+     * Supprime une salle par son identifiant.
+     * @param id l'identifiant de la salle
+     */
     public void delete(Long id) {
         String sql = "DELETE FROM room WHERE id = ?";
 

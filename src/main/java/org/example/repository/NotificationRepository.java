@@ -7,8 +7,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository d'acces aux donnees des notifications.
+ * Gere les requetes JDBC pour la table notification.
+ */
 public class NotificationRepository {
 
+    /**
+     * Retourne toutes les notifications d'un utilisateur, triees par identifiant decroissant.
+     * @param userId l'identifiant de l'utilisateur
+     * @return la liste des notifications
+     */
     public List<Notification> findByUser(Long userId) {
         List<Notification> list = new ArrayList<>();
         String sql = "SELECT * FROM notification WHERE user_id = ? ORDER BY id DESC";
@@ -25,6 +34,11 @@ public class NotificationRepository {
         return list;
     }
 
+    /**
+     * Retourne une notification par son identifiant.
+     * @param id l'identifiant de la notification
+     * @return la notification trouvee ou null
+     */
     public Notification findById(Long id) {
         String sql = "SELECT * FROM notification WHERE id = ?";
 
@@ -40,6 +54,11 @@ public class NotificationRepository {
         return null;
     }
 
+    /**
+     * Compte le nombre de notifications non lues d'un utilisateur.
+     * @param userId l'identifiant de l'utilisateur
+     * @return le nombre de notifications non lues
+     */
     public int countUnread(Long userId) {
         String sql = "SELECT COUNT(*) FROM notification WHERE user_id = ? AND is_read = 0";
 
@@ -53,6 +72,10 @@ public class NotificationRepository {
         return 0;
     }
 
+    /**
+     * Enregistre une nouvelle notification en base de donnees.
+     * @param notification la notification a enregistrer
+     */
     public void save(Notification notification) {
         String sql = "INSERT INTO notification (message, user_id, is_read, project_id) VALUES (?, ?, 0, ?)";
 
@@ -70,6 +93,10 @@ public class NotificationRepository {
         }
     }
 
+    /**
+     * Met a jour une notification existante.
+     * @param notification la notification avec les nouvelles valeurs
+     */
     public void update(Notification notification) {
         String sql = "UPDATE notification SET message = ?, user_id = ?, is_read = ?, project_id = ? WHERE id = ?";
 
@@ -89,6 +116,10 @@ public class NotificationRepository {
         }
     }
 
+    /**
+     * Marque toutes les notifications non lues d'un utilisateur comme lues.
+     * @param userId l'identifiant de l'utilisateur
+     */
     public void markAllAsRead(Long userId) {
         String sql = "UPDATE notification SET is_read = 1 WHERE user_id = ? AND is_read = 0";
 
@@ -100,6 +131,10 @@ public class NotificationRepository {
         }
     }
 
+    /**
+     * Supprime une notification par son identifiant.
+     * @param id l'identifiant de la notification
+     */
     public void delete(Long id) {
         String sql = "DELETE FROM notification WHERE id = ?";
 

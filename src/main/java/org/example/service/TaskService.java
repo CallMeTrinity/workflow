@@ -15,24 +15,38 @@ import org.example.repository.ProjectRepository;
 import java.util.List;
 
 
+/**
+ * Service de gestion des taches.
+ * Fournit les operations CRUD et l'assignation avec controle d'autorisation.
+ */
 public class TaskService {
 
     private final TaskRepository taskRepository;
     private final NotificationService notificationService;
     private final ProjectRepository projectRepository;
 
+    /** Constructeur par defaut. */
     public TaskService() {
         this.taskRepository = new TaskRepository();
         this.notificationService = new NotificationService();
         this.projectRepository = new ProjectRepository();
     }
 
+    /**
+     * Constructeur avec injection du repository.
+     * @param taskRepository le repository des taches
+     */
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
         this.notificationService = new NotificationService();
         this.projectRepository = new ProjectRepository();
     }
 
+    /**
+     * Constructeur avec injection du repository et du service de notifications.
+     * @param taskRepository le repository des taches
+     * @param notificationService le service de notifications
+     */
     public TaskService(TaskRepository taskRepository, NotificationService notificationService) {
         this.taskRepository = taskRepository;
         this.notificationService = notificationService;
@@ -40,6 +54,19 @@ public class TaskService {
     }
 
 
+    /**
+     * Cree une tache sans responsable de tache.
+     * @param title le titre de la tache
+     * @param description la description de la tache
+     * @param status le statut initial
+     * @param priority la priorite
+     * @param deadline la date limite
+     * @param timeEstimate l'estimation de temps en heures
+     * @param assignedUserId l'identifiant de l'utilisateur assigne
+     * @param projectId l'identifiant du projet
+     * @param userStoryId l'identifiant de la user story associee
+     * @return la tache creee
+     */
     public Task createTask(String title, String description, Status status, Priority priority,
                            String deadline, Integer timeEstimate, Long assignedUserId,
                            Long projectId, Long userStoryId) {
@@ -47,6 +74,20 @@ public class TaskService {
                 assignedUserId, projectId, userStoryId, null);
     }
 
+    /**
+     * Cree une tache avec tous les parametres.
+     * @param title le titre de la tache
+     * @param description la description de la tache
+     * @param status le statut initial
+     * @param priority la priorite
+     * @param deadline la date limite
+     * @param timeEstimate l'estimation de temps en heures
+     * @param assignedUserId l'identifiant de l'utilisateur assigne
+     * @param projectId l'identifiant du projet
+     * @param userStoryId l'identifiant de la user story associee
+     * @param taskLeaderId l'identifiant du responsable de tache
+     * @return la tache creee
+     */
     public Task createTask(String title, String description, Status status, Priority priority,
                            String deadline, Integer timeEstimate, Long assignedUserId,
                            Long projectId, Long userStoryId, Long taskLeaderId) {
@@ -74,15 +115,30 @@ public class TaskService {
     }
 
 
+    /**
+     * Retourne toutes les taches d'un projet.
+     * @param projectId l'identifiant du projet
+     * @return la liste des taches du projet
+     */
     public List<Task> getTasksByProject(Long projectId) {
         return taskRepository.findByProject(projectId);
     }
 
+    /**
+     * Retourne toutes les taches assignees a un utilisateur.
+     * @param userId l'identifiant de l'utilisateur
+     * @return la liste des taches assignees
+     */
     public List<Task> getTasksByAssignedUser(Long userId) {
         return taskRepository.findByAssignedUser(userId);
     }
 
 
+    /**
+     * Assigne une tache a un utilisateur.
+     * @param taskId l'identifiant de la tache
+     * @param userId l'identifiant de l'utilisateur a assigner
+     */
     public void assignTask(Long taskId, Long userId) {
         if (!isAdminOrLeader()) {
             throw new AutorisationException("Only admins or project leaders can assign tasks");
@@ -94,6 +150,11 @@ public class TaskService {
     }
 
 
+    /**
+     * Met a jour le statut d'une tache.
+     * @param taskId l'identifiant de la tache
+     * @param newStatus le nouveau statut
+     */
     public void updateTaskStatus(Long taskId, Status newStatus) {
         User currentUser = SessionManager.getCurrentUser();
         Task task = getTaskById(taskId);
@@ -110,6 +171,10 @@ public class TaskService {
     }
 
 
+    /**
+     * Met a jour une tache existante.
+     * @param task la tache avec les nouvelles valeurs
+     */
     public void updateTask(Task task) {
         if (!isAdminOrLeader()) {
             throw new AutorisationException("Only admins or project leaders can update tasks");
@@ -128,6 +193,10 @@ public class TaskService {
     }
 
 
+    /**
+     * Supprime une tache par son identifiant.
+     * @param id l'identifiant de la tache a supprimer
+     */
     public void deleteTask(Long id) {
         if (!isAdminOrLeader()) {
             throw new AutorisationException("Only admins or project leaders can delete tasks");

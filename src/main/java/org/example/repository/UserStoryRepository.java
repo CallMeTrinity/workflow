@@ -11,8 +11,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository d'acces aux donnees des user stories.
+ * Gere les requetes JDBC pour la table user_story.
+ */
 public class UserStoryRepository {
 
+    /**
+     * Enregistre une nouvelle user story en base de donnees.
+     * @param userStory la user story a enregistrer
+     * @return l'identifiant genere
+     */
     public Long save(UserStory userStory) {
         String sql = "INSERT INTO user_story (title, description, priority, project_id) VALUES (?, ?, ?, ?)";
 
@@ -31,6 +40,11 @@ public class UserStoryRepository {
         }
     }
 
+    /**
+     * Retourne une user story par son identifiant.
+     * @param id l'identifiant de la user story
+     * @return la user story trouvee ou null
+     */
     public UserStory findById(Long id) {
         String sql = "SELECT * FROM user_story WHERE id = ?";
 
@@ -47,6 +61,10 @@ public class UserStoryRepository {
         }
     }
 
+    /**
+     * Retourne toutes les user stories.
+     * @return la liste de toutes les user stories
+     */
     public List<UserStory> findAll() {
         String sql = "SELECT * FROM user_story";
 
@@ -62,6 +80,11 @@ public class UserStoryRepository {
         }
     }
 
+    /**
+     * Retourne toutes les user stories d'un projet.
+     * @param projectId l'identifiant du projet
+     * @return la liste des user stories du projet
+     */
     public List<UserStory> findByProject(Long projectId) {
         String sql = "SELECT * FROM user_story WHERE project_id = ?";
 
@@ -78,6 +101,10 @@ public class UserStoryRepository {
         }
     }
 
+    /**
+     * Met a jour une user story existante.
+     * @param userStory la user story avec les nouvelles valeurs
+     */
     public void update(UserStory userStory) {
         String sql = "UPDATE user_story SET title = ?, description = ?, priority = ?, project_id = ? WHERE id = ?";
 
@@ -91,6 +118,10 @@ public class UserStoryRepository {
         }
     }
 
+    /**
+     * Supprime une user story par son identifiant.
+     * @param id l'identifiant de la user story
+     */
     public void delete(Long id) {
         String sql = "DELETE FROM user_story WHERE id = ?";
 

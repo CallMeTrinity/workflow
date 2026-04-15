@@ -236,11 +236,19 @@ public class ReservationService {
         return conflicting;
     }
 
+    /**
+     * Ajoute un participant. Seul l'organisateur ou un admin peut le faire.
+     */
     public void addParticipant(Long reservationId, Long userId) {
+        checkOrganizerOrAdmin(reservationId);
         reservationRepository.addParticipant(reservationId, userId);
     }
 
+    /**
+     * Retire un participant. Seul l'organisateur ou un admin peut le faire.
+     */
     public void removeParticipant(Long reservationId, Long userId) {
+        checkOrganizerOrAdmin(reservationId);
         reservationRepository.removeParticipant(reservationId, userId);
     }
 
@@ -248,8 +256,26 @@ public class ReservationService {
         return reservationRepository.findParticipantIds(reservationId);
     }
 
+    /**
+     * Met a jour une reservation. Seul l'organisateur ou un admin peut le faire.
+     */
     public void updateReservation(Reservation reservation) {
+        checkOrganizerOrAdmin(reservation.getId());
         reservationRepository.update(reservation);
+    }
+
+    private void checkOrganizerOrAdmin(Long reservationId) {
+        User currentUser = SessionManager.getCurrentUser();
+        Reservation reservation = reservationRepository.findById(reservationId);
+        if (reservation == null) {
+            throw new NotFoundException("Reservation not found");
+        }
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean isOrganizer = reservation.getOrganizerId().equals(currentUser.getId());
+        if (!isAdmin && !isOrganizer) {
+            throw new AutorisationException(
+                    "Seul l'organisateur ou un administrateur peut modifier cette réservation");
+        }
     }
 
     private List<int[]> mergeIntervals(List<int[]> intervals) {
