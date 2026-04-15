@@ -33,6 +33,7 @@
         <Button text="Réservations"  onAction="#openReservations"  styleClass="btn-back"/>
         <Button text="Réunions"      onAction="#openPlanning"      styleClass="btn-back"/>
         <Button text="Agenda"        onAction="#openCalendar"      styleClass="btn-back"/>
+        <Button fx:id="adminBtn" text="Administration" onAction="#openAdmin" styleClass="btn-back"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Button fx:id="createProjectBtn" text="+ Créer un projet" onAction="#openCreateProject" styleClass="btn-primary"/>
     </HBox>
