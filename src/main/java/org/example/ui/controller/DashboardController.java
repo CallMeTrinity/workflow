@@ -38,6 +38,7 @@ public class DashboardController {
     @FXML private TableColumn<Project, Void> actionsColumn;
     @FXML private Label welcomeLabel;
     @FXML private Button createProjectBtn;
+    @FXML private Button adminBtn;
     @FXML private Label avatarHeader;
     @FXML private Circle avatarCircle;
     @FXML private Label notifBadge;
@@ -87,10 +88,14 @@ public class DashboardController {
         refreshNotifBadge();
     }
 
-    private void updateButtonVisibility(){
+    private void updateButtonVisibility() {
         boolean canCreate = isAdmin() || isProjectLeader();
         createProjectBtn.setVisible(canCreate);
         createProjectBtn.setManaged(canCreate);
+
+        boolean admin = isAdmin();
+        adminBtn.setVisible(admin);
+        adminBtn.setManaged(admin);
     }
 
     /* ------------------------------------------------------------------ */
@@ -330,6 +335,18 @@ public class DashboardController {
         return currentUser.getRole() == Role.PROJECT_LEADER;
     }
 
+
+    @FXML
+    private void openAdmin() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin.fxml"));
+            Stage stage = (Stage) projectTable.getScene().getWindow();
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Workflow - Administration");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     private void openCalendar() {

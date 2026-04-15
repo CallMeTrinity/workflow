@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.ui.controller.AdminController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <HBox styleClass="topbar" spacing="10" alignment="CENTER_LEFT">
+        <ImageView fitHeight="28" fitWidth="28" preserveRatio="true">
+            <image><Image url="@../images/workflow_logo.png"/></image>
+        </ImageView>
+        <Button text="← Retour" onAction="#goBackToDashboard" styleClass="btn-back"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Administration" styleClass="app-name"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
+        <Label text="Gestion des utilisateurs" styleClass="page-title"/>
+
+        <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="nameColumn"     text="Nom"     prefWidth="180"/>
+                <TableColumn fx:id="emailColumn"    text="Email"   prefWidth="200"/>
+                <TableColumn fx:id="usernameColumn" text="Pseudo"  prefWidth="120"/>
+                <TableColumn fx:id="roleColumn"     text="Rôle"    prefWidth="140"/>
+                <TableColumn fx:id="actionsColumn"  text=""        prefWidth="50" sortable="false"/>
+            </columns>
+        </TableView>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button text="+ Créer un utilisateur" onAction="#openCreateUser" styleClass="btn-primary"/>
+            <Button text="Gérer les salles" onAction="#openRooms" styleClass="btn-secondary"/>
+        </HBox>
+    </VBox>
+</VBox>

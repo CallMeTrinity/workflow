@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.ui.controller.CreateUserController">
+    <stylesheets>
+        <URL value="@../css/app.css"/>
+    </stylesheets>
+
+    <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
+          StackPane.alignment="CENTER" prefWidth="400">
+
+        <Label fx:id="dialogTitle" text="Nouvel utilisateur" styleClass="page-title"/>
+
+        <TextField fx:id="lastNameField" styleClass="form-input"
+                   promptText="Nom" maxWidth="Infinity"/>
+        <TextField fx:id="firstNameField" styleClass="form-input"
+                   promptText="Prénom" maxWidth="Infinity"/>
+        <TextField fx:id="emailField" styleClass="form-input"
+                   promptText="Email" maxWidth="Infinity"/>
+        <TextField fx:id="usernameField" styleClass="form-input"
+                   promptText="Pseudo" maxWidth="Infinity"/>
+        <PasswordField fx:id="passwordField" styleClass="form-input"
+                       promptText="Mot de passe" maxWidth="Infinity"/>
+        <ComboBox fx:id="roleBox" styleClass="form-input"
+                  promptText="Rôle" maxWidth="Infinity"/>
+
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+
+        <Button fx:id="submitButton" text="Créer" onAction="#handleSubmit"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+    </VBox>
+</StackPane>
