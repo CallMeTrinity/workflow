@@ -40,6 +40,7 @@ public class DashboardController {
     @FXML private Button createProjectBtn;
     @FXML private Label avatarHeader;
     @FXML private Circle avatarCircle;
+    @FXML private Label notifBadge;
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
@@ -83,6 +84,7 @@ public class DashboardController {
 
         refreshProjects();
         refreshAvatar();
+        refreshNotifBadge();
     }
 
     private void updateButtonVisibility(){
@@ -351,7 +353,13 @@ public class DashboardController {
             controller.init(SessionManager.getCurrentUser(), userService, notificationService);
 
             Stage stage = new Stage();
+            stage.setTitle("Mon profil");
             stage.setScene(new Scene(root));
+            stage.initOwner(projectTable.getScene().getWindow());
+            stage.setOnHidden(e -> {
+                refreshAvatar();
+                refreshNotifBadge();
+            });
             stage.show();
 
         } catch (Exception e) {
@@ -364,10 +372,20 @@ public class DashboardController {
         String pseudo = SessionManager.getCurrentUser().getUsername();
 
         if (pseudo != null && !pseudo.isEmpty()) {
-            avatarHeader.setText(pseudo.substring(0,1).toUpperCase());
+            avatarHeader.setText(pseudo.substring(0, 1).toUpperCase());
             avatarCircle.setStyle("-fx-fill: " + AvatarUtil.generateColor(pseudo));
         } else {
             avatarHeader.setText("?");
+        }
+    }
+
+    private void refreshNotifBadge() {
+        int count = notificationService.getUnreadCount(SessionManager.getCurrentUser().getId());
+        if (count > 0) {
+            notifBadge.setText(String.valueOf(count));
+            notifBadge.setVisible(true);
+        } else {
+            notifBadge.setVisible(false);
         }
     }
 }

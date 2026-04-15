@@ -17,24 +17,14 @@
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="welcomeLabel" styleClass="muted-label"/>
         <StackPane onMouseClicked="#openProfile" style="-fx-cursor: hand;" prefWidth="36" prefHeight="36">
-            <Circle radius="15" style="-fx-fill: #dbeafe; -fx-stroke: #93c5fd; -fx-stroke-width: 1.5;"/>
-            <Label fx:id="avatarHeader" style="-fx-font-weight: bold; -fx-text-fill: #2e7dd4; -fx-font-size: 13px;"/>
+            <Circle fx:id="avatarCircle" radius="15"/>
+            <Label fx:id="avatarHeader" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 13px;"/>
             <Label fx:id="notifBadge"
                    style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-size: 9px;
                           -fx-background-radius: 10; -fx-padding: 1 4 1 4; -fx-font-weight: bold;"
-                   StackPane.alignment="TOP_RIGHT"/>
+                   visible="false" StackPane.alignment="TOP_RIGHT"/>
         </StackPane>
         <Button text="Se déconnecter" onAction="#handleLogout" styleClass="btn-back"/>
-        <StackPane onMouseClicked="#openProfile">
-
-            <Circle fx:id="avatarCircle" radius="15"/>
-            <Label fx:id="avatarHeader" style="-fx-text-fill: white;"/>
-
-            <Label fx:id="notifBadge"
-                   style="-fx-background-color: red; -fx-text-fill: white;"
-                   StackPane.alignment="TOP_RIGHT"/>
-
-        </StackPane>
     </HBox>
 
     <!-- Barre secondaire : navigation + action principale -->
