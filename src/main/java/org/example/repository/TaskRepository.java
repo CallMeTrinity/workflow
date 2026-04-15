@@ -12,8 +12,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository d'acces aux donnees des taches.
+ * Gere les requetes JDBC pour la table task.
+ */
 public class TaskRepository {
 
+    /**
+     * Enregistre une nouvelle tache en base de donnees.
+     * @param task la tache a enregistrer
+     * @return l'identifiant genere
+     */
     public Long save(Task task) {
         String sql = "INSERT INTO task (title, description, status, priority, deadline, time_estimate, assigned_user_id, project_id, user_story_id, task_leader_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -32,6 +41,11 @@ public class TaskRepository {
         }
     }
 
+    /**
+     * Retourne une tache par son identifiant.
+     * @param id l'identifiant de la tache
+     * @return la tache trouvee ou null
+     */
     public Task findById(Long id) {
         String sql = "SELECT * FROM task WHERE id = ?";
 
@@ -48,6 +62,10 @@ public class TaskRepository {
         }
     }
 
+    /**
+     * Retourne toutes les taches.
+     * @return la liste de toutes les taches
+     */
     public List<Task> findAll() {
         String sql = "SELECT * FROM task";
 
@@ -63,6 +81,11 @@ public class TaskRepository {
         }
     }
 
+    /**
+     * Retourne toutes les taches d'un projet.
+     * @param projectId l'identifiant du projet
+     * @return la liste des taches du projet
+     */
     public List<Task> findByProject(Long projectId) {
         String sql = "SELECT * FROM task WHERE project_id = ?";
 
@@ -79,6 +102,11 @@ public class TaskRepository {
         }
     }
 
+    /**
+     * Retourne toutes les taches assignees a un utilisateur.
+     * @param userId l'identifiant de l'utilisateur
+     * @return la liste des taches assignees
+     */
     public List<Task> findByAssignedUser(Long userId) {
         String sql = "SELECT * FROM task WHERE assigned_user_id = ?";
 
@@ -95,6 +123,10 @@ public class TaskRepository {
         }
     }
 
+    /**
+     * Met a jour une tache existante.
+     * @param task la tache avec les nouvelles valeurs
+     */
     public void update(Task task) {
         String sql = "UPDATE task SET title = ?, description = ?, status = ?, priority = ?, deadline = ?, time_estimate = ?, assigned_user_id = ?, project_id = ?, user_story_id = ?, task_leader_id = ? WHERE id = ?";
 
@@ -137,6 +169,10 @@ public class TaskRepository {
         }
     }
 
+    /**
+     * Supprime une tache par son identifiant.
+     * @param id l'identifiant de la tache
+     */
     public void delete(Long id) {
         String sql = "DELETE FROM task WHERE id = ?";
 

@@ -12,7 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Repository d'acces aux donnees des reservations.
+ * Gere les requetes JDBC pour les tables reservation et participants_reservation.
+ */
 public class ReservationRepository {
+    /**
+     * Enregistre une nouvelle reservation en base de donnees.
+     * @param reservation la reservation a enregistrer
+     * @return l'identifiant genere
+     */
     public Long save(Reservation reservation) {
 
         String sql = "INSERT INTO reservation (title, description, date, start_time, end_time, room_id, project_id, organizer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -33,6 +42,11 @@ public class ReservationRepository {
         }
     }
 
+    /**
+     * Retourne une reservation par son identifiant.
+     * @param id l'identifiant de la reservation
+     * @return la reservation trouvee ou null
+     */
     public Reservation findById(Long id) {
         String sql = "SELECT * FROM reservation WHERE id = ?";
 
@@ -88,6 +102,10 @@ public class ReservationRepository {
         }
     }
 
+    /**
+     * Retourne toutes les reservations.
+     * @return la liste de toutes les reservations
+     */
     public List<Reservation> findAll() {
         String sql = "SELECT * FROM reservation";
 
@@ -167,6 +185,10 @@ public class ReservationRepository {
         }
     }
 
+    /**
+     * Met a jour une reservation existante.
+     * @param reservation la reservation avec les nouvelles valeurs
+     */
     public void update(Reservation reservation) {
         String sql = "UPDATE reservation SET title = ?, description = ?, date = ?, start_time = ?, end_time = ?, room_id = ?, project_id = ?, organizer_id = ? WHERE id = ?";
 
@@ -179,6 +201,10 @@ public class ReservationRepository {
         }
     }
 
+    /**
+     * Supprime une reservation par son identifiant.
+     * @param id l'identifiant de la reservation
+     */
     public void delete(Long id) {
         String sql = "DELETE FROM reservation WHERE id = ?";
 
