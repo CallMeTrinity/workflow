@@ -4,14 +4,16 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.ui.controller.CreateReservationController">
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.ui.controller.CreateReservationController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #f5f7fa;">
     <stylesheets>
         <URL value="@../css/app.css"/>
     </stylesheets>
 
     <VBox styleClass="dialog-card" spacing="14" alignment="TOP_CENTER"
-          StackPane.alignment="CENTER">
+          style="-fx-max-width: 460;">
 
         <Label text="Nouvelle réservation" styleClass="page-title"/>
 
@@ -34,4 +36,4 @@
                 styleClass="btn-primary" maxWidth="Infinity"/>
     </VBox>
 
-</StackPane>
+</ScrollPane>

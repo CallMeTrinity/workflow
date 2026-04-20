@@ -53,6 +53,19 @@ public class TaskService {
         this.projectRepository = new ProjectRepository();
     }
 
+    /**
+     * Constructeur avec injection de toutes les dependances.
+     * @param taskRepository le repository des taches
+     * @param notificationService le service de notifications
+     * @param projectRepository le repository des projets
+     */
+    public TaskService(TaskRepository taskRepository, NotificationService notificationService,
+                       ProjectRepository projectRepository) {
+        this.taskRepository = taskRepository;
+        this.notificationService = notificationService;
+        this.projectRepository = projectRepository;
+    }
+
 
     /**
      * Cree une tache sans responsable de tache.

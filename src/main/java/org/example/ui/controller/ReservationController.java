@@ -154,7 +154,9 @@ public class ReservationController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editReservation.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Détail réservation");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 540, 620));
+            stage.setMinWidth(480);
+            stage.setMinHeight(450);
 
             EditReservationController controller = loader.getController();
             controller.setReservation(reservation);
@@ -193,7 +195,9 @@ public class ReservationController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createReservation.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Nouvelle réservation");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 500, 550));
+            stage.setMinWidth(460);
+            stage.setMinHeight(400);
             stage.showAndWait();
             refreshReservations();
         } catch (Exception e) {

@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -176,5 +176,79 @@ public class ProjectServiceTest {
 
         assertThrows(AutorisationException.class, () -> projectService.deleteProject(1L));
         verify(projectRepository, never()).delete(any());
+    }
+
+    // --- createProject with explicit leaderId ---
+
+    @Test
+    void adminShouldCreateProjectWithExplicitLeader() {
+        SessionManager.setCurrentUser(adminUser);
+        when(projectRepository.save(any(Project.class))).thenReturn(50L);
+
+        Project result = projectService.createProject(
+                "New Project", "Desc", "2024-01-01", "2024-12-31", 2L
+        );
+
+        assertNotNull(result);
+        assertEquals(50L, result.getId());
+        assertEquals(2L, result.getProjectLeaderId());
+        verify(projectRepository).addMember(50L, 2L);
+    }
+
+    // --- addMember ---
+
+    @Test
+    void adminShouldAddMember() {
+        SessionManager.setCurrentUser(adminUser);
+        Project project = new Project(1L, "P", "D", "2024-01-01", "2024-06-30", 2L);
+        when(projectRepository.findById(1L)).thenReturn(project);
+
+        projectService.addMember(1L, 3L);
+
+        verify(projectRepository).addMember(1L, 3L);
+    }
+
+    @Test
+    void leaderShouldAddMemberToOwnProject() {
+        SessionManager.setCurrentUser(leaderUser);
+        Project project = new Project(1L, "P", "D", "2024-01-01", "2024-06-30", 2L);
+        when(projectRepository.findById(1L)).thenReturn(project);
+
+        projectService.addMember(1L, 3L);
+
+        verify(projectRepository).addMember(1L, 3L);
+    }
+
+    @Test
+    void memberShouldNotAddMember() {
+        SessionManager.setCurrentUser(memberUser);
+        Project project = new Project(1L, "P", "D", "2024-01-01", "2024-06-30", 2L);
+        when(projectRepository.findById(1L)).thenReturn(project);
+
+        assertThrows(AutorisationException.class, () -> projectService.addMember(1L, 5L));
+        verify(projectRepository, never()).addMember(anyLong(), eq(5L));
+    }
+
+    // --- removeMember ---
+
+    @Test
+    void adminShouldRemoveMember() {
+        SessionManager.setCurrentUser(adminUser);
+        Project project = new Project(1L, "P", "D", "2024-01-01", "2024-06-30", 2L);
+        when(projectRepository.findById(1L)).thenReturn(project);
+
+        projectService.removeMember(1L, 3L);
+
+        verify(projectRepository).removeMember(1L, 3L);
+    }
+
+    @Test
+    void memberShouldNotRemoveMember() {
+        SessionManager.setCurrentUser(memberUser);
+        Project project = new Project(1L, "P", "D", "2024-01-01", "2024-06-30", 2L);
+        when(projectRepository.findById(1L)).thenReturn(project);
+
+        assertThrows(AutorisationException.class, () -> projectService.removeMember(1L, 3L));
+        verify(projectRepository, never()).removeMember(anyLong(), anyLong());
     }
 }

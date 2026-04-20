@@ -4,13 +4,15 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.ui.controller.MembersController">
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.ui.controller.MembersController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #f5f7fa;">
     <stylesheets>
         <URL value="@../css/app.css"/>
     </stylesheets>
 
-    <HBox spacing="16" style="-fx-padding: 24;" StackPane.alignment="CENTER"
+    <HBox spacing="16" style="-fx-padding: 24;"
           prefWidth="900" prefHeight="560">
 
         <!-- Colonne gauche : membres actuels -->
@@ -45,4 +47,4 @@
 
     </HBox>
 
-</StackPane>
+</ScrollPane>

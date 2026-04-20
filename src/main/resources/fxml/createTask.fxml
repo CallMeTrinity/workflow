@@ -4,14 +4,16 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.ui.controller.CreateTaskController">
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.ui.controller.CreateTaskController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #f5f7fa;">
     <stylesheets>
         <URL value="@../css/app.css"/>
     </stylesheets>
 
     <VBox styleClass="dialog-card" spacing="10" alignment="TOP_CENTER"
-          StackPane.alignment="CENTER">
+          style="-fx-max-width: 460;">
 
         <Label text="Créer une tâche" styleClass="page-title"/>
 
@@ -49,4 +51,4 @@
                 styleClass="btn-primary" maxWidth="Infinity"/>
     </VBox>
 
-</StackPane>
+</ScrollPane>

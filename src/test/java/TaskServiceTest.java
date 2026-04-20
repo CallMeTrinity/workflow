@@ -3,12 +3,15 @@ package org.example.service;
 import org.example.config.SessionManager;
 import org.example.exception.AutorisationException;
 import org.example.exception.NotFoundException;
+import org.example.model.Project;
 import org.example.model.Task;
 import org.example.model.User;
 import org.example.model.enums.Priority;
 import org.example.model.enums.Role;
 import org.example.model.enums.Status;
+import org.example.repository.ProjectRepository;
 import org.example.repository.TaskRepository;
+import org.example.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +23,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +32,12 @@ public class TaskServiceTest {
 
     @Mock
     private TaskRepository taskRepository;
+
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private ProjectRepository projectRepository;
 
     @InjectMocks
     private TaskService taskService;
@@ -243,5 +254,59 @@ public class TaskServiceTest {
 
         assertThrows(AutorisationException.class, () -> taskService.deleteTask(1L));
         verify(taskRepository, never()).delete(any());
+    }
+
+    // --- createTask with notification ---
+
+    @Test
+    void createTaskWithAssignedUserShouldSendNotification() {
+        SessionManager.setCurrentUser(adminUser);
+        when(taskRepository.save(any(Task.class))).thenReturn(10L);
+
+        taskService.createTask("Fix bug", "desc", Status.TODO, Priority.HIGH,
+                "2024-06-01", 2, 3L, 1L, null);
+
+        verify(notificationService).createNotification(anyLong(), anyString(), anyLong());
+    }
+
+    @Test
+    void createTaskWithoutAssignedUserShouldNotSendNotification() {
+        SessionManager.setCurrentUser(adminUser);
+        when(taskRepository.save(any(Task.class))).thenReturn(10L);
+
+        taskService.createTask("Fix bug", "desc", Status.TODO, Priority.HIGH,
+                "2024-06-01", 2, null, 1L, null);
+
+        verify(notificationService, never()).createNotification(anyLong(), anyString(), anyLong());
+    }
+
+    // --- updateTask with notification ---
+
+    @Test
+    void updateTaskChangingAssigneeShouldSendNotification() {
+        SessionManager.setCurrentUser(adminUser);
+        Task oldTask = new Task(1L, "Fix bug", "desc", Status.TODO, Priority.HIGH,
+                "2024-06-01", 2, 1L, null, 2L);
+        when(taskRepository.findById(1L)).thenReturn(oldTask);
+
+        Task updatedTask = new Task(1L, "Fix bug", "desc", Status.TODO, Priority.HIGH,
+                "2024-06-01", 2, 1L, null, 5L);
+        taskService.updateTask(updatedTask);
+
+        verify(notificationService).createNotification(anyLong(), anyString(), anyLong());
+    }
+
+    @Test
+    void updateTaskWithoutChangingAssigneeShouldNotSendNotification() {
+        SessionManager.setCurrentUser(adminUser);
+        Task oldTask = new Task(1L, "Fix bug", "desc", Status.TODO, Priority.HIGH,
+                "2024-06-01", 2, 1L, null, 3L);
+        when(taskRepository.findById(1L)).thenReturn(oldTask);
+
+        Task updatedTask = new Task(1L, "Fix bug updated", "desc", Status.IN_PROGRESS, Priority.HIGH,
+                "2024-06-01", 2, 1L, null, 3L);
+        taskService.updateTask(updatedTask);
+
+        verify(notificationService, never()).createNotification(anyLong(), anyString(), anyLong());
     }
 }

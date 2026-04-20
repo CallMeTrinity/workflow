@@ -15,9 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,12 +31,14 @@ public class ReservationServiceTest {
     private ReservationService reservationService;
 
     private User adminUser;
+    private User leaderUser;
     private User memberUser;
     private Reservation sampleReservation;
 
     @BeforeEach
     void setUp() {
         adminUser  = new User(1L, "Admin", "System", "admin@test.com", "hash", Role.ADMIN, null);
+        leaderUser = new User(2L, "Leader", "John", "leader@test.com", "hash", Role.PROJECT_LEADER, null);
         memberUser = new User(3L, "Member", "Jane", "member@test.com", "hash", Role.MEMBER, null);
 
         sampleReservation = new Reservation(
@@ -225,5 +228,206 @@ public class ReservationServiceTest {
 
         assertEquals(1, result.size());
         assertEquals("Réunion", result.get(0).getTitle());
+    }
+
+    // --- createReservation with invalid time ---
+
+    @Test
+    void shouldThrowIfEndTimeBeforeStartTime() {
+        when(reservationRepository.findByRoomAndDate(1L, "2024-06-01")).thenReturn(List.of());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                reservationService.createReservation(
+                        "Bad", "Desc", "2024-06-01", "10:00", "09:00", 1L, null, 1L
+                )
+        );
+    }
+
+    @Test
+    void shouldThrowIfEndTimeEqualsStartTime() {
+        when(reservationRepository.findByRoomAndDate(1L, "2024-06-01")).thenReturn(List.of());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                reservationService.createReservation(
+                        "Bad", "Desc", "2024-06-01", "10:00", "10:00", 1L, null, 1L
+                )
+        );
+    }
+
+    // --- addParticipant ---
+
+    @Test
+    void adminShouldAddParticipant() {
+        SessionManager.setCurrentUser(adminUser);
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        reservationService.addParticipant(1L, 5L);
+
+        verify(reservationRepository).addParticipant(1L, 5L);
+    }
+
+    @Test
+    void organizerShouldAddParticipant() {
+        SessionManager.setCurrentUser(memberUser); // memberUser.id = 3L = organizerId
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        reservationService.addParticipant(1L, 5L);
+
+        verify(reservationRepository).addParticipant(1L, 5L);
+    }
+
+    @Test
+    void nonOrganizerNonAdminShouldNotAddParticipant() {
+        User otherUser = new User(99L, "Other", "User", "other@test.com", "hash", Role.MEMBER, null);
+        SessionManager.setCurrentUser(otherUser);
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        assertThrows(AutorisationException.class, () ->
+                reservationService.addParticipant(1L, 5L)
+        );
+        verify(reservationRepository, never()).addParticipant(anyLong(), anyLong());
+    }
+
+    // --- removeParticipant ---
+
+    @Test
+    void adminShouldRemoveParticipant() {
+        SessionManager.setCurrentUser(adminUser);
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        reservationService.removeParticipant(1L, 5L);
+
+        verify(reservationRepository).removeParticipant(1L, 5L);
+    }
+
+    @Test
+    void nonOrganizerShouldNotRemoveParticipant() {
+        User otherUser = new User(99L, "Other", "User", "other@test.com", "hash", Role.MEMBER, null);
+        SessionManager.setCurrentUser(otherUser);
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        assertThrows(AutorisationException.class, () ->
+                reservationService.removeParticipant(1L, 5L)
+        );
+        verify(reservationRepository, never()).removeParticipant(anyLong(), anyLong());
+    }
+
+    // --- updateReservation ---
+
+    @Test
+    void organizerShouldUpdateReservation() {
+        SessionManager.setCurrentUser(memberUser); // organizer
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        Reservation updated = new Reservation(1L, "Updated", "Desc", "2024-06-01",
+                "09:00", "11:00", 1L, null, 3L);
+        reservationService.updateReservation(updated);
+
+        verify(reservationRepository).update(updated);
+    }
+
+    @Test
+    void nonOrganizerShouldNotUpdateReservation() {
+        User otherUser = new User(99L, "Other", "User", "other@test.com", "hash", Role.MEMBER, null);
+        SessionManager.setCurrentUser(otherUser);
+        when(reservationRepository.findById(1L)).thenReturn(sampleReservation);
+
+        Reservation updated = new Reservation(1L, "Updated", "Desc", "2024-06-01",
+                "09:00", "11:00", 1L, null, 3L);
+
+        assertThrows(AutorisationException.class, () ->
+                reservationService.updateReservation(updated)
+        );
+        verify(reservationRepository, never()).update(any());
+    }
+
+    // --- declineReservation / acceptReservation ---
+
+    @Test
+    void declineReservationShouldUpdateStatus() {
+        SessionManager.setCurrentUser(memberUser);
+
+        reservationService.declineReservation(1L);
+
+        verify(reservationRepository).updateParticipantStatus(1L, 3L, "declined");
+    }
+
+    @Test
+    void acceptReservationShouldUpdateStatus() {
+        SessionManager.setCurrentUser(memberUser);
+
+        reservationService.acceptReservation(1L);
+
+        verify(reservationRepository).updateParticipantStatus(1L, 3L, "accepted");
+    }
+
+    // --- findConflictingUserIds ---
+
+    @Test
+    void findConflictingUserIdsShouldReturnConflictingUsers() {
+        Reservation overlap = new Reservation(2L, "Other", "Desc", "2024-06-01",
+                "09:30", "10:30", 2L, null, 1L);
+        when(reservationRepository.findForUserInRange(5L, "2024-06-01", "2024-06-01"))
+                .thenReturn(List.of(overlap));
+        when(reservationRepository.findForUserInRange(6L, "2024-06-01", "2024-06-01"))
+                .thenReturn(List.of());
+
+        List<Long> result = reservationService.findConflictingUserIds(
+                List.of(5L, 6L), "2024-06-01", "09:00", "10:00"
+        );
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains(5L));
+    }
+
+    @Test
+    void findConflictingUserIdsWithNoConflictsShouldReturnEmpty() {
+        Reservation noOverlap = new Reservation(2L, "Other", "Desc", "2024-06-01",
+                "11:00", "12:00", 2L, null, 1L);
+        when(reservationRepository.findForUserInRange(5L, "2024-06-01", "2024-06-01"))
+                .thenReturn(List.of(noOverlap));
+
+        List<Long> result = reservationService.findConflictingUserIds(
+                List.of(5L), "2024-06-01", "09:00", "10:00"
+        );
+
+        assertTrue(result.isEmpty());
+    }
+
+    // --- getAllReservations ---
+
+    @Test
+    void getAllReservationsShouldReturnList() {
+        when(reservationRepository.findAll()).thenReturn(List.of(sampleReservation));
+
+        List<Reservation> result = reservationService.getAllReservations();
+
+        assertEquals(1, result.size());
+    }
+
+    // --- getReservationsForUser ---
+
+    @Test
+    void getReservationsForUserShouldReturnList() {
+        when(reservationRepository.findForUserInRange(1L, "2024-06-01", "2024-06-30"))
+                .thenReturn(List.of(sampleReservation));
+
+        List<Reservation> result = reservationService.getReservationsForUser(1L, "2024-06-01", "2024-06-30");
+
+        assertEquals(1, result.size());
+    }
+
+    // --- getMyStatusForReservations ---
+
+    @Test
+    void getMyStatusForReservationsShouldReturnMap() {
+        Map<Long, String> statuses = Map.of(1L, "accepted", 2L, "declined");
+        when(reservationRepository.findParticipantStatusesForUser(1L, "2024-06-01", "2024-06-30"))
+                .thenReturn(statuses);
+
+        Map<Long, String> result = reservationService.getMyStatusForReservations(1L, "2024-06-01", "2024-06-30");
+
+        assertEquals(2, result.size());
+        assertEquals("accepted", result.get(1L));
     }
 }
