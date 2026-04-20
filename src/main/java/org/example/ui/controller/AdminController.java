@@ -128,7 +128,9 @@ public class AdminController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUser.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Modifier l'utilisateur");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 460, 520));
+            stage.setMinWidth(400);
+            stage.setMinHeight(400);
             stage.sizeToScene();
             stage.setOnHidden(e -> refreshUsers());
             CreateUserController controller = loader.getController();
@@ -157,7 +159,9 @@ public class AdminController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUser.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Nouvel utilisateur");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 460, 520));
+            stage.setMinWidth(400);
+            stage.setMinHeight(400);
             stage.sizeToScene();
             stage.setOnHidden(e -> refreshUsers());
             stage.show();

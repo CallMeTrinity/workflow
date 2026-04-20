@@ -378,7 +378,9 @@ public class KanbanController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
             createTaskStage = new Stage();
-            createTaskStage.setScene(new Scene(loader.load()));
+            createTaskStage.setScene(new Scene(loader.load(), 500, 650));
+            createTaskStage.setMinWidth(460);
+            createTaskStage.setMinHeight(500);
             createTaskStage.sizeToScene();
             createTaskStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
                 if (!focused) createTaskStage.close();
@@ -411,7 +413,9 @@ public class KanbanController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
             createTaskStage = new Stage();
-            createTaskStage.setScene(new Scene(loader.load()));
+            createTaskStage.setScene(new Scene(loader.load(), 500, 650));
+            createTaskStage.setMinWidth(460);
+            createTaskStage.setMinHeight(500);
             createTaskStage.sizeToScene();
             createTaskStage.setTitle("Modifier la tâche");
             createTaskStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
@@ -435,7 +439,9 @@ public class KanbanController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/userStory.fxml"));
             userStoriesStage = new Stage();
-            userStoriesStage.setScene(new Scene(loader.load()));
+            userStoriesStage.setScene(new Scene(loader.load(), 700, 500));
+            userStoriesStage.setMinWidth(500);
+            userStoriesStage.setMinHeight(400);
             userStoriesStage.sizeToScene();
             userStoriesStage.setTitle("User Stories - " + project.getName());
             userStoriesStage.setOnHidden(e -> { loadUserStories(); loadTasks(); });
@@ -521,7 +527,9 @@ public class KanbanController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/members.fxml"));
             membersStage = new Stage();
-            membersStage.setScene(new Scene(loader.load()));
+            membersStage.setScene(new Scene(loader.load(), 920, 580));
+            membersStage.setMinWidth(700);
+            membersStage.setMinHeight(400);
             membersStage.sizeToScene();
             membersStage.setTitle("Membres - " + project.getName());
             membersStage.setOnHidden(e -> loadMemberNames());

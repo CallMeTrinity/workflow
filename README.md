@@ -1,4 +1,4 @@
-# ProjectRoom
+# Workflow
 
 Application de bureau JavaFX pour la gestion de projets : tableaux Kanban, suivi des taches, et reservation de salles de reunion.
 

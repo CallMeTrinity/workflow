@@ -439,7 +439,9 @@ public class CalendarController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createReservation.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Nouvelle réunion");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 500, 550));
+            stage.setMinWidth(460);
+            stage.setMinHeight(400);
             stage.sizeToScene();
             stage.setOnHidden(e -> showWeek(currentWeekStart));
             CreateReservationController controller = loader.getController();
@@ -455,7 +457,9 @@ public class CalendarController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editReservation.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Détail de la réunion");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 540, 620));
+            stage.setMinWidth(480);
+            stage.setMinHeight(450);
             stage.sizeToScene();
             stage.setOnHidden(e -> showWeek(currentWeekStart));
             EditReservationController controller = loader.getController();

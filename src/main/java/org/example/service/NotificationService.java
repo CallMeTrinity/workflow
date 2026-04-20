@@ -11,7 +11,15 @@ import java.util.List;
  */
 public class NotificationService {
 
-    private final NotificationRepository repository = new NotificationRepository();
+    private final NotificationRepository repository;
+
+    public NotificationService() {
+        this.repository = new NotificationRepository();
+    }
+
+    public NotificationService(NotificationRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Cree une notification sans projet associe.

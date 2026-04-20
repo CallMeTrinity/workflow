@@ -139,7 +139,9 @@ public class RoomController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editRoom.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Modifier la salle");
-            stage.setScene(new Scene(loader.load()));
+            stage.setScene(new Scene(loader.load(), 460, 320));
+            stage.setMinWidth(380);
+            stage.setMinHeight(280);
 
             EditRoomController controller = loader.getController();
             controller.setRoom(room);
@@ -169,7 +171,9 @@ public class RoomController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createRoom.fxml"));
             javafx.stage.Stage stage = new Stage();
             stage.setTitle("Ajouter une salle");
-            stage.setScene(new javafx.scene.Scene(loader.load()));
+            stage.setScene(new javafx.scene.Scene(loader.load(), 460, 320));
+            stage.setMinWidth(380);
+            stage.setMinHeight(280);
             stage.showAndWait();
             refreshRooms();
         } catch (Exception e) {

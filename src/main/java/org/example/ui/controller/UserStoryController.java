@@ -78,7 +78,9 @@ public class UserStoryController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUserStory.fxml"));
             createUserStoryStage = new Stage();
-            createUserStoryStage.setScene(new Scene(loader.load()));
+            createUserStoryStage.setScene(new Scene(loader.load(), 480, 420));
+            createUserStoryStage.setMinWidth(400);
+            createUserStoryStage.setMinHeight(350);
             createUserStoryStage.sizeToScene();
             createUserStoryStage.setTitle("Créer une User Story");
             createUserStoryStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
@@ -100,7 +102,9 @@ public class UserStoryController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUserStory.fxml"));
             createUserStoryStage = new Stage();
-            createUserStoryStage.setScene(new Scene(loader.load()));
+            createUserStoryStage.setScene(new Scene(loader.load(), 480, 420));
+            createUserStoryStage.setMinWidth(400);
+            createUserStoryStage.setMinHeight(350);
             createUserStoryStage.sizeToScene();
             createUserStoryStage.setTitle("Modifier la User Story");
             createUserStoryStage.focusedProperty().addListener((obs, wasFocused, focused) -> {

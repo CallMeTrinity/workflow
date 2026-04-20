@@ -13,7 +13,15 @@ import org.example.repository.UserRepository;
  */
 public class AuthService {
 
-    private final UserRepository userRepository = new UserRepository();
+    private final UserRepository userRepository;
+
+    public AuthService() {
+        this.userRepository = new UserRepository();
+    }
+
+    public AuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     /**
      * Authentifie un utilisateur par email et mot de passe.

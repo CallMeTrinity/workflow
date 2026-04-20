@@ -212,7 +212,9 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editProject.fxml"));
             editProjectStage = new Stage();
             editProjectStage.setTitle("Modifier le projet");
-            editProjectStage.setScene(new Scene(loader.load()));
+            editProjectStage.setScene(new Scene(loader.load(), 500, 580));
+            editProjectStage.setMinWidth(460);
+            editProjectStage.setMinHeight(450);
             editProjectStage.sizeToScene();
             editProjectStage.setOnHidden(e -> refreshProjects());
 
@@ -265,7 +267,9 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createProject.fxml"));
             createProjectStage = new Stage();
             createProjectStage.setTitle("Créer un projet");
-            createProjectStage.setScene(new Scene(loader.load()));
+            createProjectStage.setScene(new Scene(loader.load(), 500, 580));
+            createProjectStage.setMinWidth(460);
+            createProjectStage.setMinHeight(450);
             createProjectStage.sizeToScene();
             createProjectStage.setOnHidden(e -> refreshProjects());
             createProjectStage.show();
@@ -371,7 +375,9 @@ public class DashboardController {
 
             Stage stage = new Stage();
             stage.setTitle("Mon profil");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, 650, 520));
+            stage.setMinWidth(500);
+            stage.setMinHeight(400);
             stage.initOwner(projectTable.getScene().getWindow());
             stage.setOnHidden(e -> {
                 refreshAvatar();
