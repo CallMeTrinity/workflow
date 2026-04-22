@@ -1,4 +1,4 @@
-# Workflow
+# ProjectRoom
 
 Application de bureau JavaFX pour la gestion de projets : tableaux Kanban, suivi des taches, et reservation de salles de reunion.
 
@@ -10,17 +10,18 @@ ProjectRoom est un outil de gestion de projets collaboratif qui permet aux equip
 
 | Technologie | Version |
 |-------------|---------|
-| Java        | 21      |
-| JavaFX      | 21      |
+| Java        | 25      |
+| JavaFX      | 25      |
 | Maven       | 3.8+    |
 | SQLite      | Embarque (JDBC) |
 | BCrypt      | Hachage des mots de passe |
 | JUnit 5     | Tests unitaires |
-| Mockito     | Mocks pour les tests |
+| Mockito     | Tests unitaires (mocks) |
+| JaCoCo      | Couverture de code |
 
 ## Prerequis
 
-- **Java 21** ou superieur
+- **Java 25** ou superieur
 - **Maven 3.8** ou superieur
 
 ## Installation et lancement
@@ -36,6 +37,9 @@ mvn javafx:run
 ```bash
 # Lancer l'application
 mvn javafx:run
+
+# Compiler et verifier (tests + couverture + checkstyle)
+mvn clean verify
 
 # Compiler le projet
 mvn clean package
@@ -83,8 +87,10 @@ La session utilisateur est geree par `SessionManager` qui conserve l'utilisateur
 - **User Stories** -- regroupement des taches par user story
 - **Salles de reunion** -- gestion des salles disponibles
 - **Reservations** -- reservation de creneaux avec detection de conflits
+- **Recherche de creneaux** -- algorithme de recherche de creneaux libres multi-participants
 - **Calendrier hebdomadaire** -- visualisation des reservations sur la semaine
-- **Notifications** -- alertes pour les evenements importants
+- **Notifications** -- alertes pour les assignations de taches et invitations
+- **Administration** -- panneau d'administration pour la gestion des utilisateurs
 - **Controle d'acces par role** -- trois niveaux : `ADMIN`, `PROJECT_LEADER`, `MEMBER`
 - **Profils utilisateurs** -- consultation et modification du profil
 
@@ -94,22 +100,29 @@ La session utilisateur est geree par `SessionManager` qui conserve l'utilisateur
 src/main/java/org/example/
     config/          -- DatabaseConfig, SessionManager
     exception/       -- exceptions metier
-    model/           -- POJOs (User, Project, Task, UserStory, Room, Reservation, ...)
+    model/           -- POJOs (User, Project, Task, UserStory, Room, Reservation, Notification)
     repository/      -- couche d'acces aux donnees (JDBC)
     service/         -- logique metier (AuthService, ProjectService, TaskService, ...)
     ui/
-        controller/  -- controleurs JavaFX
+        controller/  -- controleurs JavaFX (21 controleurs)
         util/        -- utilitaires UI
     Main.java        -- point d'entree de l'application
 
 src/main/resources/
+    css/             -- feuilles de style
     fxml/            -- vues FXML
     db/schema.sql    -- schema de la base de donnees + donnees initiales
 ```
 
 ## Tests
 
-Les tests utilisent **JUnit 5** et **Mockito**. Les dependances vers les repositories sont mockees : aucune connexion a la base de donnees n'est necessaire.
+Le projet contient **233 tests** repartis en deux categories :
+
+### Tests unitaires
+Les services sont testes avec **Mockito** : les repositories sont mockes pour isoler la logique metier. Les modeles sont egalement testes (constructeurs, getters/setters).
+
+### Tests d'integration
+Les repositories sont testes avec une **base SQLite en memoire** (`jdbc:sqlite::memory:`) pour verifier les requetes SQL, le mapping des resultats et les contraintes de cles etrangeres. Chaque test demarre avec une base vierge pour garantir l'isolation.
 
 ```bash
 # Executer tous les tests
@@ -117,6 +130,15 @@ mvn test
 
 # Executer un test specifique
 mvn test -Dtest=NomDuTest
+
+# Verifier la couverture (rapport dans target/site/jacoco/)
+mvn clean verify
 ```
 
-Les classes de test se trouvent dans `src/test/java/`.
+La couverture de code cible est de **80%** sur les services et modeles (les controleurs UI et repositories sont exclus du seuil JaCoCo).
+
+## Versioning
+
+Le projet suit le [Semantic Versioning](https://semver.org/lang/fr/). Voir le fichier [CHANGELOG.md](CHANGELOG.md) pour l'historique des versions.
+
+**Version actuelle : 1.0.0-beta.1**
