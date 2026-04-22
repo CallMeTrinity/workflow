@@ -30,6 +30,14 @@ public class DatabaseConfig {
         }
     }
 
+    /**
+     * Permet d'injecter une connexion externe (utile pour les tests d'integration
+     * avec une base SQLite en memoire).
+     */
+    public static void setConnection(Connection conn) {
+        connection = conn;
+    }
+
     // Retourne la connexion au lieu de void
     public static Connection getConnection() {
         if (connection == null) {

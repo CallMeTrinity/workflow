@@ -3,6 +3,7 @@ import org.example.exception.AutorisationException;
 import org.example.exception.NotFoundException;
 import org.example.exception.ReservationConflictException;
 import org.example.model.Reservation;
+import org.example.model.Room;
 import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.repository.ReservationRepository;
@@ -392,6 +393,118 @@ public class ReservationServiceTest {
         );
 
         assertTrue(result.isEmpty());
+    }
+
+    // --- getParticipantIds ---
+
+    @Test
+    void getParticipantIdsShouldReturnList() {
+        when(reservationRepository.findParticipantIds(1L)).thenReturn(List.of(3L, 5L));
+
+        List<Long> result = reservationService.getParticipantIds(1L);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(3L));
+        assertTrue(result.contains(5L));
+    }
+
+    // --- checkOrganizerOrAdmin with null reservation ---
+
+    @Test
+    void addParticipantShouldThrowWhenReservationNotFound() {
+        SessionManager.setCurrentUser(adminUser);
+        when(reservationRepository.findById(99L)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () ->
+                reservationService.addParticipant(99L, 5L)
+        );
+    }
+
+    // --- findAvailableSlots ---
+
+    @Test
+    void findAvailableSlotsShouldReturnFreeSlots() {
+        when(reservationRepository.findByParticipantAndDate(1L, "2024-06-01"))
+                .thenReturn(List.of(
+                        new Reservation(1L, "R1", "", "2024-06-01", "09:00", "10:00", 1L, null, 1L)
+                ));
+        when(reservationRepository.findByRoomAndDate(1L, "2024-06-01"))
+                .thenReturn(List.of(
+                        new Reservation(2L, "R2", "", "2024-06-01", "14:00", "15:00", 1L, null, 1L)
+                ));
+
+        List<int[]> slots = reservationService.findAvailableSlots(
+                List.of(1L), "2024-06-01", 30, 1L
+        );
+
+        assertFalse(slots.isEmpty());
+        for (int[] slot : slots) {
+            assertTrue(slot[1] - slot[0] >= 30);
+        }
+    }
+
+    @Test
+    void findAvailableSlotsShouldWorkWithoutRoom() {
+        when(reservationRepository.findByParticipantAndDate(1L, "2024-06-01"))
+                .thenReturn(List.of());
+
+        List<int[]> slots = reservationService.findAvailableSlots(
+                List.of(1L), "2024-06-01", 60, null
+        );
+
+        assertFalse(slots.isEmpty());
+    }
+
+    @Test
+    void findAvailableSlotsShouldReturnEmptyWhenFullyBooked() {
+        when(reservationRepository.findByParticipantAndDate(1L, "2024-06-01"))
+                .thenReturn(List.of(
+                        new Reservation(1L, "R", "", "2024-06-01", "08:00", "20:00", 1L, null, 1L)
+                ));
+
+        List<int[]> slots = reservationService.findAvailableSlots(
+                List.of(1L), "2024-06-01", 30, null
+        );
+
+        assertTrue(slots.isEmpty());
+    }
+
+    // --- findAvailableSlotsWithAutoRoom ---
+
+    @Test
+    void findAvailableSlotsWithAutoRoomShouldReturnSlotsWithRoomId() {
+        when(reservationRepository.findByParticipantAndDate(1L, "2024-06-01"))
+                .thenReturn(List.of());
+        when(reservationRepository.findByRoomAndDate(10L, "2024-06-01"))
+                .thenReturn(List.of());
+
+        Room room = new Room(10L, "Salle A", 5);
+        List<int[]> slots = reservationService.findAvailableSlotsWithAutoRoom(
+                List.of(1L), "2024-06-01", 60, List.of(room)
+        );
+
+        assertFalse(slots.isEmpty());
+        assertEquals(10, slots.get(0)[2]);
+    }
+
+    @Test
+    void findAvailableSlotsWithAutoRoomShouldSkipTooSmallRooms() {
+        when(reservationRepository.findByParticipantAndDate(anyLong(), eq("2024-06-01")))
+                .thenReturn(List.of());
+        when(reservationRepository.findByRoomAndDate(20L, "2024-06-01"))
+                .thenReturn(List.of());
+
+        Room tooSmall = new Room(10L, "Petite", 1);
+        Room bigEnough = new Room(20L, "Grande", 10);
+
+        List<int[]> slots = reservationService.findAvailableSlotsWithAutoRoom(
+                List.of(1L, 2L, 3L), "2024-06-01", 60, List.of(tooSmall, bigEnough)
+        );
+
+        assertFalse(slots.isEmpty());
+        for (int[] slot : slots) {
+            assertEquals(20, slot[2]);
+        }
     }
 
     // --- getAllReservations ---

@@ -8,20 +8,53 @@ public class UserTest {
 
     @Test
     void shouldReturnFullName() {
-
         User user = new User(
-                1L,
-                "Busson",
-                "Juline",
-                "jbusson@polytech.com",
-                "password123",
-                Role.MEMBER,
-                null
+                1L, "Busson", "Juline", "jbusson@polytech.com",
+                "password123", Role.MEMBER, null
         );
 
-        String fullName = user.getFullName();
+        assertEquals("Juline Busson", user.getFullName());
+    }
 
-        assertEquals("Juline Busson", fullName);
-        System.out.println("Full name : " + fullName);
+    @Test
+    void shouldCreateUserWithNoArgConstructor() {
+        User user = new User();
+        assertNull(user.getId());
+        assertNull(user.getLastName());
+    }
+
+    @Test
+    void shouldGetAllFieldsFromConstructor() {
+        User user = new User(1L, "Doe", "John", "john@test.com",
+                "pass", Role.ADMIN, "johndoe");
+
+        assertEquals(1L, user.getId());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("John", user.getFirstName());
+        assertEquals("john@test.com", user.getMail());
+        assertEquals("pass", user.getPassword());
+        assertEquals(Role.ADMIN, user.getRole());
+        assertEquals("johndoe", user.getUsername());
+    }
+
+    @Test
+    void shouldSetAndGetAllFields() {
+        User user = new User();
+
+        user.setId(2L);
+        user.setLastName("Smith");
+        user.setFirstName("Jane");
+        user.setMail("jane@test.com");
+        user.setPassword("secret");
+        user.setRole(Role.PROJECT_LEADER);
+        user.setUsername("janesmith");
+
+        assertEquals(2L, user.getId());
+        assertEquals("Smith", user.getLastName());
+        assertEquals("Jane", user.getFirstName());
+        assertEquals("jane@test.com", user.getMail());
+        assertEquals("secret", user.getPassword());
+        assertEquals(Role.PROJECT_LEADER, user.getRole());
+        assertEquals("janesmith", user.getUsername());
     }
 }
