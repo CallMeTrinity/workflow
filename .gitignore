@@ -43,6 +43,9 @@ build/
 ### Mac OS ###
 .DS_Store
 
+### Maven generated ###
+dependency-reduced-pom.xml
+
 ### Database files ###
 *.db
 *.db-shm
