@@ -1,99 +1,108 @@
 # Feuille de route ProjectRoom
 
-## 5 séances x 5h — 2 développeurs (Dev A = expérimenté, Dev B = débutant)
+## 5 seances x 5h — 2 developpeurs (Dev A = experimente, Dev B = debutant)
 
 ---
 
-## Séance 1 — Fondations (5h)
+## Seance 1 — Fondations (5h)
 
-**Objectif : projet qui tourne, base de données créée, login fonctionnel**
+**Objectif : projet qui tourne, base de donnees creee, login fonctionnel**
 
-| Tâche                                                             | Qui | Durée estimé |
+| Tache                                                             | Qui | Duree estime |
 |-------------------------------------------------------------------|-----|--------------|
-| ~~Créer le projet Maven, configurer le pom.xml, init Git/GitLab~~ | A   | 30min        |
-| ~~Créer la structure des packages~~                               | A   | 20min        |
-| ~~Écrire le schema.sql (toutes les tables)~~                      | A   | 45min        |
+| ~~Creer le projet Maven, configurer le pom.xml, init Git/GitLab~~ | A   | 30min        |
+| ~~Creer la structure des packages~~                               | A   | 20min        |
+| ~~Ecrire le schema.sql (toutes les tables)~~                      | A   | 45min        |
 | ~~DatabaseConfig.java + initialisation auto du schema.sql~~       | A   | 45min        |
-| ~~Modèles User, Role (enum), priority (enum), status (enum)~~     | B   | 1h           |
+| ~~Modeles User, Role (enum), priority (enum), status (enum)~~     | B   | 1h           |
 | ~~UserRepository (save, findByEmail, findById)~~                  | A   | 45min        |
 | ~~AuthService (login, hash bcrypt, SessionManager)~~              | A   | 45min        |
 | ~~login.fxml + LoginController basique~~                          | B   | 1h           |
-| ~~Modèles Projet, Tache, UserStory + enums~~                      | B   | 1h           |
+| ~~Modeles Projet, Tache, UserStory + enums~~                      | B   | 1h           |
 
-**Fin de séance 1 :** on peut se connecter avec un user créé manuellement en base
+**Fin de seance 1 :** on peut se connecter avec un user cree manuellement en base
 
 ---
 
-## Séance 2 — Gestion de projets et tâches (5h)
+## Seance 2 — Gestion de projets et taches (5h)
 
-**Objectif : CRUD projets et tâches, kanban basique**
+**Objectif : CRUD projets et taches, kanban basique**
 
-| Tâche                                                             | Qui | Durée |
+| Tache                                                             | Qui | Duree |
 |-------------------------------------------------------------------|-----|-------|
 | ~~ProjetRepository (CRUD complet)~~                               | A   | 45min |
 | ~~TacheRepository (CRUD + findByAssignee)~~                       | A   | 45min |
-| ~~ProjetService + TacheService (logique métier, droits)~~         | A   | 1h    |
+| ~~ProjetService + TacheService (logique metier, droits)~~         | A   | 1h    |
 | ~~dashboard.fxml + DashboardController (liste projets)~~          | B   | 1h    |
-| ~~kanban.fxml + KanbanController (3 colonnes, affichage tâches)~~ | B   | 1h    |
+| ~~kanban.fxml + KanbanController (3 colonnes, affichage taches)~~ | B   | 1h    |
 | ~~Tests JUnit ProjetService + TacheService~~                      | A   | 30min |
 
-**Fin de séance 2 :** on peut créer un projet, des tâches, les déplacer dans le kanban
+**Fin de seance 2 :** on peut creer un projet, des taches, les deplacer dans le kanban
 
 ---
 
-## Séance 3 — Salles et réservations (5h)
+## Seance 3 — Salles et reservations (5h)
 
-**Objectif : gestion des salles, création de réservations**
+**Objectif : gestion des salles, creation de reservations**
 
-| Tâche                                                  | Qui | Durée |
+| Tache                                                  | Qui | Duree |
 |--------------------------------------------------------|-----|-------|
-| Amélioration de l'existant                             | B   | 3h    |
-| ~~Modèles Salle, Reservation~~                         | A   | 45min |
+| ~~Amelioration de l'existant~~                         | B   | 3h    |
+| ~~Modeles Salle, Reservation~~                         | A   | 45min |
 | ~~SalleRepository + ReservationRepository~~            | A   | 1h    |
-| ~~SalleService + ReservationService (vérif conflits)~~ | A   | 1h    |
+| ~~SalleService + ReservationService (verif conflits)~~ | A   | 1h    |
 | ~~salle.fxml + SalleController (liste, CRUD admin)~~   | A   | 1h    |
 | ~~reservation.fxml + ReservationController~~           | A   | 1h    |
 | ~~Tests JUnit ReservationService (conflits)~~          | A   | 30min |
 | ~~Branchement des vues entre elles (navigation)~~      | A   | 30min |
 
-**Fin de séance 3 :** on peut gérer les salles et créer des réservations sans conflit
+**Fin de seance 3 :** on peut gerer les salles et creer des reservations sans conflit
 
 ---
 
-## Séance 4 — Planning et notifications (5h)
+## Seance 4 — Planning et notifications (5h)
 
-**Objectif : vue planning, recherche de créneaux, notifications**
+**Objectif : vue planning, recherche de creneaux, notifications**
 
-| Tâche                                                          | Qui | Durée |
+| Tache                                                          | Qui | Duree |
 |----------------------------------------------------------------|-----|-------|
-| ~~Modèle PlanningItem + PlanningService complet~~              | A   | 1h30  |
+| ~~Modele PlanningItem + PlanningService complet~~              | A   | 1h30  |
 | ~~Algorithme findCreneauxLibres~~                              | A   | 1h    |
-| ~~Tests JUnit PlanningService (algo créneaux)~~                | A   | 30min |
+| ~~Tests JUnit PlanningService (algo creneaux)~~                | A   | 30min |
 | ~~planning.fxml + PlanningController (vue calendrier)~~        | B   | 1h30  |
-| ~~Modèle Notification + NotificationRepository~~               | B   | 30min |
+| ~~Modele Notification + NotificationRepository~~               | B   | 30min |
 | ~~NotificationService + branchement dans les autres services~~ | B   | 30min |
 | ~~notification.fxml + NotificationController~~                 | B   | 30min |
-| ~~Amélioration UX et UI~~                                      | A   | 2h    |
-| ~~Améliorer réservation salle en fonction du nombre de gens~~  | A   | 2h    |
+| ~~Amelioration UX et UI~~                                      | A   | 2h    |
+| ~~Ameliorer reservation salle en fonction du nombre de gens~~  | A   | 2h    |
 
-**Fin de séance 4 :** planning consultable, créneaux libres trouvables, notifications in-app
+**Fin de seance 4 :** planning consultable, creneaux libres trouvables, notifications in-app
 
 ---
 
-## Séance 5 — Rôles, finitions, qualité (5h)
+## Seance 5 — Roles, finitions, qualite (5h)
 
-**Objectif : gestion des rôles, polish, qualité du code**
+**Objectif : gestion des roles, polish, qualite du code**
 
-| Tâche                                          | Qui | Durée |
-|------------------------------------------------|-----|-------|
-| AdminController (gestion users, salles)        | B   | 1h    |
-| Vérification des restrictions par rôle partout | A   | 45min |
-| ~~UserStoryRepository + UserStoryService~~     | A   | 45min |
-| Amélioration UI (CSS, cohérence visuelle)      | B   | 1h30  |
-| Checkstyle — corriger les violations           | A+B | 30min |
-| Javadoc sur les services et repositories       | A+B | 30min |
-| README (install, lancer le projet, stack)      | B   | 30min |
-| Tests de bout en bout manuels                  | A+B | 30min |
+| Tache                                                  | Qui | Duree |
+|--------------------------------------------------------|-----|-------|
+| ~~AdminController (gestion users, salles)~~            | B   | 1h    |
+| ~~Verification des restrictions par role partout~~     | A   | 45min |
+| ~~UserStoryRepository + UserStoryService~~             | A   | 45min |
+| ~~Amelioration UI (CSS, coherence visuelle)~~          | B   | 1h30  |
+| ~~Checkstyle — corriger les violations~~               | A+B | 30min |
+| ~~Javadoc sur les services et repositories~~           | A+B | 30min |
+| ~~README (install, lancer le projet, stack)~~          | B   | 30min |
+| ~~Tests unitaires et d'integration (233 tests)~~       | A+B | 30min |
 
-**Fin de séance 5 :** projet complet, propre, documenté, prêt pour la démo
+**Fin de seance 5 :** projet complet, propre, documente, pret pour la demo
+
 ---
+
+## Bilan
+
+- 5 seances realisees sur 5
+- 21 controleurs, 7 services, 7 repositories
+- 233 tests (unitaires + integration), couverture > 80%
+- 0 violation Checkstyle
+- Projet pret pour la beta 1
