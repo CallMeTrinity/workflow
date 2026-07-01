@@ -170,8 +170,8 @@ public class UserRepository {
             stmt.setString(1, username);
             stmt.setLong(2, id);
             stmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating username: " + e.getMessage(), e);
         }
     }
 }
