@@ -15,8 +15,12 @@ import org.example.model.enums.Role;
 import org.example.service.RoomService;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RoomController {
+
+    private static final Logger LOGGER = Logger.getLogger(RoomController.class.getName());
 
     @FXML private TableView<Room> roomTable;
     @FXML private TableColumn<Room, String> nameColumn;
@@ -149,7 +153,7 @@ public class RoomController {
             stage.showAndWait();
             refreshRooms();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -177,7 +181,7 @@ public class RoomController {
             stage.showAndWait();
             refreshRooms();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -198,7 +202,7 @@ public class RoomController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Dashboard");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }

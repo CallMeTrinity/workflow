@@ -20,8 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReservationController {
+
+    private static final Logger LOGGER = Logger.getLogger(ReservationController.class.getName());
 
     @FXML private TableView<Reservation> reservationTable;
     @FXML private TableColumn<Reservation, String> titleColumn;
@@ -164,7 +168,7 @@ public class ReservationController {
             stage.showAndWait();
             refreshReservations();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -201,7 +205,7 @@ public class ReservationController {
             stage.showAndWait();
             refreshReservations();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -213,7 +217,7 @@ public class ReservationController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Dashboard");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }
