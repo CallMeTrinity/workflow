@@ -2,13 +2,13 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.example.model.Project;
 import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.repository.UserRepository;
 import org.example.service.ProjectService;
+import org.example.ui.util.Modals;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -77,7 +77,7 @@ public class EditProjectController {
             project.setEndDate(endDatePicker.getValue() != null ? endDatePicker.getValue().toString() : null);
             project.setProjectLeaderId(leaderBox.getValue().getId());
             projectService.updateProject(project);
-            ((Stage) nameField.getScene().getWindow()).close();
+            Modals.close(nameField);
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }

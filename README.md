@@ -83,6 +83,11 @@ La session utilisateur est geree par `SessionManager` qui conserve l'utilisateur
 ## Fonctionnalites
 
 - **Authentification** -- connexion / deconnexion securisee avec BCrypt
+- **Theme sombre** -- bascule clair/sombre persistee entre les lancements
+- **Statistiques** -- cartes de synthese sur le dashboard (projets, taches, reunions, notifications)
+- **Avancement des projets** -- barre de progression par projet (taches terminees)
+- **Recherche de taches** -- filtre plein texte dans le Kanban
+- **Modaux integres** -- les dialogues s'affichent en superposition dans la fenetre principale (comportement identique sur toutes les plateformes, y compris macOS plein ecran)
 - **Gestion de projets** -- creation, modification, suppression de projets
 - **Tableau Kanban** -- colonnes TODO / IN_PROGRESS / DONE avec glisser-deposer
 - **Affectation de taches** -- assignation de taches aux membres du projet
@@ -143,4 +148,4 @@ La couverture de code cible est de **80%** sur les services et modeles (les cont
 
 Le projet suit le [Semantic Versioning](https://semver.org/lang/fr/). Voir le fichier [CHANGELOG.md](CHANGELOG.md) pour l'historique des versions.
 
-**Version actuelle : 1.0.0-beta.1**
+**Version actuelle : 1.1.0-beta.1**

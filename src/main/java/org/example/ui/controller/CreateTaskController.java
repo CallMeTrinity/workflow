@@ -2,7 +2,6 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.example.model.Project;
 import org.example.model.User;
@@ -13,6 +12,7 @@ import org.example.repository.ProjectRepository;
 import org.example.service.TaskService;
 import org.example.service.UserStoryService;
 import org.example.model.Task;
+import org.example.ui.util.Modals;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -163,7 +163,7 @@ public class CreateTaskController {
                 taskService.updateTask(taskToEdit);
             }
 
-            ((Stage) titleField.getScene().getWindow()).close();
+            Modals.close(titleField);
 
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());

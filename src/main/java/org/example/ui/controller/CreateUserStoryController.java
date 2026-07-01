@@ -2,10 +2,10 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import org.example.model.UserStory;
 import org.example.model.enums.Priority;
 import org.example.service.UserStoryService;
+import org.example.ui.util.Modals;
 
 public class CreateUserStoryController {
 
@@ -66,7 +66,7 @@ public class CreateUserStoryController {
                 userStoryService.updateUserStory(userStoryToEdit);
             }
 
-            ((Stage) titleField.getScene().getWindow()).close();
+            Modals.close(titleField);
 
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());

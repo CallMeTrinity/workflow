@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
@@ -15,6 +14,7 @@ import org.example.model.User;
 import org.example.service.ReservationService;
 import org.example.service.RoomService;
 import org.example.service.UserService;
+import org.example.ui.util.Modals;
 
 import java.util.List;
 import java.util.Map;
@@ -154,38 +154,23 @@ public class ReservationController {
     }
 
     private void openEditReservation(Reservation reservation) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editReservation.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Détail réservation");
-            stage.setScene(new Scene(loader.load(), 540, 620));
-            stage.setMinWidth(480);
-            stage.setMinHeight(450);
-
-            EditReservationController controller = loader.getController();
-            controller.setReservation(reservation);
-
-            stage.showAndWait();
-            refreshReservations();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        EditReservationController controller = Modals.open(reservationTable,
+                "/fxml/editReservation.fxml", 580, 660, this::refreshReservations);
+        controller.setReservation(reservation);
     }
 
     private void cancelReservation(Reservation reservation) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        Modals.confirm(reservationTable, "Annuler la réservation",
                 "Annuler la réservation « " + reservation.getTitle() + " » ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                try {
-                    reservationService.cancelReservation(reservation.getId());
-                    refreshReservations();
-                } catch (Exception e) {
-                    new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-                }
-            }
-        });
+                "Oui, annuler", true,
+                () -> {
+                    try {
+                        reservationService.cancelReservation(reservation.getId());
+                        refreshReservations();
+                    } catch (Exception e) {
+                        Modals.error(reservationTable, e.getMessage());
+                    }
+                });
     }
 
     private void refreshReservations() {
@@ -195,18 +180,8 @@ public class ReservationController {
 
     @FXML
     private void openCreateReservation() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createReservation.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Nouvelle réservation");
-            stage.setScene(new Scene(loader.load(), 500, 550));
-            stage.setMinWidth(460);
-            stage.setMinHeight(400);
-            stage.showAndWait();
-            refreshReservations();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        Modals.open(reservationTable, "/fxml/createReservation.fxml",
+                540, 620, this::refreshReservations);
     }
 
     @FXML

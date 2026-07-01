@@ -2,7 +2,6 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -16,6 +15,7 @@ import org.example.model.enums.Status;
 import org.example.repository.ProjectRepository;
 import org.example.service.TaskService;
 import org.example.service.UserStoryService;
+import org.example.ui.util.Modals;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -41,6 +41,10 @@ public class KanbanController {
     @FXML private ComboBox<String> sortBox;
     @FXML private ComboBox<String> filterUserStoryBox;
     @FXML private ToggleButton myTasksBtn;
+    @FXML private TextField searchField;
+    @FXML private Label todoCountLabel;
+    @FXML private Label inProgressCountLabel;
+    @FXML private Label doneCountLabel;
 
     private final TaskService taskService = new TaskService();
     private final UserStoryService userStoryService = new UserStoryService();
@@ -49,10 +53,6 @@ public class KanbanController {
     private List<UserStory> projectUserStories;
     private Map<Long, String> userStoryNames = new HashMap<>();
     private Map<Long, String> memberNames = new HashMap<>();
-
-    private Stage createTaskStage;
-    private Stage userStoriesStage;
-    private Stage membersStage;
 
     public void setProject(Project project) {
         this.project = project;
@@ -124,6 +124,9 @@ public class KanbanController {
         );
         sortBox.setValue("Aucun");
         sortBox.setOnAction(e -> loadTasks());
+
+        // RECHERCHE
+        searchField.textProperty().addListener((obs, oldText, newText) -> loadTasks());
     }
 
 
@@ -145,7 +148,7 @@ public class KanbanController {
 
                     // TITRE
                     Label title = new Label(task.getTitle());
-                    title.setStyle("-fx-font-weight: bold; -fx-text-fill: #1e293b;");
+                    title.getStyleClass().add("task-title");
 
                     // PRIORITÉ
                     String priorityVisual = switch (task.getPriority()) {
@@ -171,49 +174,40 @@ public class KanbanController {
                     HBox peopleRow = new HBox(8);
                     if (assigneeName != null) {
                         Label al = new Label("\uD83D\uDC64 " + assigneeName);
-                        al.setStyle("-fx-text-fill: #374151; -fx-font-size: 11px;");
+                        al.getStyleClass().add("task-meta");
                         peopleRow.getChildren().add(al);
                     }
                     if (leaderName != null) {
                         Label ll = new Label("\uD83C\uDFAF " + leaderName);
-                        ll.setStyle("-fx-text-fill: #374151; -fx-font-size: 11px;");
+                        ll.getStyleClass().add("task-meta");
                         peopleRow.getChildren().add(ll);
                     }
+
+                    // DEADLINE
+                    Label deadline = new Label(
+                            task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
+                    );
+                    deadline.getStyleClass().add("task-meta");
 
                     // USER STORY LABEL
                     VBox card;
                     if (task.getUserStoryId() != null && userStoryNames.containsKey(task.getUserStoryId())) {
                         Label usLabel = new Label("\uD83D\uDCD6 " + userStoryNames.get(task.getUserStoryId()));
-                        usLabel.setStyle("-fx-text-fill: #7c3aed; -fx-font-size: 11px; -fx-font-weight: bold;");
-
-                        // DEADLINE
-                        Label deadline = new Label(
-                                task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
-                        );
-                        deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
-
+                        usLabel.getStyleClass().add("task-us-label");
                         card = new VBox(topRow, usLabel, deadline, peopleRow);
                     } else {
-                        // DEADLINE
-                        Label deadline = new Label(
-                                task.getDeadline() != null ? "Deadline " + task.getDeadline() : ""
-                        );
-                        deadline.setStyle("-fx-text-fill: #64748b; -fx-font-size: 11px;");
-
                         card = new VBox(topRow, deadline, peopleRow);
                     }
 
                     card.setSpacing(5);
-                    card.setStyle("-fx-padding: 10; -fx-background-radius: 10;");
-
                     card.setMouseTransparent(true);
-
-                    switch (task.getPriority()) {
-                        case LOW      -> card.setStyle(card.getStyle() + "-fx-background-color: #f0fdf4;");
-                        case MEDIUM   -> card.setStyle(card.getStyle() + "-fx-background-color: #eff6ff;");
-                        case HIGH     -> card.setStyle(card.getStyle() + "-fx-background-color: #fefce8;");
-                        case CRITICAL -> card.setStyle(card.getStyle() + "-fx-background-color: #fef2f2;");
-                    }
+                    card.getStyleClass().add("task-card");
+                    card.getStyleClass().add(switch (task.getPriority()) {
+                        case LOW      -> "task-card-low";
+                        case MEDIUM   -> "task-card-medium";
+                        case HIGH     -> "task-card-high";
+                        case CRITICAL -> "task-card-critical";
+                    });
 
                     setGraphic(card);
                     setStyle("-fx-padding: 5;");
@@ -297,6 +291,15 @@ public class KanbanController {
                     .toList();
         }
 
+        // FILTRE RECHERCHE
+        String query = searchField.getText() != null ? searchField.getText().trim().toLowerCase() : "";
+        if (!query.isEmpty()) {
+            tasks = tasks.stream()
+                    .filter(t -> (t.getTitle() != null && t.getTitle().toLowerCase().contains(query))
+                            || (t.getDescription() != null && t.getDescription().toLowerCase().contains(query)))
+                    .toList();
+        }
+
         String selectedPriority = filterPriorityBox.getValue();
         String selectedUserStory = filterUserStoryBox.getValue();
         String sort = sortBox.getValue();
@@ -373,31 +376,18 @@ public class KanbanController {
                 case DONE -> doneList.getItems().add(task);
             }
         }
+
+        todoCountLabel.setText(String.valueOf(todoList.getItems().size()));
+        inProgressCountLabel.setText(String.valueOf(inProgressList.getItems().size()));
+        doneCountLabel.setText(String.valueOf(doneList.getItems().size()));
     }
 
 
     @FXML
     private void handleAddTask() {
-        if (createTaskStage != null && createTaskStage.isShowing()) createTaskStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
-            createTaskStage = new Stage();
-            createTaskStage.setScene(new Scene(loader.load(), 500, 650));
-            createTaskStage.setMinWidth(460);
-            createTaskStage.setMinHeight(500);
-            createTaskStage.sizeToScene();
-            createTaskStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) createTaskStage.close();
-            });
-            createTaskStage.setOnHidden(e -> loadTasks());
-
-            CreateTaskController controller = loader.getController();
-            controller.setProject(project);
-
-            createTaskStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        CreateTaskController controller = Modals.open(todoList, "/fxml/createTask.fxml",
+                540, 700, this::loadTasks);
+        controller.setProject(project);
     }
 
     @FXML
@@ -413,50 +403,20 @@ public class KanbanController {
 
     @FXML
     private void openEditTask(Task task) {
-        if (createTaskStage != null && createTaskStage.isShowing()) createTaskStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createTask.fxml"));
-            createTaskStage = new Stage();
-            createTaskStage.setScene(new Scene(loader.load(), 500, 650));
-            createTaskStage.setMinWidth(460);
-            createTaskStage.setMinHeight(500);
-            createTaskStage.sizeToScene();
-            createTaskStage.setTitle("Modifier la tâche");
-            createTaskStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) createTaskStage.close();
-            });
-            createTaskStage.setOnHidden(e -> loadTasks());
-
-            CreateTaskController controller = loader.getController();
-            controller.setProject(project);
-            controller.setTask(task);
-
-            createTaskStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        CreateTaskController controller = Modals.open(todoList, "/fxml/createTask.fxml",
+                540, 700, this::loadTasks);
+        controller.setProject(project);
+        controller.setTask(task);
     }
 
     @FXML
     private void handleOpenUserStories() {
-        if (userStoriesStage != null && userStoriesStage.isShowing()) userStoriesStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/userStory.fxml"));
-            userStoriesStage = new Stage();
-            userStoriesStage.setScene(new Scene(loader.load(), 700, 500));
-            userStoriesStage.setMinWidth(500);
-            userStoriesStage.setMinHeight(400);
-            userStoriesStage.sizeToScene();
-            userStoriesStage.setTitle("User Stories - " + project.getName());
-            userStoriesStage.setOnHidden(e -> { loadUserStories(); loadTasks(); });
-
-            UserStoryController controller = loader.getController();
-            controller.setProject(project);
-
-            userStoriesStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        UserStoryController controller = Modals.open(todoList, "/fxml/userStory.fxml",
+                760, 560, () -> {
+                    loadUserStories();
+                    loadTasks();
+                });
+        controller.setProject(project);
     }
 
     /* ------------------------------------------------------------------ */
@@ -513,38 +473,19 @@ public class KanbanController {
     }
 
     private void handleDeleteTask(Task task) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        Modals.confirmDelete(todoList,
                 "Supprimer la tâche \"" + task.getTitle() + "\" ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.setHeaderText("Confirmation");
-        confirm.showAndWait().ifPresent(btn -> {
-            if (btn == ButtonType.YES) {
-                taskService.deleteTask(task.getId());
-                loadTasks();
-            }
-        });
+                () -> {
+                    taskService.deleteTask(task.getId());
+                    loadTasks();
+                });
     }
 
     @FXML
     private void handleOpenMembers() {
-        if (membersStage != null && membersStage.isShowing()) membersStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/members.fxml"));
-            membersStage = new Stage();
-            membersStage.setScene(new Scene(loader.load(), 920, 580));
-            membersStage.setMinWidth(700);
-            membersStage.setMinHeight(400);
-            membersStage.sizeToScene();
-            membersStage.setTitle("Membres - " + project.getName());
-            membersStage.setOnHidden(e -> loadMemberNames());
-
-            MembersController controller = loader.getController();
-            controller.setProject(project);
-
-            membersStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        MembersController controller = Modals.open(todoList, "/fxml/members.fxml",
+                940, 600, this::loadMemberNames);
+        controller.setProject(project);
     }
 
 }

@@ -1,21 +1,15 @@
 package org.example.ui.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Project;
 import org.example.model.UserStory;
 import org.example.model.enums.Role;
 import org.example.service.UserStoryService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.example.ui.util.Modals;
 
 public class UserStoryController {
-
-    private static final Logger LOGGER = Logger.getLogger(UserStoryController.class.getName());
 
     @FXML private TableView<UserStory> userStoryTable;
     @FXML private TableColumn<UserStory, String> titleColumn;
@@ -25,7 +19,6 @@ public class UserStoryController {
 
     private final UserStoryService userStoryService = new UserStoryService();
     private Project project;
-    private Stage createUserStoryStage;
 
     public void setProject(Project project) {
         this.project = project;
@@ -78,66 +71,25 @@ public class UserStoryController {
 
     @FXML
     private void handleAdd() {
-        if (createUserStoryStage != null && createUserStoryStage.isShowing()) createUserStoryStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUserStory.fxml"));
-            createUserStoryStage = new Stage();
-            createUserStoryStage.setScene(new Scene(loader.load(), 480, 420));
-            createUserStoryStage.setMinWidth(400);
-            createUserStoryStage.setMinHeight(350);
-            createUserStoryStage.sizeToScene();
-            createUserStoryStage.setTitle("Créer une User Story");
-            createUserStoryStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) createUserStoryStage.close();
-            });
-            createUserStoryStage.setOnHidden(e -> loadUserStories());
-
-            CreateUserStoryController controller = loader.getController();
-            controller.setProjectId(project.getId());
-
-            createUserStoryStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        CreateUserStoryController controller = Modals.open(userStoryTable,
+                "/fxml/createUserStory.fxml", 500, 480, this::loadUserStories);
+        controller.setProjectId(project.getId());
     }
 
     private void handleEdit(UserStory userStory) {
-        if (createUserStoryStage != null && createUserStoryStage.isShowing()) createUserStoryStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUserStory.fxml"));
-            createUserStoryStage = new Stage();
-            createUserStoryStage.setScene(new Scene(loader.load(), 480, 420));
-            createUserStoryStage.setMinWidth(400);
-            createUserStoryStage.setMinHeight(350);
-            createUserStoryStage.sizeToScene();
-            createUserStoryStage.setTitle("Modifier la User Story");
-            createUserStoryStage.focusedProperty().addListener((obs, wasFocused, focused) -> {
-                if (!focused) createUserStoryStage.close();
-            });
-            createUserStoryStage.setOnHidden(e -> loadUserStories());
-
-            CreateUserStoryController controller = loader.getController();
-            controller.setProjectId(project.getId());
-            controller.setUserStory(userStory);
-
-            createUserStoryStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        CreateUserStoryController controller = Modals.open(userStoryTable,
+                "/fxml/createUserStory.fxml", 500, 480, this::loadUserStories);
+        controller.setProjectId(project.getId());
+        controller.setUserStory(userStory);
     }
 
     private void handleDelete(UserStory userStory) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        Modals.confirmDelete(userStoryTable,
                 "Supprimer la user story \"" + userStory.getTitle() + "\" ?\n"
                         + "Les tâches associées ne seront pas supprimées.",
-                ButtonType.YES, ButtonType.NO);
-        confirm.setHeaderText("Confirmation");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                userStoryService.deleteUserStory(userStory.getId());
-                loadUserStories();
-            }
-        });
+                () -> {
+                    userStoryService.deleteUserStory(userStory.getId());
+                    loadUserStories();
+                });
     }
 }

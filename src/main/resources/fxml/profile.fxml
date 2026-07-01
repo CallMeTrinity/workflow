@@ -19,7 +19,7 @@
     <HBox VBox.vgrow="ALWAYS" spacing="0">
         <!-- Left panel: profile info -->
         <VBox spacing="16" alignment="TOP_CENTER" prefWidth="220"
-              style="-fx-padding: 24; -fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-width: 0 1 0 0;">
+              styleClass="profile-side">
 
             <StackPane>
                 <Circle fx:id="avatarCircle" radius="40"/>

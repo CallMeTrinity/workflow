@@ -4,9 +4,9 @@ import com.sun.javafx.scene.control.IntegerField;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.example.model.Room;
 import org.example.service.RoomService;
+import org.example.ui.util.Modals;
 
 
 public class EditRoomController {
@@ -36,7 +36,7 @@ public class EditRoomController {
             room.setName(name);
             room.setCapacity(Integer.parseInt(capacityField.getText().trim()));
             roomService.updateRoom(room);
-            ((Stage) nameField.getScene().getWindow()).close();
+            Modals.close(nameField);
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }

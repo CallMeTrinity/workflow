@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.example.ui.util.ThemeManager;
 
 import java.util.Objects;
 
@@ -25,6 +26,9 @@ public class Main extends Application {
         scene.getStylesheets().add(
                 Objects.requireNonNull(getClass().getResource("/css/app.css")).toExternalForm()
         );
+
+        // Applique le theme clair/sombre persiste et le maintient a chaque navigation.
+        ThemeManager.register(scene);
 
         stage.setTitle("WorkFlow");
         stage.setScene(scene);

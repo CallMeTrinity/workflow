@@ -11,13 +11,13 @@ import org.example.model.User;
 import org.example.service.ReservationService;
 import org.example.service.RoomService;
 import org.example.service.UserService;
+import org.example.ui.util.Modals;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.logging.Level;
@@ -113,7 +113,7 @@ public class PlanningController {
         displayedSlots.clear();
         displayedDates.clear();
 
-        List<User> selectedUsers = participantList.getSelectionModel().getSelectedItems();
+        List<User> selectedUsers = List.copyOf(participantList.getSelectionModel().getSelectedItems());
         if (selectedUsers.isEmpty()) {
             errorLabel.setText("Sélectionne au moins un participant");
             return;
@@ -284,7 +284,7 @@ public class PlanningController {
         long roomId = chosen[2];
         Long organizerId = SessionManager.getCurrentUser().getId();
 
-        List<User> selectedUsers = participantList.getSelectionModel().getSelectedItems();
+        List<User> selectedUsers = List.copyOf(participantList.getSelectionModel().getSelectedItems());
         List<Long> participantIds = selectedUsers.stream().map(User::getId).toList();
         List<Long> conflictingIds = reservationService.findConflictingUserIds(
                 participantIds, date.toString(), startTime, endTime);
@@ -296,14 +296,21 @@ public class PlanningController {
                             .map(User::getFullName)
                             .orElse("?"))
                     .collect(Collectors.joining(", "));
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            Modals.confirm(slotList, "Conflit de disponibilité",
                     "Ces participants ont déjà une réunion sur ce créneau :\n" + names
                             + "\n\nContinuer quand même ?",
-                    ButtonType.YES, ButtonType.NO);
-            Optional<ButtonType> response = confirm.showAndWait();
-            if (response.isEmpty() || response.get() != ButtonType.YES) return;
+                    "Continuer", false,
+                    () -> doCreateReservation(title, date, startTime, endTime, roomId,
+                            organizerId, selectedUsers));
+            return;
         }
 
+        doCreateReservation(title, date, startTime, endTime, roomId, organizerId, selectedUsers);
+    }
+
+    private void doCreateReservation(String title, LocalDate date, String startTime,
+                                     String endTime, long roomId, Long organizerId,
+                                     List<User> selectedUsers) {
         try {
             var reservation = reservationService.createReservation(
                     title,

@@ -16,12 +16,11 @@
         <Label text="WorkFlow" styleClass="app-name"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="welcomeLabel" styleClass="muted-label"/>
+        <Button fx:id="themeBtn" text="🌙" onAction="#toggleTheme" styleClass="btn-icon"/>
         <StackPane onMouseClicked="#openProfile" style="-fx-cursor: hand;" prefWidth="36" prefHeight="36">
             <Circle fx:id="avatarCircle" radius="15"/>
             <Label fx:id="avatarHeader" style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 13px;"/>
-            <Label fx:id="notifBadge"
-                   style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-size: 9px;
-                          -fx-background-radius: 10; -fx-padding: 1 4 1 4; -fx-font-weight: bold;"
+            <Label fx:id="notifBadge" styleClass="notif-badge"
                    visible="false" StackPane.alignment="TOP_RIGHT"/>
         </StackPane>
         <Button text="Se déconnecter" onAction="#handleLogout" styleClass="btn-back"/>
@@ -40,13 +39,35 @@
 
     <!-- Contenu principal -->
     <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
+
+        <!-- Statistiques -->
+        <HBox spacing="16">
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <Label text="PROJETS" styleClass="stat-title"/>
+                <Label fx:id="statProjectsLabel" text="0" styleClass="stat-value"/>
+            </VBox>
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <Label text="MES TÂCHES EN COURS" styleClass="stat-title"/>
+                <Label fx:id="statTasksLabel" text="0" styleClass="stat-value"/>
+            </VBox>
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <Label text="RÉUNIONS (7 JOURS)" styleClass="stat-title"/>
+                <Label fx:id="statMeetingsLabel" text="0" styleClass="stat-value"/>
+            </VBox>
+            <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <Label text="NOTIFICATIONS NON LUES" styleClass="stat-title"/>
+                <Label fx:id="statNotifsLabel" text="0" styleClass="stat-value"/>
+            </VBox>
+        </HBox>
+
         <Label text="Mes projets" styleClass="page-title"/>
 
         <TableView fx:id="projectTable" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="nameColumn"        text="Nom"            prefWidth="160"/>
-                <TableColumn fx:id="descriptionColumn" text="Description"    prefWidth="240"/>
+                <TableColumn fx:id="descriptionColumn" text="Description"    prefWidth="220"/>
                 <TableColumn fx:id="leaderColumn"      text="Chef de projet" prefWidth="150"/>
+                <TableColumn fx:id="progressColumn"    text="Avancement"     prefWidth="160" sortable="false"/>
                 <TableColumn fx:id="startDateColumn"   text="Début"          prefWidth="100"/>
                 <TableColumn fx:id="endDateColumn"     text="Fin"            prefWidth="100"/>
                 <TableColumn fx:id="createdAtColumn"   text="Créé le"        prefWidth="100"/>

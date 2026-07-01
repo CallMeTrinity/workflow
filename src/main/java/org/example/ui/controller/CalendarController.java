@@ -6,7 +6,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -19,6 +18,7 @@ import org.example.model.User;
 import org.example.service.ReservationService;
 import org.example.service.RoomService;
 import org.example.service.UserService;
+import org.example.ui.util.Modals;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -399,17 +399,14 @@ public class CalendarController {
 
             MenuItem cancel = new MenuItem("Annuler la réunion");
             cancel.setStyle("-fx-text-fill: #dc2626;");
-            cancel.setOnAction(e -> {
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                        "Annuler la réunion \"" + r.getTitle() + "\" ?",
-                        ButtonType.YES, ButtonType.NO);
-                confirm.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.YES) {
+            cancel.setOnAction(e -> Modals.confirm(calendarGrid,
+                    "Annuler la réunion",
+                    "Annuler la réunion \"" + r.getTitle() + "\" ?",
+                    "Oui, annuler", true,
+                    () -> {
                         reservationService.cancelReservation(r.getId());
                         showWeek(currentWeekStart);
-                    }
-                });
-            });
+                    }));
 
             menu.getItems().addAll(edit, new SeparatorMenuItem(), cancel);
         } else {
@@ -439,39 +436,15 @@ public class CalendarController {
     /* ------------------------------------------------------------------ */
 
     private void openCreateReservationPrefilled(LocalDate date, String startTime, String endTime) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createReservation.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Nouvelle réunion");
-            stage.setScene(new Scene(loader.load(), 500, 550));
-            stage.setMinWidth(460);
-            stage.setMinHeight(400);
-            stage.sizeToScene();
-            stage.setOnHidden(e -> showWeek(currentWeekStart));
-            CreateReservationController controller = loader.getController();
-            controller.prefill(date, startTime, endTime);
-            stage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        CreateReservationController controller = Modals.open(calendarGrid,
+                "/fxml/createReservation.fxml", 540, 620, () -> showWeek(currentWeekStart));
+        controller.prefill(date, startTime, endTime);
     }
 
     private void openEditReservation(Reservation r) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editReservation.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Détail de la réunion");
-            stage.setScene(new Scene(loader.load(), 540, 620));
-            stage.setMinWidth(480);
-            stage.setMinHeight(450);
-            stage.sizeToScene();
-            stage.setOnHidden(e -> showWeek(currentWeekStart));
-            EditReservationController controller = loader.getController();
-            controller.setReservation(r);
-            stage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        EditReservationController controller = Modals.open(calendarGrid,
+                "/fxml/editReservation.fxml", 580, 660, () -> showWeek(currentWeekStart));
+        controller.setReservation(r);
     }
 
     /* ------------------------------------------------------------------ */

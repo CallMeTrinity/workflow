@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -13,6 +12,7 @@ import org.example.config.SessionManager;
 import org.example.model.Room;
 import org.example.model.enums.Role;
 import org.example.service.RoomService;
+import org.example.ui.util.Modals;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -139,50 +139,23 @@ public class RoomController {
     /* ------------------------------------------------------------------ */
 
     private void openEditRoom(Room room) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editRoom.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Modifier la salle");
-            stage.setScene(new Scene(loader.load(), 460, 320));
-            stage.setMinWidth(380);
-            stage.setMinHeight(280);
-
-            EditRoomController controller = loader.getController();
-            controller.setRoom(room);
-
-            stage.showAndWait();
-            refreshRooms();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        EditRoomController controller = Modals.open(roomTable, "/fxml/editRoom.fxml",
+                480, 380, this::refreshRooms);
+        controller.setRoom(room);
     }
 
     private void deleteRoom(Room room) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Supprimer le projet \"" + room.getName() + "\" ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                roomService.deleteRoom(room.getId());
-                refreshRooms();
-            }
-        });
+        Modals.confirmDelete(roomTable,
+                "Supprimer la salle \"" + room.getName() + "\" ?",
+                () -> {
+                    roomService.deleteRoom(room.getId());
+                    refreshRooms();
+                });
     }
 
     @FXML
     private void openCreateRoom() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createRoom.fxml"));
-            javafx.stage.Stage stage = new Stage();
-            stage.setTitle("Ajouter une salle");
-            stage.setScene(new javafx.scene.Scene(loader.load(), 460, 320));
-            stage.setMinWidth(380);
-            stage.setMinHeight(280);
-            stage.showAndWait();
-            refreshRooms();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        Modals.open(roomTable, "/fxml/createRoom.fxml", 480, 380, this::refreshRooms);
     }
 
     @FXML
