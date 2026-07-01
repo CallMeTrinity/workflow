@@ -6,8 +6,12 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatabaseConfig {
+    private static final Logger LOGGER = Logger.getLogger(DatabaseConfig.class.getName());
+
     private static Connection connection = null;
     private static final String DB_URL = buildDbUrl();
 
@@ -34,16 +38,16 @@ public class DatabaseConfig {
      * Permet d'injecter une connexion externe (utile pour les tests d'integration
      * avec une base SQLite en memoire).
      */
-    public static void setConnection(Connection conn) {
+    public static synchronized void setConnection(Connection conn) {
         connection = conn;
     }
 
     // Retourne la connexion au lieu de void
-    public static Connection getConnection() {
+    public static synchronized Connection getConnection() {
         if (connection == null) {
             try {
                 connection = DriverManager.getConnection(DB_URL);
-                System.out.println("Connection to SQLite has been established.");
+                LOGGER.log(Level.INFO, "Connection to SQLite has been established.");
                 initSchema();
             } catch (SQLException | IOException e) {
                 throw new RuntimeException("Failed to initialize database", e);
@@ -53,13 +57,13 @@ public class DatabaseConfig {
     }
 
     private static void initSchema() throws IOException, SQLException {
-        InputStream is = DatabaseConfig.class.getResourceAsStream("/db/schema.sql");
-
-        if (is == null) {
-            throw new RuntimeException("schema.sql not found in resources");
+        String sql;
+        try (InputStream is = DatabaseConfig.class.getResourceAsStream("/db/schema.sql")) {
+            if (is == null) {
+                throw new IOException("schema.sql not found in resources");
+            }
+            sql = new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
-
-        String sql = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
         // Filtre les lignes vides et les commentaires
         String[] instructions = sql.split(";");
