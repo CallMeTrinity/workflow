@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.config.SessionManager;
 import org.example.exception.AutorisationException;
+import org.example.exception.InvalidDateInputException;
 import org.example.exception.NotFoundException;
 import org.example.exception.ReservationConflictException;
 import org.example.model.Reservation;
@@ -35,15 +36,16 @@ public class ReservationService {
     public Reservation createReservation(String title, String description, String date,
                                          String startTime, String endTime,
                                          Long roomId, Long projectId, Long organizerId) {
-        List<Reservation> existing = reservationRepository.findByRoomAndDate(roomId, date);
-        if (hasConflict(existing, startTime, endTime)) {
-            throw new ReservationConflictException("Time slot is already booked for this room");
-        }
-
+        // Valider les horaires avant d'interroger la base
         int start = toMinutes(startTime);
         int end = toMinutes(endTime);
         if (end <= start) {
             throw new IllegalArgumentException("End time must be after start time");
+        }
+
+        List<Reservation> existing = reservationRepository.findByRoomAndDate(roomId, date);
+        if (hasConflict(existing, startTime, endTime)) {
+            throw new ReservationConflictException("Time slot is already booked for this room");
         }
 
         Reservation reservation = new Reservation(null, title, description, date,
@@ -330,18 +332,14 @@ public class ReservationService {
     /**
      * Convertit "HH:MM" en minutes depuis minuit.
      * Ex: "14:30" -> 870
+     * @throws InvalidDateInputException si le format est invalide
      */
     private int toMinutes(String time) {
+        if (time == null || !time.matches("\\d{1,2}:\\d{2}")) {
+            throw new InvalidDateInputException("Invalid time format. Expected format: HH:MM");
+        }
         String[] parts = time.split(":");
         return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
-    }
-
-    /**
-     * Convertit des minutes depuis minuit en "HH:MM".
-     * Ex: 870 -> "14:30"
-     */
-    private String toTimeString(int minutes) {
-        return String.format("%02d:%02d", minutes / 60, minutes % 60);
     }
 
     private boolean timesOverlap(String start1, String end1, String start2, String end2) {
