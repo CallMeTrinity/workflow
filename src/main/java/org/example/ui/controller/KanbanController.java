@@ -22,8 +22,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class KanbanController {
+
+    private static final Logger LOGGER = Logger.getLogger(KanbanController.class.getName());
 
     @FXML private ListView<Task> todoList;
     @FXML private ListView<Task> inProgressList;
@@ -392,7 +396,7 @@ public class KanbanController {
 
             createTaskStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -403,7 +407,7 @@ public class KanbanController {
             Stage stage = (Stage) todoList.getScene().getWindow();
             stage.getScene().setRoot(loader.load());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -429,7 +433,7 @@ public class KanbanController {
 
             createTaskStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -451,7 +455,7 @@ public class KanbanController {
 
             userStoriesStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -539,7 +543,7 @@ public class KanbanController {
 
             membersStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 

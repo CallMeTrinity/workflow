@@ -15,8 +15,11 @@ import org.example.service.AuthService;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class LoginController {
+
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
 
     @FXML
     private TextField emailField;
@@ -36,7 +39,7 @@ public class LoginController {
 
         try {
             User user = authService.login(email, password);
-            System.out.println("Logged in as : " + user.getFullName());
+            LOGGER.info(() -> "Logged in as : " + user.getFullName());
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml"));

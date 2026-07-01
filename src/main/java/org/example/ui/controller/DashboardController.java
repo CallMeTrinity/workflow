@@ -25,8 +25,12 @@ import org.example.ui.util.AvatarUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DashboardController {
+
+    private static final Logger LOGGER = Logger.getLogger(DashboardController.class.getName());
 
     @FXML private TableView<Project> projectTable;
     @FXML private TableColumn<Project, String> nameColumn;
@@ -202,7 +206,7 @@ public class DashboardController {
             KanbanController controller = loader.getController();
             controller.setProject(project);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -223,7 +227,7 @@ public class DashboardController {
 
             editProjectStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -274,7 +278,7 @@ public class DashboardController {
             createProjectStage.setOnHidden(e -> refreshProjects());
             createProjectStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -287,7 +291,7 @@ public class DashboardController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -299,7 +303,7 @@ public class DashboardController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Salles");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -311,7 +315,7 @@ public class DashboardController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Réservations");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -323,7 +327,7 @@ public class DashboardController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Réunions");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -348,7 +352,7 @@ public class DashboardController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Administration");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -360,7 +364,7 @@ public class DashboardController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Agenda");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -386,7 +390,7 @@ public class DashboardController {
             stage.show();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 

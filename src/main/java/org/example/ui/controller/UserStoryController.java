@@ -10,8 +10,12 @@ import org.example.model.Project;
 import org.example.model.UserStory;
 import org.example.model.enums.Role;
 import org.example.service.UserStoryService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserStoryController {
+
+    private static final Logger LOGGER = Logger.getLogger(UserStoryController.class.getName());
 
     @FXML private TableView<UserStory> userStoryTable;
     @FXML private TableColumn<UserStory, String> titleColumn;
@@ -93,7 +97,7 @@ public class UserStoryController {
 
             createUserStoryStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -118,7 +122,7 @@ public class UserStoryController {
 
             createUserStoryStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
