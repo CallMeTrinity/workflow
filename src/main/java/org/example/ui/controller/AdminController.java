@@ -10,7 +10,9 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.model.User;
 import org.example.model.enums.Role;
-import org.example.repository.UserRepository;
+import org.example.service.UserService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controleur du panneau d'administration.
@@ -19,6 +21,8 @@ import org.example.repository.UserRepository;
  */
 public class AdminController {
 
+    private static final Logger LOGGER = Logger.getLogger(AdminController.class.getName());
+
     @FXML private TableView<User> userTable;
     @FXML private TableColumn<User, String> nameColumn;
     @FXML private TableColumn<User, String> emailColumn;
@@ -26,7 +30,7 @@ public class AdminController {
     @FXML private TableColumn<User, String> roleColumn;
     @FXML private TableColumn<User, Void> actionsColumn;
 
-    private final UserRepository userRepository = new UserRepository();
+    private final UserService userService = new UserService();
     private ContextMenu activeMenu;
 
     @FXML
@@ -137,7 +141,7 @@ public class AdminController {
             controller.setUser(user);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -147,8 +151,12 @@ public class AdminController {
                 ButtonType.YES, ButtonType.NO);
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
-                userRepository.delete(user.getId());
-                refreshUsers();
+                try {
+                    userService.deleteUser(user.getId());
+                    refreshUsers();
+                } catch (Exception e) {
+                    new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
+                }
             }
         });
     }
@@ -166,7 +174,7 @@ public class AdminController {
             stage.setOnHidden(e -> refreshUsers());
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -178,13 +186,13 @@ public class AdminController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Salles");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
     private void refreshUsers() {
         userTable.getItems().clear();
-        userTable.getItems().addAll(userRepository.findAll());
+        userTable.getItems().addAll(userService.getAllUsers());
     }
 
     @FXML
@@ -195,7 +203,7 @@ public class AdminController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Dashboard");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }
