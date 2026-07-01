@@ -1,15 +1,15 @@
 package org.example.ui.controller;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.model.User;
 import org.example.model.enums.Role;
-import org.example.repository.UserRepository;
+import org.example.service.UserService;
 
 /**
  * Controleur du formulaire de creation / modification d'un utilisateur.
+ * Delegue la logique metier (hachage, validation, autorisation) a UserService.
  */
 public class CreateUserController {
 
@@ -23,7 +23,7 @@ public class CreateUserController {
     @FXML private Label dialogTitle;
     @FXML private Button submitButton;
 
-    private final UserRepository userRepository = new UserRepository();
+    private final UserService userService = new UserService();
     private User userToEdit;
 
     @FXML
@@ -67,21 +67,13 @@ public class CreateUserController {
                 userToEdit.setMail(email);
                 userToEdit.setUsername(username);
                 userToEdit.setRole(role);
-                if (!password.isEmpty()) {
-                    userToEdit.setPassword(BCrypt.withDefaults()
-                            .hashToString(12, password.toCharArray()));
-                }
-                userRepository.update(userToEdit);
+                userService.updateUser(userToEdit, password);
             } else {
                 if (password.isEmpty()) {
                     errorLabel.setText("Le mot de passe est obligatoire");
                     return;
                 }
-                String hashedPassword = BCrypt.withDefaults()
-                        .hashToString(12, password.toCharArray());
-                User user = new User(null, lastName, firstName, email,
-                        hashedPassword, role, username);
-                userRepository.save(user);
+                userService.createUser(lastName, firstName, email, password, role, username);
             }
             ((Stage) lastNameField.getScene().getWindow()).close();
         } catch (Exception e) {

@@ -28,10 +28,10 @@ public class NotificationRepository {
             while (rs.next()) {
                 list.add(mapRow(rs));
             }
+            return list;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error finding notifications for user", e);
         }
-        return list;
     }
 
     /**
@@ -48,10 +48,10 @@ public class NotificationRepository {
             if (rs.next()) {
                 return mapRow(rs);
             }
+            return null;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error finding notification", e);
         }
-        return null;
     }
 
     /**
@@ -66,10 +66,10 @@ public class NotificationRepository {
             stmt.setLong(1, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) return rs.getInt(1);
+            return 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error counting unread notifications", e);
         }
-        return 0;
     }
 
     /**
@@ -89,7 +89,7 @@ public class NotificationRepository {
             }
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error saving notification", e);
         }
     }
 
@@ -112,7 +112,7 @@ public class NotificationRepository {
             stmt.setLong(5, notification.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error updating notification", e);
         }
     }
 
@@ -127,7 +127,7 @@ public class NotificationRepository {
             stmt.setLong(1, userId);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error marking notifications as read", e);
         }
     }
 
@@ -142,7 +142,7 @@ public class NotificationRepository {
             stmt.setLong(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error deleting notification", e);
         }
     }
 

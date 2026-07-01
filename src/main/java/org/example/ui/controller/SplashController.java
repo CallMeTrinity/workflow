@@ -9,8 +9,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SplashController {
+
+    private static final Logger LOGGER = Logger.getLogger(SplashController.class.getName());
 
     @FXML private ImageView logoView;
     @FXML private VBox container;
@@ -41,7 +45,7 @@ public class SplashController {
             stage.getScene().setRoot(loader.load());
             stage.setMaximized(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }

@@ -1,5 +1,6 @@
 import org.example.config.SessionManager;
 import org.example.exception.AutorisationException;
+import org.example.exception.InvalidDateInputException;
 import org.example.exception.NotFoundException;
 import org.example.exception.ReservationConflictException;
 import org.example.model.Reservation;
@@ -235,24 +236,43 @@ public class ReservationServiceTest {
 
     @Test
     void shouldThrowIfEndTimeBeforeStartTime() {
-        when(reservationRepository.findByRoomAndDate(1L, "2024-06-01")).thenReturn(List.of());
-
         assertThrows(IllegalArgumentException.class, () ->
                 reservationService.createReservation(
                         "Bad", "Desc", "2024-06-01", "10:00", "09:00", 1L, null, 1L
                 )
         );
+        // La validation doit avoir lieu avant toute requete en base
+        verifyNoInteractions(reservationRepository);
     }
 
     @Test
     void shouldThrowIfEndTimeEqualsStartTime() {
-        when(reservationRepository.findByRoomAndDate(1L, "2024-06-01")).thenReturn(List.of());
-
         assertThrows(IllegalArgumentException.class, () ->
                 reservationService.createReservation(
                         "Bad", "Desc", "2024-06-01", "10:00", "10:00", 1L, null, 1L
                 )
         );
+        verifyNoInteractions(reservationRepository);
+    }
+
+    @Test
+    void shouldThrowIfTimeFormatInvalid() {
+        assertThrows(InvalidDateInputException.class, () ->
+                reservationService.createReservation(
+                        "Bad", "Desc", "2024-06-01", "9h00", "10:00", 1L, null, 1L
+                )
+        );
+        verifyNoInteractions(reservationRepository);
+    }
+
+    @Test
+    void shouldThrowIfTimeIsNull() {
+        assertThrows(InvalidDateInputException.class, () ->
+                reservationService.createReservation(
+                        "Bad", "Desc", "2024-06-01", null, "10:00", 1L, null, 1L
+                )
+        );
+        verifyNoInteractions(reservationRepository);
     }
 
     // --- addParticipant ---

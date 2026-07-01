@@ -20,8 +20,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PlanningController {
+
+    private static final Logger LOGGER = Logger.getLogger(PlanningController.class.getName());
 
     @FXML private CheckBox asapCheckBox;
     @FXML private DatePicker datePicker;
@@ -366,7 +370,7 @@ public class PlanningController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Dashboard");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }

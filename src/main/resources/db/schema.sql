@@ -95,6 +95,16 @@ CREATE TABLE IF NOT EXISTS notification (
     FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE SET NULL
 );
 
+-- Index sur les colonnes de jointure et de recherche frequentes
+CREATE INDEX IF NOT EXISTS idx_task_project ON task(project_id);
+CREATE INDEX IF NOT EXISTS idx_task_assigned_user ON task(assigned_user_id);
+CREATE INDEX IF NOT EXISTS idx_task_user_story ON task(user_story_id);
+CREATE INDEX IF NOT EXISTS idx_user_story_project ON user_story(project_id);
+CREATE INDEX IF NOT EXISTS idx_reservation_room_date ON reservation(room_id, date);
+CREATE INDEX IF NOT EXISTS idx_reservation_organizer ON reservation(organizer_id);
+CREATE INDEX IF NOT EXISTS idx_notification_user ON notification(user_id, is_read);
+CREATE INDEX IF NOT EXISTS idx_participants_reservation_user ON participants_reservation(user_id);
+
 INSERT OR IGNORE INTO users (last_name, first_name, mail, password, role, username) VALUES
 (
  'Administrateur',

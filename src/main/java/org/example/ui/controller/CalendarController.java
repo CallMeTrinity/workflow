@@ -27,8 +27,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CalendarController {
+
+    private static final Logger LOGGER = Logger.getLogger(CalendarController.class.getName());
 
     @FXML private GridPane calendarGrid;
     @FXML private Label weekLabel;
@@ -448,7 +452,7 @@ public class CalendarController {
             controller.prefill(date, startTime, endTime);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -466,7 +470,7 @@ public class CalendarController {
             controller.setReservation(r);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 
@@ -526,7 +530,7 @@ public class CalendarController {
             stage.getScene().setRoot(loader.load());
             stage.setTitle("Workflow - Dashboard");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }

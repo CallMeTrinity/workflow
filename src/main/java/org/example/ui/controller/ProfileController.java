@@ -18,8 +18,12 @@ import org.example.service.UserService;
 import org.example.ui.util.AvatarUtil;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProfileController {
+
+    private static final Logger LOGGER = Logger.getLogger(ProfileController.class.getName());
 
     @FXML private Label avatarLabel;
     @FXML private Circle avatarCircle;
@@ -182,7 +186,7 @@ public class ProfileController {
                 profileStage.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }
     }
 }
