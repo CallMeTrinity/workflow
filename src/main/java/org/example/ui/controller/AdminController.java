@@ -5,12 +5,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.service.UserService;
+import org.example.ui.util.Modals;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,54 +128,27 @@ public class AdminController {
     }
 
     private void openEditUser(User user) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUser.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Modifier l'utilisateur");
-            stage.setScene(new Scene(loader.load(), 460, 520));
-            stage.setMinWidth(400);
-            stage.setMinHeight(400);
-            stage.sizeToScene();
-            stage.setOnHidden(e -> refreshUsers());
-            CreateUserController controller = loader.getController();
-            controller.setUser(user);
-            stage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        CreateUserController controller = Modals.open(userTable, "/fxml/createUser.fxml",
+                500, 580, this::refreshUsers);
+        controller.setUser(user);
     }
 
     private void deleteUser(User user) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        Modals.confirmDelete(userTable,
                 "Supprimer l'utilisateur \"" + user.getFullName() + "\" ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                try {
-                    userService.deleteUser(user.getId());
-                    refreshUsers();
-                } catch (Exception e) {
-                    new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
-                }
-            }
-        });
+                () -> {
+                    try {
+                        userService.deleteUser(user.getId());
+                        refreshUsers();
+                    } catch (Exception e) {
+                        Modals.error(userTable, e.getMessage());
+                    }
+                });
     }
 
     @FXML
     private void openCreateUser() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createUser.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Nouvel utilisateur");
-            stage.setScene(new Scene(loader.load(), 460, 520));
-            stage.setMinWidth(400);
-            stage.setMinHeight(400);
-            stage.sizeToScene();
-            stage.setOnHidden(e -> refreshUsers());
-            stage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        Modals.open(userTable, "/fxml/createUser.fxml", 500, 580, this::refreshUsers);
     }
 
     @FXML

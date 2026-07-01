@@ -2,10 +2,10 @@ package org.example.ui.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import org.example.model.User;
 import org.example.model.enums.Role;
 import org.example.service.UserService;
+import org.example.ui.util.Modals;
 
 /**
  * Controleur du formulaire de creation / modification d'un utilisateur.
@@ -75,7 +75,7 @@ public class CreateUserController {
                 }
                 userService.createUser(lastName, firstName, email, password, role, username);
             }
-            ((Stage) lastNameField.getScene().getWindow()).close();
+            Modals.close(lastNameField);
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }

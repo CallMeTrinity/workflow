@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import org.example.config.SessionManager;
 import org.example.model.Reservation;
 import org.example.model.Room;
@@ -13,6 +12,7 @@ import org.example.model.User;
 import org.example.service.ReservationService;
 import org.example.service.RoomService;
 import org.example.service.UserService;
+import org.example.ui.util.Modals;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -207,7 +207,7 @@ public class EditReservationController {
                 }
             }
 
-            ((Stage) titleField.getScene().getWindow()).close();
+            Modals.close(titleField);
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }

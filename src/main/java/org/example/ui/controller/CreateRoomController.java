@@ -3,8 +3,8 @@ package org.example.ui.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.example.service.RoomService;
+import org.example.ui.util.Modals;
 
 public class CreateRoomController {
 
@@ -35,7 +35,7 @@ public class CreateRoomController {
 
         try {
             roomService.createRoom(name, capacity);
-            ((Stage) nameField.getScene().getWindow()).close();
+            Modals.close(nameField);
         } catch (Exception e) {
             errorLabel.setText(e.getMessage());
         }

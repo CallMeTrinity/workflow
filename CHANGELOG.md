@@ -4,6 +4,27 @@ Toutes les modifications notables du projet sont documentees dans ce fichier.
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et ce projet suit le [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.1.0-beta.1] - 2026-07-01
+
+### Ajoute
+- Theme sombre avec bascule dans la barre superieure, persiste entre les lancements
+- Cartes de statistiques sur le dashboard (projets, taches en cours, reunions a venir, notifications non lues)
+- Colonne "Avancement" avec barre de progression par projet dans le tableau des projets
+- Recherche plein texte des taches dans le Kanban (titre + description)
+- Compteur de taches par colonne dans le Kanban
+
+### Modifie
+- **Toutes les boites de dialogue (creation/edition, confirmations, erreurs) s'affichent
+  desormais en superposition dans la fenetre principale** au lieu d'ouvrir une fenetre
+  separee. Le comportement est identique sur toutes les plateformes et corrige le bug
+  macOS ou les modaux ouvraient une nouvelle fenetre en mode plein ecran.
+- Fermeture des modaux via ECHAP, clic sur le fond assombri ou bouton de fermeture
+- Refonte de la feuille de style : palette centralisee en design tokens
+  (looked-up colors), styles harmonises pour tableaux, listes, formulaires,
+  menus contextuels, calendrier et barres de defilement
+- Animations de fondu/zoom a l'ouverture et la fermeture des modaux
+- Cartes de taches du Kanban stylees via classes CSS (compatibles theme sombre)
+
 ## [1.0.0-beta.1] - 2026-04-22
 
 ### Ajoute

@@ -3,25 +3,32 @@ package org.example.ui.controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.scene.layout.HBox;
 import org.example.config.SessionManager;
 import org.example.model.Project;
+import org.example.model.Reservation;
+import org.example.model.Task;
 import org.example.model.User;
 import org.example.model.enums.Role;
+import org.example.model.enums.Status;
 import org.example.repository.UserRepository;
 import org.example.service.AuthService;
 import org.example.service.NotificationService;
 import org.example.service.ProjectService;
+import org.example.service.ReservationService;
+import org.example.service.TaskService;
 import org.example.service.UserService;
 import org.example.ui.util.AvatarUtil;
+import org.example.ui.util.Modals;
+import org.example.ui.util.ThemeManager;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,26 +46,31 @@ public class DashboardController {
     @FXML private TableColumn<Project, String> startDateColumn;
     @FXML private TableColumn<Project, String> endDateColumn;
     @FXML private TableColumn<Project, String> createdAtColumn;
+    @FXML private TableColumn<Project, Double> progressColumn;
     @FXML private TableColumn<Project, Void> actionsColumn;
     @FXML private Label welcomeLabel;
     @FXML private Button createProjectBtn;
     @FXML private Button adminBtn;
+    @FXML private Button themeBtn;
     @FXML private Label avatarHeader;
     @FXML private Circle avatarCircle;
     @FXML private Label notifBadge;
+    @FXML private Label statProjectsLabel;
+    @FXML private Label statTasksLabel;
+    @FXML private Label statMeetingsLabel;
+    @FXML private Label statNotifsLabel;
 
     private final ProjectService projectService = new ProjectService();
     private final AuthService authService = new AuthService();
     private final UserRepository userRepository = new UserRepository();
+    private final TaskService taskService = new TaskService();
+    private final ReservationService reservationService = new ReservationService();
     private List<Project> projects;
     private Map<Long, String> userNames;
     private final UserService userService = new UserService();
     private final NotificationService notificationService = new NotificationService();
 
     private ContextMenu activeMenu;
-
-    private Stage createProjectStage;
-    private Stage editProjectStage;
 
     @FXML
     public void initialize() {
@@ -82,6 +94,7 @@ public class DashboardController {
         createdAtColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getCreatedAt()));
 
+        setupProgressColumn();
         setupActionsColumn();
         setupRowContextMenu();
 
@@ -90,6 +103,74 @@ public class DashboardController {
         refreshProjects();
         refreshAvatar();
         refreshNotifBadge();
+        refreshStats();
+        updateThemeButton();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Statistiques + theme                                               */
+    /* ------------------------------------------------------------------ */
+
+    private void refreshStats() {
+        Long userId = SessionManager.getCurrentUser().getId();
+
+        statProjectsLabel.setText(String.valueOf(projectService.getAllProjects().size()));
+
+        List<Task> myTasks = taskService.getTasksByAssignedUser(userId);
+        long activeTasks = myTasks.stream().filter(t -> t.getStatus() != Status.DONE).count();
+        statTasksLabel.setText(String.valueOf(activeTasks));
+
+        LocalDate today = LocalDate.now();
+        List<Reservation> upcoming = reservationService.getReservationsForUser(
+                userId, today.toString(), today.plusDays(7).toString());
+        statMeetingsLabel.setText(String.valueOf(upcoming.size()));
+
+        statNotifsLabel.setText(String.valueOf(notificationService.getUnreadCount(userId)));
+    }
+
+    @FXML
+    private void toggleTheme() {
+        ThemeManager.toggle(projectTable.getScene());
+        updateThemeButton();
+    }
+
+    private void updateThemeButton() {
+        themeBtn.setText(ThemeManager.isDark() ? "☀" : "🌙");
+    }
+
+    private void setupProgressColumn() {
+        progressColumn.setCellValueFactory(data -> {
+            List<Task> tasks = taskService.getTasksByProject(data.getValue().getId());
+            double progress = tasks.isEmpty() ? 0
+                    : (double) tasks.stream().filter(t -> t.getStatus() == Status.DONE).count()
+                            / tasks.size();
+            return new javafx.beans.property.SimpleObjectProperty<>(progress);
+        });
+        progressColumn.setCellFactory(col -> new TableCell<>() {
+            private final ProgressBar bar = new ProgressBar(0);
+            private final Label percent = new Label();
+            private final HBox box = new HBox(8, bar, percent);
+
+            {
+                bar.setMaxWidth(Double.MAX_VALUE);
+                bar.getStyleClass().add("project-progress");
+                HBox.setHgrow(bar, javafx.scene.layout.Priority.ALWAYS);
+                box.setAlignment(Pos.CENTER_LEFT);
+                percent.getStyleClass().add("muted-label");
+            }
+
+            @Override
+            protected void updateItem(Double value, boolean empty) {
+                super.updateItem(value, empty);
+                if (empty || value == null) {
+                    setGraphic(null);
+                    return;
+                }
+                bar.setProgress(value);
+                percent.setText(Math.round(value * 100) + "%");
+                setGraphic(box);
+            }
+        });
     }
 
     private void updateButtonVisibility() {
@@ -211,41 +292,24 @@ public class DashboardController {
     }
 
     private void openEditProject(Project project) {
-        if (editProjectStage != null && editProjectStage.isShowing()) editProjectStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editProject.fxml"));
-            editProjectStage = new Stage();
-            editProjectStage.setTitle("Modifier le projet");
-            editProjectStage.setScene(new Scene(loader.load(), 500, 580));
-            editProjectStage.setMinWidth(460);
-            editProjectStage.setMinHeight(450);
-            editProjectStage.sizeToScene();
-            editProjectStage.setOnHidden(e -> refreshProjects());
-
-            EditProjectController controller = loader.getController();
-            controller.setProject(project);
-
-            editProjectStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        EditProjectController controller = Modals.open(projectTable, "/fxml/editProject.fxml",
+                540, 640, this::refreshProjects);
+        controller.setProject(project);
     }
 
     private void deleteProject(Project project) {
         if (!isAdmin()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Vous n'avez pas les droits pour supprimer ce projet.");
-            alert.showAndWait();
+            Modals.info(projectTable, "Droits insuffisants",
+                    "Vous n'avez pas les droits pour supprimer ce projet.");
             return;
         }
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        Modals.confirmDelete(projectTable,
                 "Supprimer le projet \"" + project.getName() + "\" ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                projectService.deleteProject(project.getId());
-                refreshProjects();
-            }
-        });
+                () -> {
+                    projectService.deleteProject(project.getId());
+                    refreshProjects();
+                    refreshStats();
+                });
     }
 
     /* ------------------------------------------------------------------ */
@@ -262,24 +326,14 @@ public class DashboardController {
     @FXML
     private void openCreateProject() {
         if (!isAdmin() && !isProjectLeader()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Vous n'avez pas les droits pour créer un projet.");
-            alert.showAndWait();
+            Modals.info(projectTable, "Droits insuffisants",
+                    "Vous n'avez pas les droits pour créer un projet.");
             return;
         }
-        if (createProjectStage != null && createProjectStage.isShowing()) createProjectStage.close();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/createProject.fxml"));
-            createProjectStage = new Stage();
-            createProjectStage.setTitle("Créer un projet");
-            createProjectStage.setScene(new Scene(loader.load(), 500, 580));
-            createProjectStage.setMinWidth(460);
-            createProjectStage.setMinHeight(450);
-            createProjectStage.sizeToScene();
-            createProjectStage.setOnHidden(e -> refreshProjects());
-            createProjectStage.show();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        Modals.open(projectTable, "/fxml/createProject.fxml", 540, 640, () -> {
+            refreshProjects();
+            refreshStats();
+        });
     }
 
     @FXML
@@ -370,28 +424,13 @@ public class DashboardController {
 
     @FXML
     private void openProfile() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/profile.fxml"));
-            Parent root = loader.load();
-
-            ProfileController controller = loader.getController();
-            controller.init(SessionManager.getCurrentUser(), userService, notificationService);
-
-            Stage stage = new Stage();
-            stage.setTitle("Mon profil");
-            stage.setScene(new Scene(root, 650, 520));
-            stage.setMinWidth(500);
-            stage.setMinHeight(400);
-            stage.initOwner(projectTable.getScene().getWindow());
-            stage.setOnHidden(e -> {
-                refreshAvatar();
-                refreshNotifBadge();
-            });
-            stage.show();
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error", e);
-        }
+        ProfileController controller = Modals.open(projectTable, "/fxml/profile.fxml",
+                720, 560, () -> {
+                    refreshAvatar();
+                    refreshNotifBadge();
+                    refreshStats();
+                });
+        controller.init(SessionManager.getCurrentUser(), userService, notificationService);
     }
 
 

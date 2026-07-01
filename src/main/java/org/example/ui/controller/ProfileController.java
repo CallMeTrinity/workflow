@@ -113,11 +113,7 @@ public class ProfileController {
                 msg.setWrapText(true);
                 msg.setMaxWidth(Double.MAX_VALUE);
                 HBox.setHgrow(msg, Priority.ALWAYS);
-                if (!notif.isRead()) {
-                    msg.setStyle("-fx-font-weight: bold; -fx-text-fill: #1e293b;");
-                } else {
-                    msg.setStyle("-fx-text-fill: #64748b;");
-                }
+                msg.getStyleClass().add(notif.isRead() ? "notif-read" : "notif-unread");
                 row.getChildren().add(msg);
 
                 Button toggleBtn = new Button(notif.isRead() ? "Non lu" : "Lu");
@@ -169,22 +165,12 @@ public class ProfileController {
             if (project == null) return;
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/kanban.fxml"));
-            Stage profileStage = (Stage) notificationList.getScene().getWindow();
-            Stage mainStage = (Stage) profileStage.getOwner();
-
-            if (mainStage == null) {
-                // Fallback: use any existing stage
-                mainStage = profileStage;
-            }
-
-            mainStage.getScene().setRoot(loader.load());
-            mainStage.setTitle("Kanban - " + project.getName());
+            Stage stage = (Stage) notificationList.getScene().getWindow();
+            // Remplacer la racine ferme aussi l'overlay du profil.
+            stage.getScene().setRoot(loader.load());
+            stage.setTitle("Kanban - " + project.getName());
             KanbanController controller = loader.getController();
             controller.setProject(project);
-
-            if (profileStage != mainStage) {
-                profileStage.close();
-            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unexpected error", e);
         }

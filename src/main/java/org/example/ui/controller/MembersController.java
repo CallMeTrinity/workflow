@@ -11,6 +11,7 @@ import org.example.model.enums.Role;
 import org.example.repository.ProjectRepository;
 import org.example.repository.UserRepository;
 import org.example.service.ProjectService;
+import org.example.ui.util.Modals;
 
 import java.util.List;
 
@@ -137,19 +138,16 @@ public class MembersController {
     }
 
     private void handleRemove(User user) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+        Modals.confirm(membersTable, "Confirmation",
                 "Retirer " + user.getFirstName() + " " + user.getLastName() + " du projet ?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.setHeaderText("Confirmation");
-        confirm.showAndWait().ifPresent(btn -> {
-            if (btn == ButtonType.YES) {
-                try {
-                    projectService.removeMember(project.getId(), user.getId());
-                    load();
-                } catch (Exception e) {
-                    errorLabel.setText(e.getMessage());
-                }
-            }
-        });
+                "Retirer", true,
+                () -> {
+                    try {
+                        projectService.removeMember(project.getId(), user.getId());
+                        load();
+                    } catch (Exception e) {
+                        errorLabel.setText(e.getMessage());
+                    }
+                });
     }
 }
