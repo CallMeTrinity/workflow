@@ -1,5 +1,7 @@
 # ProjectRoom
 
+[![CI](https://github.com/CallMeTrinity/workflow/actions/workflows/ci.yml/badge.svg)](https://github.com/CallMeTrinity/workflow/actions/workflows/ci.yml)
+
 Application de bureau JavaFX pour la gestion de projets : tableaux Kanban, suivi des taches, et reservation de salles de reunion.
 
 ## Description
@@ -116,7 +118,7 @@ src/main/resources/
 
 ## Tests
 
-Le projet contient **233 tests** repartis en deux categories :
+Le projet contient **247 tests** repartis en deux categories :
 
 ### Tests unitaires
 Les services sont testes avec **Mockito** : les repositories sont mockes pour isoler la logique metier. Les modeles sont egalement testes (constructeurs, getters/setters).
